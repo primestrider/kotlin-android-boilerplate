@@ -86,7 +86,7 @@ Pertahankan perilaku RN:
 - Font aplikasi: Plus Jakarta Sans, sama seperti RN (`configs/font.config.ts`).
 - Token warna (semantic: background, foreground, card, border, primary, …, plus palet mentah), spacing, radii, tipografi — dipetakan ke `MaterialTheme` + `CompositionLocal` tambahan untuk token yang tidak ada di M3.
 - Tema: System / Light / Dark, disimpan, dibaca sebelum render pertama (tanpa kilatan tema salah). Edge-to-edge dengan ikon system bar mengikuti tema.
-- Komponen shared (padanan `src/shared/components/**`): Accordion, Alert, AppText, Avatar, Badge, BottomSheet, Button, Card, Checkbox, Chip, Dialog, Divider, EmptyState, IconButton, Input, ListItem, ProgressBar, Radio, Screen, Select, Skeleton, Spinner, Switch, Tabs, ThemeToggle, Toast, SegmentedControl, ProgressIndicator. Bila Material 3 sudah menyediakannya, komponen cukup pembungkus tipis yang menerapkan token — jangan menulis ulang.
+- Komponen (keputusan user, 2026-10-30): **tidak** membuat library pembungkus seperti `src/shared/components/**` di RN. Starter kit memakai komponen Jetpack Compose / Material 3 langsung dan menyediakan **halaman contoh** cara memakainya: Button (filled/tonal/outlined/text/elevated), IconButton, FAB, Chip, Badge, Card, ListItem, Divider, TextField, Checkbox, RadioButton, Switch, Slider, dropdown/select, SegmentedButton, Tabs, progress indicator, AlertDialog, ModalBottomSheet, Snackbar, DropdownMenu, Tooltip. Pola yang tidak ada di M3 dibuat sebagai contoh di halaman: avatar inisial, skeleton, empty state, banner alert. Supaya komponen M3 bawaan tampil sesuai token, **semua** peran warna `ColorScheme` dipetakan ke token. `ThemeModeSelector` tetap menjadi padanan ThemeToggle.
 - Error boundary RN → error state per layar + handler crash global yang menampilkan layar fallback **[call Claude]**.
 
 ### 5.3 Konfigurasi
@@ -97,7 +97,7 @@ Pertahankan perilaku RN:
 Layar beranda publik → indeks contoh, dikelompokkan seperti RN.
 
 **Design system pages:** colors, typography, spacing, sizing, layout, appearance, helpers, theme.
-**Komponen:** display, form, layout, overlay (galeri semua komponen shared). Halaman `native-android`/`native-universal` RN (showcase @expo/ui) digabung ke galeri karena di Kotlin semuanya sudah native **[call Claude]**.
+**Komponen:** halaman contoh komponen Compose/M3: actions, inputs, display, overlays. Halaman `native-android`/`native-universal` RN (showcase @expo/ui) digabung ke galeri karena di Kotlin semuanya sudah native **[call Claude]**.
 **Form:** contoh form dengan validasi (padanan `form.tsx` + `form.schema.ts`).
 **Features:**
 - Products: list DummyJSON dengan pencarian (debounce), infinite scroll, detail produk; ID tidak valid tidak memanggil API.
@@ -163,7 +163,7 @@ User ingin markdown yang menjelaskan kode beserta "skill"-nya, supaya developer 
   - `add-feature` — membuat paket fitur baru (screen, ViewModel, repository, DI, route, tes).
   - `add-screen-route` — menambah layar dan route, publik atau protected.
   - `add-api-endpoint` — menambah endpoint Retrofit + model + mapping error + tes.
-  - `add-shared-component` — menambah komponen design system dengan token dan tes UI.
+  - `add-component-example` — menambah contoh komponen Compose ke halaman galeri, dengan tes UI.
   - `add-translation` — menambah string en/id dan menjaga tes kelengkapan.
   - `add-permission-feature` — fitur device yang butuh izin memakai `PermissionGate`.
   - `swap-auth-backend` — menulis `AuthAdapter` untuk backend nyata.
