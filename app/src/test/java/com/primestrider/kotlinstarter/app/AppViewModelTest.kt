@@ -4,7 +4,9 @@ import com.primestrider.kotlinstarter.core.auth.FakeSessionCipher
 import com.primestrider.kotlinstarter.core.auth.SessionRepository
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreferenceRepository
+import com.primestrider.kotlinstarter.testing.GatedPreferencesDataStore
 import com.primestrider.kotlinstarter.testing.InMemoryPreferencesDataStore
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -46,6 +48,22 @@ class AppViewModelTest {
 
     private fun sessionRepository(scope: CoroutineScope) =
         SessionRepository(InMemoryPreferencesDataStore(), FakeSessionCipher(), Json, scope)
+
+    @Test
+    fun notReadyWhileSessionStillLoading() =
+        runTest {
+            val store = GatedPreferencesDataStore()
+            val gate = CompletableDeferred<Unit>()
+            store.readGate = gate
+            val session = SessionRepository(store, FakeSessionCipher(), Json, this)
+            val viewModel = AppViewModel(ThemePreferenceRepository(InMemoryPreferencesDataStore()), session)
+            advanceUntilIdle()
+            assertEquals(ThemeMode.SYSTEM, viewModel.themeMode.value)
+            assertFalse(viewModel.ready.value)
+            gate.complete(Unit)
+            advanceUntilIdle()
+            assertTrue(viewModel.ready.value)
+        }
 
     @Test
     fun readyOnlyAfterThemeAndSessionLoaded() =

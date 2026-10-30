@@ -14,8 +14,9 @@ if and only if a session exists.
 - **Backups:** `datastore/session.preferences_pb` is excluded from cloud backup and device transfer
   (`backup_rules.xml`, `data_extraction_rules.xml`). The Keystore key never leaves the device, so a
   restored ciphertext could not be decrypted anyway.
-- **Failure handling:** a value that cannot be decoded or decrypted (corruption, lost key after a
-  restore or lock-screen reset) is treated as signed out and the key is removed. Startup never crashes on it.
+- **Failure handling:** a value that cannot be decoded or decrypted (corruption, or the Keystore key lost or
+  unusable) is treated as signed out and the key is removed. An unusable key is deleted and regenerated
+  once. A failing storage read is treated as signed out too. Startup never crashes on it.
 - **Startup:** the session is read before the first frame. `AppViewModel.ready` waits for it and the
   theme, and the splash stays up until then, so a signed-in cold start never flashes sign-in.
 - **Not persisted:** `signOutReason` lives in memory only, so the "session expired" message is not
