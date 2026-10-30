@@ -16,8 +16,10 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.input.ImeAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import org.junit.Assert.assertEquals
@@ -111,5 +113,21 @@ class TextFieldsTest {
         return results
             .first()
             .layoutInput.text.text
+    }
+
+    @Test
+    fun ime_action_runs_callback_for_app_and_password_fields() {
+        var app = 0
+        var password = 0
+        rule.setContent {
+            AppTheme(false) {
+                AppTextField("", {}, label = "A", imeAction = ImeAction.Next, onImeAction = { app++ }, modifier = Modifier.testTag("a"))
+                PasswordTextField("", {}, label = "P", onImeAction = { password++ }, modifier = Modifier.testTag("p"))
+            }
+        }
+        rule.onNodeWithTag("a").performImeAction()
+        rule.onNodeWithTag("p").performImeAction()
+        assertEquals(1, app)
+        assertEquals(1, password)
     }
 }

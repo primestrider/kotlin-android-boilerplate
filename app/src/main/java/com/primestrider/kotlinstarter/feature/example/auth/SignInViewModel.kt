@@ -13,6 +13,7 @@ import com.primestrider.kotlinstarter.core.network.ApiError
 import com.primestrider.kotlinstarter.core.network.ApiResult
 import com.primestrider.kotlinstarter.core.network.safeApiCall
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
@@ -101,10 +103,13 @@ class SignInViewModel
             viewModelScope.launch {
                 when (val result = safeApiCall(json) { adapter.signIn(credentials) }) {
                     is ApiResult.Success -> {
-                        repository.signIn(Session(result.data.user, result.data.tokens))
-                        _state.update { it.copy(loading = false) }
-                        messenger.success(UiText.Resource(R.string.auth_signed_in))
-                        _signedIn.send(Unit)
+                        // Leaving the screen mid-write must not drop the stored session, the message or the event.
+                        withContext(NonCancellable) {
+                            repository.signIn(Session(result.data.user, result.data.tokens))
+                            _state.update { it.copy(loading = false) }
+                            messenger.success(UiText.Resource(R.string.auth_signed_in))
+                            _signedIn.send(Unit)
+                        }
                     }
                     is ApiResult.Failure -> _state.update { it.copy(loading = false, error = result.error) }
                 }

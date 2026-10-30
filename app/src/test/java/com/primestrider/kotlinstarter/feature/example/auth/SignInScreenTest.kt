@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import com.primestrider.kotlinstarter.core.network.ApiError
@@ -21,6 +22,7 @@ class SignInScreenTest {
     val rule = createComposeRule()
 
     private var filled = 0
+    private var submitted = 0
 
     private fun show(state: SignInUiState) {
         rule.setContent {
@@ -31,7 +33,7 @@ class SignInScreenTest {
                     onPasswordChange = {},
                     onShortLivedChange = {},
                     onFillDemo = { filled++ },
-                    onSubmit = {},
+                    onSubmit = { submitted++ },
                     onBack = {},
                 )
             }
@@ -61,5 +63,12 @@ class SignInScreenTest {
     fun sign_in_button_disabled_while_loading() {
         show(SignInUiState(loading = true))
         rule.onNodeWithTag(SIGN_IN_BUTTON_TAG).assertIsNotEnabled()
+    }
+
+    @Test
+    fun ime_done_on_password_submits() {
+        show(SignInUiState())
+        rule.onNodeWithTag(PASSWORD_FIELD_TAG).performImeAction()
+        assertEquals(1, submitted)
     }
 }

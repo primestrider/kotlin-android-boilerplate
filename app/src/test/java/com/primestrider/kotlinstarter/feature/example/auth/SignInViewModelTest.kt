@@ -190,4 +190,26 @@ class SignInViewModelTest {
             assertTrue(vm.state.value.shortLived)
             assertTrue(demo.shortLivedTokens)
         }
+
+    @Test
+    fun next_submit_clears_previous_error_while_loading() =
+        runTest(dispatcher) {
+            val gate = CompletableDeferred<AuthResult>()
+            val adapter = FakeAdapter { throw IOException("down") }
+            val (vm, _) = viewModel(adapter)
+            vm.onUsernameChange("emilys")
+            vm.onPasswordChange("emilyspass")
+            vm.submit()
+            runCurrent()
+            assertTrue(vm.state.value.error != null)
+
+            adapter.behavior = { gate.await() }
+            vm.submit()
+            assertNull(vm.state.value.error)
+            assertTrue(vm.state.value.loading)
+            runCurrent()
+            gate.complete(AuthResult(user, AuthTokens("a1", "r1")))
+            runCurrent()
+            assertFalse(vm.state.value.loading)
+        }
 }

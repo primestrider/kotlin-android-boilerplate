@@ -3,6 +3,8 @@ package com.primestrider.kotlinstarter.core.designsystem.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActionScope
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -45,6 +47,7 @@ fun AppTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardType: KeyboardType = KeyboardType.Text,
     imeAction: ImeAction = ImeAction.Default,
+    onImeAction: (() -> Unit)? = null,
     singleLine: Boolean = true,
     minLines: Int = 1,
     maxLength: Int? = null,
@@ -69,6 +72,7 @@ fun AppTextField(
             },
         isError = errorText != null,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
+        keyboardActions = imeActions(imeAction, onImeAction),
         singleLine = singleLine,
         minLines = if (singleLine) 1 else minLines,
         enabled = enabled,
@@ -85,6 +89,7 @@ fun PasswordTextField(
     modifier: Modifier = Modifier,
     errorText: String? = null,
     imeAction: ImeAction = ImeAction.Done,
+    onImeAction: (() -> Unit)? = null,
 ) {
     var visible by rememberSaveable { mutableStateOf(false) }
     AppTextField(
@@ -95,6 +100,7 @@ fun PasswordTextField(
         errorText = errorText,
         keyboardType = KeyboardType.Password,
         imeAction = imeAction,
+        onImeAction = onImeAction,
         visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
         trailingIcon = {
             IconButton(onClick = { visible = !visible }) {
@@ -152,3 +158,20 @@ private fun SupportingRow(
 /** First [max] Unicode code points, so an emoji (a surrogate pair) is never cut in half. */
 internal fun String.takeCodePoints(max: Int): String =
     if (codePointCount(0, length) <= max) this else substring(0, offsetByCodePoints(0, max))
+
+/** Runs [onImeAction] when the keyboard action matching [imeAction] is pressed; nothing otherwise. */
+private fun imeActions(
+    imeAction: ImeAction,
+    onImeAction: (() -> Unit)?,
+): KeyboardActions {
+    if (onImeAction == null) return KeyboardActions.Default
+    val run: KeyboardActionScope.() -> Unit = { onImeAction() }
+    return when (imeAction) {
+        ImeAction.Done -> KeyboardActions(onDone = run)
+        ImeAction.Go -> KeyboardActions(onGo = run)
+        ImeAction.Next -> KeyboardActions(onNext = run)
+        ImeAction.Search -> KeyboardActions(onSearch = run)
+        ImeAction.Send -> KeyboardActions(onSend = run)
+        else -> KeyboardActions.Default
+    }
+}

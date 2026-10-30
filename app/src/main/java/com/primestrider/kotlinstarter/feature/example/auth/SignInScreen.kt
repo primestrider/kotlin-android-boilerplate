@@ -29,6 +29,7 @@ import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 
 internal const val SIGN_IN_BUTTON_TAG = "sign_in_submit"
+internal const val PASSWORD_FIELD_TAG = "sign_in_password"
 
 @Composable
 fun SignInScreen(
@@ -70,8 +71,10 @@ fun SignInScreen(
                 value = state.password,
                 onValueChange = onPasswordChange,
                 label = stringResource(R.string.auth_field_password),
+                modifier = Modifier.testTag(PASSWORD_FIELD_TAG),
                 errorText = state.errors[SignInField.PASSWORD]?.let { stringResource(it) },
                 imeAction = ImeAction.Done,
+                onImeAction = onSubmit,
             )
             Row(
                 Modifier
