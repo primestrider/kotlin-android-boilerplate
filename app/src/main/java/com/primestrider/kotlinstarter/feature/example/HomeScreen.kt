@@ -1,5 +1,6 @@
 package com.primestrider.kotlinstarter.feature.example
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +25,7 @@ internal const val HOME_LIST_TAG = "home_list"
 
 @Composable
 fun HomeScreen(
+    @StringRes title: Int = R.string.app_name,
     sections: List<ExampleSection>,
     onOpen: (Any) -> Unit,
 ) {
@@ -33,7 +35,7 @@ fun HomeScreen(
     ) {
         item {
             Text(
-                text = stringResource(R.string.app_name),
+                text = stringResource(title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.padding(bottom = Spacing.s4),
             )

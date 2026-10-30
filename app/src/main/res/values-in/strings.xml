@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Kotlin Starter</string>
-    <string name="common_action_back">Kembali</string>
     <string name="example_home_features_title">Fitur</string>
     <string name="example_home_features_description">Layar nyata yang tersambung ke modul bawaan starter ini</string>
     <string name="example_home_styling_title">Gaya</string>
@@ -25,7 +24,6 @@
     <string name="example_styling_appearance_subtitle">Border, radius, bayangan, dan opasitas</string>
     <string name="example_styling_theme_title">Tema</string>
     <string name="example_styling_theme_subtitle">Mode gelap dengan preferensi Sistem / Terang / Gelap yang tersimpan</string>
-    <string name="example_home_settings_subtitle">Skema warna dan bahasa aplikasi</string>
     <string name="styling_sample_text">Pak Budi membeli tujuh kue bolu yang enak di pasar</string>
     <string name="styling_section_semantic_colors">Warna semantik</string>
     <string name="styling_section_palette">Palet</string>
@@ -249,4 +247,8 @@
     <string name="components_period_week_content">Ringkasan minggu ini</string>
     <string name="components_period_month_content">Ringkasan bulan ini</string>
     <string name="components_skeleton_show">Tampilkan skeleton</string>
+    <string name="component_back">Kembali</string>
+    <string name="nav_home">Beranda</string>
+    <string name="nav_components">Komponen</string>
+    <string name="nav_profile">Profil</string>
 </resources>

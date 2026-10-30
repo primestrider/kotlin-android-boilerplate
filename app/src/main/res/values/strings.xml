@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Kotlin Starter</string>
-    <string name="common_action_back">Back</string>
     <string name="example_home_features_title">Features</string>
     <string name="example_home_features_description">Real screens wired to the built-in starter modules</string>
     <string name="example_home_styling_title">Styling</string>
@@ -25,7 +24,6 @@
     <string name="example_styling_appearance_subtitle">Border, radius, shadow, and opacity</string>
     <string name="example_styling_theme_title">Theme</string>
     <string name="example_styling_theme_subtitle">Dark mode with a persisted System / Light / Dark preference</string>
-    <string name="example_home_settings_subtitle">Color scheme and app language</string>
     <string name="styling_sample_text">The quick brown fox jumps over the lazy dog</string>
     <string name="styling_section_semantic_colors">Semantic colors</string>
     <string name="styling_section_palette">Palette</string>
@@ -249,4 +247,8 @@
     <string name="components_period_week_content">This week\'s summary</string>
     <string name="components_period_month_content">This month\'s summary</string>
     <string name="components_skeleton_show">Show skeleton</string>
+    <string name="component_back">Back</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_components">Components</string>
+    <string name="nav_profile">Profile</string>
 </resources>

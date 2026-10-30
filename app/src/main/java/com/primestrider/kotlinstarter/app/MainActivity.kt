@@ -11,7 +11,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.primestrider.kotlinstarter.app.navigation.AppNavHost
+import com.primestrider.kotlinstarter.app.navigation.MainShell
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.designsystem.theme.resolveDarkTheme
@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             AppTheme(darkTheme = darkTheme) {
-                AppNavHost()
+                MainShell()
             }
         }
     }

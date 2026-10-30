@@ -33,33 +33,33 @@ class HomeScreenTest {
         }
 
     @Test
-    fun rendersSectionTitleAndSettingsEntry() {
+    fun rendersSectionTitleAndFormEntry() {
         show {}
         rule.onNodeWithText("Features").assertIsDisplayed()
-        rule.onNodeWithText("Settings").assertIsDisplayed()
+        rule.onNodeWithText("Form").assertIsDisplayed()
     }
 
     @Test
-    fun settingsEntryExposesButtonRole() {
+    fun formEntryExposesButtonRole() {
         show {}
         rule
-            .onNode(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button) and hasText("Settings"))
+            .onNode(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button) and hasText("Form"))
             .assertIsDisplayed()
     }
 
     @Test
-    fun clickingSettingsOpensSettingsRoute() {
+    fun clickingSettingsOpensFormExampleRoute() {
         var opened: Any? = null
         show { opened = it }
-        rule.onNodeWithText("Settings").performClick()
-        assertEquals(SettingsRoute, opened)
+        rule.onNodeWithText("Form").performClick()
+        assertEquals(FormExampleRoute, opened)
     }
 
     @Test
     @Config(sdk = [36], fontScale = 2.0f)
     fun settingsEntryReachableAtLargeFontScale() {
         show {}
-        rule.onNodeWithTag(HOME_LIST_TAG).performScrollToNode(hasText("Settings"))
-        rule.onNodeWithText("Settings").assertIsDisplayed()
+        rule.onNodeWithTag(HOME_LIST_TAG).performScrollToNode(hasText("Form"))
+        rule.onNodeWithText("Form").assertIsDisplayed()
     }
 }

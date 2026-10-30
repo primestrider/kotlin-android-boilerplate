@@ -58,7 +58,7 @@ class StylingScreensTest(
     fun backButtonInvokesOnBack() {
         var backs = 0
         rule.setContent { AppTheme(darkTheme = false) { page.content { backs++ } } }
-        rule.onNodeWithContentDescription(string(R.string.common_action_back)).performClick()
+        rule.onNodeWithContentDescription(string(R.string.component_back)).performClick()
         assertEquals(1, backs)
     }
 }

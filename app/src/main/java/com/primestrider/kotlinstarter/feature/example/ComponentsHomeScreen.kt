@@ -1,0 +1,24 @@
+package com.primestrider.kotlinstarter.feature.example
+
+import androidx.compose.runtime.Composable
+import com.primestrider.kotlinstarter.R
+
+/** Root of the Components tab: the component example pages, in the same list style as Home. */
+@Composable
+fun ComponentsHomeScreen(
+    entries: List<ExampleEntry>,
+    onOpen: (Any) -> Unit,
+) {
+    HomeScreen(
+        title = R.string.nav_components,
+        sections =
+            listOf(
+                ExampleSection(
+                    title = R.string.example_home_components_title,
+                    description = R.string.example_home_components_description,
+                    entries = entries,
+                ),
+            ),
+        onOpen = onOpen,
+    )
+}

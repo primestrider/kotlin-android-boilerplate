@@ -1,0 +1,50 @@
+package com.primestrider.kotlinstarter.core.designsystem.component
+
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
+
+private const val BADGE_MAX = 99
+
+/** One destination of [AppNavigationBar]; a positive [badgeCount] shows a count badge ("99+" above 99). */
+data class NavBarItem(
+    val label: String,
+    val icon: ImageVector,
+    val badgeCount: Int? = null,
+)
+
+/** Bottom navigation bar for top-level destinations. Stateless: the caller owns [selectedIndex]. */
+@Composable
+fun AppNavigationBar(
+    items: List<NavBarItem>,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    NavigationBar(modifier) {
+        items.forEachIndexed { index, item ->
+            NavigationBarItem(
+                selected = index == selectedIndex,
+                onClick = { onSelect(index) },
+                icon = {
+                    val count = item.badgeCount
+                    if (count != null && count > 0) {
+                        BadgedBox(badge = { Badge { Text(if (count > BADGE_MAX) "$BADGE_MAX+" else "$count") } }) {
+                            Icon(item.icon, contentDescription = null)
+                        }
+                    } else {
+                        Icon(item.icon, contentDescription = null)
+                    }
+                },
+                label = { Text(item.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            )
+        }
+    }
+}

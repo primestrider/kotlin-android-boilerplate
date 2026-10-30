@@ -11,23 +11,15 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 
-/** Scrollable page with a top app bar (title + back) and a subtitle, shared by all example pages. */
-@OptIn(ExperimentalMaterial3Api::class)
+/** Scrollable example page on top of [AppScaffold]: title + back, a subtitle, IME-aware scrolling content. */
 @Composable
 fun ExamplePageScaffold(
     @StringRes title: Int,
@@ -36,22 +28,7 @@ fun ExamplePageScaffold(
     snackbarHost: @Composable () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Scaffold(
-        snackbarHost = snackbarHost,
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.common_action_back),
-                        )
-                    }
-                },
-            )
-        },
-    ) { padding ->
+    AppScaffold(title = stringResource(title), onBack = onBack, snackbarHost = snackbarHost) { padding ->
         Column(
             Modifier
                 .fillMaxSize()

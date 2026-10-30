@@ -8,8 +8,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.primestrider.kotlinstarter.app.navigation.AppNavHost
+import com.primestrider.kotlinstarter.app.navigation.MainShell
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
+import com.primestrider.kotlinstarter.feature.example.componentEntries
 import com.primestrider.kotlinstarter.feature.example.exampleSections
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -37,11 +38,11 @@ class AppNavHostTest {
         // Replaces MainActivity's own content so the test controls the NavHostController.
         composeRule.activity.setContent {
             navController = rememberNavController()
-            AppTheme(darkTheme = false) { AppNavHost(navController) }
+            AppTheme(darkTheme = false) { MainShell(navController) }
         }
         composeRule.waitForIdle()
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
-        val entries = exampleSections.flatMap { it.entries }
+        val entries = exampleSections.flatMap { it.entries } + componentEntries
         assertTrue(entries.isNotEmpty())
         entries.forEach { entry ->
             composeRule.runOnUiThread { navController.navigate(entry.route) }

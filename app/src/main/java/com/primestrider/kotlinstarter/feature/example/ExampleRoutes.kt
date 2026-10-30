@@ -41,3 +41,6 @@ data object OverlaysRoute
 
 @Serializable
 data object FormExampleRoute
+
+@Serializable
+data object ComponentsHomeRoute

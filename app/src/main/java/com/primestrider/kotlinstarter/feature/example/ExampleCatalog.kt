@@ -15,52 +15,22 @@ data class ExampleSection(
     val entries: List<ExampleEntry>,
 )
 
-/** Home index content. Sections in order: Features, Components, SDK, Styling. */
+/** Root of the Components tab. */
+val componentEntries: List<ExampleEntry> =
+    listOf(
+        ExampleEntry(R.string.example_components_actions_title, R.string.example_components_actions_subtitle, ActionsRoute),
+        ExampleEntry(R.string.example_components_inputs_title, R.string.example_components_inputs_subtitle, InputsRoute),
+        ExampleEntry(R.string.example_components_display_title, R.string.example_components_display_subtitle, DisplayRoute),
+        ExampleEntry(R.string.example_components_overlays_title, R.string.example_components_overlays_subtitle, OverlaysRoute),
+    )
+
+/** Home tab content. Sections in order: Features, SDK, Styling. Components and Settings have their own tabs. */
 val exampleSections: List<ExampleSection> =
     listOf(
         ExampleSection(
             title = R.string.example_home_features_title,
             description = R.string.example_home_features_description,
-            entries =
-                listOf(
-                    ExampleEntry(
-                        title = R.string.settings_title,
-                        subtitle = R.string.example_home_settings_subtitle,
-                        route = SettingsRoute,
-                    ),
-                    ExampleEntry(
-                        title = R.string.example_form_title,
-                        subtitle = R.string.example_form_subtitle,
-                        route = FormExampleRoute,
-                    ),
-                ),
-        ),
-        ExampleSection(
-            title = R.string.example_home_components_title,
-            description = R.string.example_home_components_description,
-            entries =
-                listOf(
-                    ExampleEntry(
-                        R.string.example_components_actions_title,
-                        R.string.example_components_actions_subtitle,
-                        ActionsRoute,
-                    ),
-                    ExampleEntry(
-                        R.string.example_components_inputs_title,
-                        R.string.example_components_inputs_subtitle,
-                        InputsRoute,
-                    ),
-                    ExampleEntry(
-                        R.string.example_components_display_title,
-                        R.string.example_components_display_subtitle,
-                        DisplayRoute,
-                    ),
-                    ExampleEntry(
-                        R.string.example_components_overlays_title,
-                        R.string.example_components_overlays_subtitle,
-                        OverlaysRoute,
-                    ),
-                ),
+            entries = listOf(ExampleEntry(R.string.example_form_title, R.string.example_form_subtitle, FormExampleRoute)),
         ),
         ExampleSection(
             title = R.string.example_home_styling_title,
@@ -68,19 +38,11 @@ val exampleSections: List<ExampleSection> =
             entries =
                 listOf(
                     ExampleEntry(R.string.example_styling_colors_title, R.string.example_styling_colors_subtitle, ColorsRoute),
-                    ExampleEntry(
-                        R.string.example_styling_typography_title,
-                        R.string.example_styling_typography_subtitle,
-                        TypographyRoute,
-                    ),
+                    ExampleEntry(R.string.example_styling_typography_title, R.string.example_styling_typography_subtitle, TypographyRoute),
                     ExampleEntry(R.string.example_styling_spacing_title, R.string.example_styling_spacing_subtitle, SpacingRoute),
                     ExampleEntry(R.string.example_styling_sizing_title, R.string.example_styling_sizing_subtitle, SizingRoute),
                     ExampleEntry(R.string.example_styling_layout_title, R.string.example_styling_layout_subtitle, LayoutRoute),
-                    ExampleEntry(
-                        R.string.example_styling_appearance_title,
-                        R.string.example_styling_appearance_subtitle,
-                        AppearanceRoute,
-                    ),
+                    ExampleEntry(R.string.example_styling_appearance_title, R.string.example_styling_appearance_subtitle, AppearanceRoute),
                     ExampleEntry(R.string.example_styling_theme_title, R.string.example_styling_theme_subtitle, ThemeRoute),
                 ),
         ),
