@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.io.encoding.Base64
@@ -54,9 +55,10 @@ class SessionRepository
         init {
             scope.launch {
                 try {
-                    val restored = lock.withLock { read() }
-                    // A sign-in that raced the initial read wins.
-                    _session.compareAndSet(null, restored)
+                    lock.withLock {
+                        // A sign-in that raced the initial read wins.
+                        _session.compareAndSet(null, read())
+                    }
                 } finally {
                     _loaded.value = true
                 }
@@ -99,7 +101,7 @@ class SessionRepository
             dataStore.edit { it[KEY] = Base64.encode(cipher.encrypt(plain)) }
         }
 
-        /** Any failure (storage, decrypt, parse) means signed out; the stored value is dropped. */
+        /** A failed storage read means signed out for this run; a value that cannot be decrypted or parsed is dropped. */
         @Suppress("TooGenericExceptionCaught", "SwallowedException")
         private suspend fun read(): Session? =
             try {
@@ -112,6 +114,9 @@ class SessionRepository
                 }
             } catch (e: CancellationException) {
                 throw e
+            } catch (e: IOException) {
+                // Storage unreadable right now: signed out for this run, stored data kept.
+                null
             } catch (e: Exception) {
                 try {
                     dataStore.edit { it.remove(KEY) }

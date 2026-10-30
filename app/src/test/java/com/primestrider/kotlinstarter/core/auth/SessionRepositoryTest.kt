@@ -162,14 +162,17 @@ class SessionRepositoryTest {
         }
 
     @Test
-    fun storageReadFailureIsTreatedAsSignedOut() =
+    fun storageReadFailureIsSignedOutButKeepsStoredData() =
         runTest {
             val store = GatedPreferencesDataStore()
+            SessionRepository(store, FakeSessionCipher(), json, this).signIn(sample)
             store.readError = IOException("disk")
             val repository = SessionRepository(store, FakeSessionCipher(), json, this)
             advanceUntilIdle()
             assertTrue(repository.loaded.value)
             assertNull(repository.session.value)
+            store.readError = null
+            assertNotNull(store.data.first()[key])
         }
 
     @Test

@@ -1,10 +1,10 @@
 package com.primestrider.kotlinstarter.core.auth
 
 import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyPermanentlyInvalidatedException
 import android.security.keystore.KeyProperties
-import java.security.InvalidKeyException
+import java.security.GeneralSecurityException
 import java.security.KeyStore
-import java.security.KeyStoreException
 import java.security.UnrecoverableKeyException
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -21,8 +21,8 @@ interface SessionCipher {
 
 /**
  * AES-256/GCM with a non-exportable key in the AndroidKeyStore; the 12-byte IV is prepended.
- * If the key is unusable it is deleted and regenerated once; data encrypted under the old key
- * then fails to decrypt, which the repository treats as signed out.
+ * A permanently lost key (see [isPermanentKeyFailure]) is deleted; encrypt then regenerates it once,
+ * decrypt rethrows (old data is unrecoverable and the repository treats it as signed out).
  */
 class KeystoreSessionCipher
     @Inject
@@ -31,7 +31,7 @@ class KeystoreSessionCipher
         private var cachedKey: SecretKey? = null
 
         override fun encrypt(plain: ByteArray): ByteArray =
-            withKey { key ->
+            withKey(regenerateOnPermanentFailure = true) { key ->
                 val cipher = Cipher.getInstance(TRANSFORMATION)
                 cipher.init(Cipher.ENCRYPT_MODE, key)
                 cipher.iv + cipher.doFinal(plain)
@@ -39,29 +39,30 @@ class KeystoreSessionCipher
 
         override fun decrypt(cipher: ByteArray): ByteArray {
             require(cipher.size > IV_SIZE) { "Ciphertext too short" }
-            return withKey { key ->
+            return withKey(regenerateOnPermanentFailure = false) { key ->
                 val c = Cipher.getInstance(TRANSFORMATION)
                 c.init(Cipher.DECRYPT_MODE, key, GCMParameterSpec(TAG_BITS, cipher, 0, IV_SIZE))
                 c.doFinal(cipher, IV_SIZE, cipher.size - IV_SIZE)
             }
         }
 
-        private fun <T> withKey(operation: (SecretKey) -> T): T =
+        private fun <T> withKey(
+            regenerateOnPermanentFailure: Boolean,
+            operation: (SecretKey) -> T,
+        ): T =
             try {
                 operation(key())
-            } catch (e: UnrecoverableKeyException) {
-                operation(regenerateKey())
-            } catch (e: KeyStoreException) {
-                operation(regenerateKey())
-            } catch (e: InvalidKeyException) {
-                operation(regenerateKey())
+            } catch (e: GeneralSecurityException) {
+                // Transient keystore errors must not cost the user a valid key.
+                if (!isPermanentKeyFailure(e)) throw e
+                discardKey()
+                if (regenerateOnPermanentFailure) operation(key()) else throw e
             }
 
         @Synchronized
-        private fun regenerateKey(): SecretKey {
+        private fun discardKey() {
             cachedKey = null
             runCatching { keyStore().deleteEntry(ALIAS) }
-            return key()
         }
 
         private fun keyStore(): KeyStore = KeyStore.getInstance(PROVIDER).apply { load(null) }
@@ -97,3 +98,6 @@ class KeystoreSessionCipher
             const val TAG_BITS = 128
         }
     }
+
+/** Only these mean the key is gone for good; other keystore errors can be transient. */
+internal fun isPermanentKeyFailure(e: Throwable): Boolean = e is KeyPermanentlyInvalidatedException || e is UnrecoverableKeyException
