@@ -31,6 +31,18 @@ Tests mirror the main source tree under `app/src/test/`.
 - Supported languages: `en` (fallback) and `id` (`res/values-in/`).
 - Docs, comments, README, and AGENTS.md are written in English.
 
+## Example routes and adding a page
+
+Routes in `feature/example/ExampleRoutes.kt`: `SettingsRoute`, and the styling pages `ColorsRoute`, `TypographyRoute`, `SpacingRoute`, `SizingRoute`, `LayoutRoute`, `AppearanceRoute`, `ThemeRoute`. `HomeRoute` is in `app/navigation/AppNavHost.kt`.
+
+To add an example page:
+
+1. Add a `@Serializable` route object to `ExampleRoutes.kt`.
+2. Write a stateless `XxxScreen(..., onBack)` (styling pages use `StylingScaffold`).
+3. Register `composable<XxxRoute>` in `AppNavHost`.
+4. Add an `ExampleEntry` to a section in `ExampleCatalog.kt`, with title/subtitle strings in both `values/` and `values-in/`.
+5. Cover it in a Robolectric test.
+
 ## Testing conventions
 
 Robolectric tests use `@RunWith(AndroidJUnit4::class)` and `@Config(sdk = [36])` (Robolectric 4.17 does not yet support SDK 37).

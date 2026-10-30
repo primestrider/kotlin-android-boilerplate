@@ -56,3 +56,9 @@ All styles use Plus Jakarta Sans (400 to 800).
 - `AppViewModel.themeMode` is `null` until the first stored value arrives. `MainActivity` keeps the splash screen visible while it is `null`, so the first frame is drawn in the correct theme (no flash of the wrong theme on cold start).
 - If reading DataStore throws an `IOException`, the repository falls back to `SYSTEM` instead of crashing.
 - System bar icon colors follow the resolved theme: `enableEdgeToEdge(SystemBarStyle.auto(...))` is re-applied whenever it changes.
+
+## Showcase pages
+
+`feature/example/styling/` holds seven pages (Colors, Typography, Spacing, Sizing, Layout, Appearance, Theme) built on `StylingScaffold`. They read tokens from `AppThemeTokens`, `MaterialTheme`, `Spacing`, `Radii`, `FontSize`, and `Palette` (swatches only). The Theme page reuses `ThemeModeSelector`, the same System / Light / Dark control as Settings.
+
+RN's `helpers` page (`view()`, `space()`, `gridCol()`) is intentionally not ported: those are React Native style-object utilities with no Compose counterpart (use `Modifier`, `Arrangement`, and `LazyVerticalGrid` directly).

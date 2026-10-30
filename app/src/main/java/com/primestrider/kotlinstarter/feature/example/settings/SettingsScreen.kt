@@ -17,9 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +27,7 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.i18n.AppLanguage
+import com.primestrider.kotlinstarter.feature.example.ThemeModeSelector
 
 @Composable
 fun SettingsScreen(
@@ -56,17 +54,7 @@ fun SettingsScreen(
             Text(stringResource(R.string.settings_title), style = MaterialTheme.typography.headlineMedium)
         }
         Text(stringResource(R.string.settings_theme_label), style = MaterialTheme.typography.titleMedium)
-        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-            ThemeMode.entries.forEachIndexed { index, mode ->
-                SegmentedButton(
-                    selected = state.themeMode == mode,
-                    onClick = { onThemeModeChange(mode) },
-                    shape = SegmentedButtonDefaults.itemShape(index, ThemeMode.entries.size),
-                ) {
-                    Text(stringResource(mode.labelRes()))
-                }
-            }
-        }
+        ThemeModeSelector(selected = state.themeMode, onSelect = onThemeModeChange)
         Text(stringResource(R.string.settings_language_label), style = MaterialTheme.typography.titleMedium)
         Column(Modifier.selectableGroup()) {
             AppLanguage.entries.forEach { language ->
@@ -87,10 +75,3 @@ fun SettingsScreen(
         }
     }
 }
-
-private fun ThemeMode.labelRes(): Int =
-    when (this) {
-        ThemeMode.SYSTEM -> R.string.settings_theme_system
-        ThemeMode.LIGHT -> R.string.settings_theme_light
-        ThemeMode.DARK -> R.string.settings_theme_dark
-    }
