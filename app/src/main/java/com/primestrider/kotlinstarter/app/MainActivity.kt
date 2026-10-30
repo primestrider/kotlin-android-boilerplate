@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splash.setKeepOnScreenCondition { viewModel.themeMode.value == null }
+        splash.setKeepOnScreenCondition { !viewModel.ready.value }
         enableEdgeToEdge()
         setContent {
             val mode = viewModel.themeMode.collectAsState().value ?: ThemeMode.SYSTEM

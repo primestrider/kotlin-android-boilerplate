@@ -16,6 +16,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import java.io.File
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 /**
@@ -32,6 +33,11 @@ fun createPreferencesDataStore(
         produceFile = produceFile,
     )
 
+/** Qualifier for the encrypted-session DataStore (file `session`), kept apart from settings. */
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class SessionStore
+
 @Module
 @InstallIn(SingletonComponent::class)
 object DataStoreModule {
@@ -40,4 +46,11 @@ object DataStoreModule {
     fun providePreferencesDataStore(
         @ApplicationContext context: Context,
     ): DataStore<Preferences> = createPreferencesDataStore { context.preferencesDataStoreFile("settings") }
+
+    @Provides
+    @Singleton
+    @SessionStore
+    fun provideSessionDataStore(
+        @ApplicationContext context: Context,
+    ): DataStore<Preferences> = createPreferencesDataStore { context.preferencesDataStoreFile("session") }
 }
