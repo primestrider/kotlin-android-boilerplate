@@ -50,6 +50,11 @@ val exampleSections: List<ExampleSection> =
                         R.string.example_components_display_subtitle,
                         DisplayRoute,
                     ),
+                    ExampleEntry(
+                        R.string.example_components_overlays_title,
+                        R.string.example_components_overlays_subtitle,
+                        OverlaysRoute,
+                    ),
                 ),
         ),
         ExampleSection(

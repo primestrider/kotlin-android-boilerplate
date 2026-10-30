@@ -31,9 +31,11 @@ fun ExamplePageScaffold(
     @StringRes title: Int,
     @StringRes subtitle: Int,
     onBack: () -> Unit,
+    snackbarHost: @Composable () -> Unit = {},
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Scaffold(
+        snackbarHost = snackbarHost,
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(title)) },
