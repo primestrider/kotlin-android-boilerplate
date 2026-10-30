@@ -31,6 +31,24 @@ Never hardcode a `Color` in a screen. Use `AppThemeTokens.colors`, `MaterialThem
 | secondaryContainer / onSecondaryContainer | secondary / secondaryForeground |
 | error / onError | destructive / destructiveForeground |
 | outline, outlineVariant | border |
+| tertiary / onTertiary | info / white |
+| surfaceTint | primary |
+| scrim | black |
+
+Every other role is mapped to the palette as well, so stock M3 components never show the M3 baseline purple (`AppTheme.kt`, `toColorScheme`):
+
+| Role | Light | Dark |
+| --- | --- | --- |
+| primaryContainer / onPrimaryContainer | Primary.c100 / Primary.c900 | Primary.c800 / Primary.c100 |
+| inversePrimary | Primary.c300 | Primary.c600 |
+| secondary / onSecondary | Gray.c700 / white | Gray.c300 / Gray.c950 |
+| tertiaryContainer / onTertiaryContainer | Info.c50 / Info.c700 | Blue.c900 / Blue.c100 |
+| errorContainer / onErrorContainer | Error.c50 / Error.c700 | Red.c950 / Red.c200 |
+| surfaceDim / surfaceBright | Gray.c100 / white | Gray.c950 / Gray.c800 |
+| surfaceContainerLowest / Low / (default) / High / Highest | white / Gray.c50 / Gray.c100 / Gray.c200 / Gray.c300 | Gray.c950 / Gray.c900 / Gray.c900 / Gray.c800 / Gray.c700 |
+| inverseSurface / inverseOnSurface | Gray.c800 / Gray.c50 | Gray.c100 / Gray.c900 |
+
+`AppThemeTest` fails if any of these roles falls back to the baseline.
 
 Shapes: small = `Radii.sm`, medium = `Radii.md`, large = `Radii.lg`, extraLarge = `Radii.xl`.
 
