@@ -1,7 +1,11 @@
 package com.primestrider.kotlinstarter.app
 
+import android.content.Context
+import androidx.test.core.app.ApplicationProvider
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.auth.FakeSessionCipher
 import com.primestrider.kotlinstarter.core.auth.SessionRepository
+import com.primestrider.kotlinstarter.core.crash.CrashRecorder
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreferenceRepository
 import com.primestrider.kotlinstarter.testing.GatedPreferencesDataStore
@@ -23,9 +27,17 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
+// Robolectric for the crash recorder's SharedPreferences.
+@RunWith(AndroidJUnit4::class)
+@Config(sdk = [36])
 @OptIn(ExperimentalCoroutinesApi::class)
 class AppViewModelTest {
+    private val context: Context = ApplicationProvider.getApplicationContext()
+    private val recorder = CrashRecorder(context)
+
     @Before
     fun setUp() {
         Dispatchers.setMain(StandardTestDispatcher())
@@ -33,6 +45,7 @@ class AppViewModelTest {
 
     @After
     fun tearDown() {
+        recorder.clear()
         Dispatchers.resetMain()
     }
 
@@ -40,7 +53,7 @@ class AppViewModelTest {
     fun themeModeIsNullUntilFirstValueThenSystem() =
         runTest {
             val store = InMemoryPreferencesDataStore()
-            val viewModel = AppViewModel(ThemePreferenceRepository(store), sessionRepository(this))
+            val viewModel = AppViewModel(ThemePreferenceRepository(store), sessionRepository(this), recorder)
             assertNull(viewModel.themeMode.value)
             advanceUntilIdle()
             assertEquals(ThemeMode.SYSTEM, viewModel.themeMode.value)
@@ -56,7 +69,7 @@ class AppViewModelTest {
             val gate = CompletableDeferred<Unit>()
             store.readGate = gate
             val session = SessionRepository(store, FakeSessionCipher(), Json, this)
-            val viewModel = AppViewModel(ThemePreferenceRepository(InMemoryPreferencesDataStore()), session)
+            val viewModel = AppViewModel(ThemePreferenceRepository(InMemoryPreferencesDataStore()), session, recorder)
             advanceUntilIdle()
             assertEquals(ThemeMode.SYSTEM, viewModel.themeMode.value)
             assertFalse(viewModel.ready.value)
@@ -69,9 +82,36 @@ class AppViewModelTest {
     fun readyOnlyAfterThemeAndSessionLoaded() =
         runTest {
             val viewModel =
-                AppViewModel(ThemePreferenceRepository(InMemoryPreferencesDataStore()), sessionRepository(this))
+                AppViewModel(ThemePreferenceRepository(InMemoryPreferencesDataStore()), sessionRepository(this), recorder)
             assertFalse(viewModel.ready.value)
             advanceUntilIdle()
             assertTrue(viewModel.ready.value)
+        }
+
+    @Test
+    fun storedCrashIsExposedAndDismissClearsIt() =
+        runTest {
+            val handler = Thread.getDefaultUncaughtExceptionHandler()
+            Thread.setDefaultUncaughtExceptionHandler { _, _ -> }
+            try {
+                recorder.install()
+                Thread.getDefaultUncaughtExceptionHandler()!!.uncaughtException(Thread.currentThread(), IllegalStateException("boom"))
+            } finally {
+                Thread.setDefaultUncaughtExceptionHandler(handler)
+            }
+            val viewModel =
+                AppViewModel(ThemePreferenceRepository(InMemoryPreferencesDataStore()), sessionRepository(this), recorder)
+            assertEquals("java.lang.IllegalStateException", viewModel.lastCrash.value?.exceptionClass)
+            viewModel.dismissCrash()
+            assertNull(viewModel.lastCrash.value)
+            assertNull(recorder.lastCrash())
+        }
+
+    @Test
+    fun noCrashMeansNoFallback() =
+        runTest {
+            val viewModel =
+                AppViewModel(ThemePreferenceRepository(InMemoryPreferencesDataStore()), sessionRepository(this), recorder)
+            assertNull(viewModel.lastCrash.value)
         }
 }

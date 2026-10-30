@@ -21,6 +21,7 @@ core/designsystem/theme/     # palette, semantic colors, spacing, radii, typogra
 core/designsystem/component/ # reusable components (see docs/architecture/components.md)
 core/i18n/                   # AppLanguage, LanguageController
 core/util/                   # formatCurrency, formatPercent, currentLocale
+core/crash/                  # CrashRecorder (last uncaught exception) + CrashFallbackScreen (docs/architecture/overview.md, Error handling)
 feature/example/             # example catalog, Home, Profile hub, sign-in, protected Account, Settings, component + styling pages, form example (deletable)
 feature/example/todos/       # Todos in Room: ExampleDatabase (example.db), DAO, repository; schemas in app/schemas
 feature/example/products/    # Products list + detail: Retrofit API, Paging 3 source, debounced search, tabs, add-to-cart sheet (docs/architecture/data-loading.md)

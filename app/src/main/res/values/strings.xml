@@ -360,4 +360,12 @@
     <string name="todos_removed">Task deleted</string>
     <string name="todos_cleared">Completed tasks cleared</string>
     <string name="todos_cd_delete">Delete %1$s</string>
+    <string name="crash_title">Something went wrong</string>
+    <string name="crash_body">The app closed unexpectedly last time. You can continue where you left off.</string>
+    <string name="crash_details">Details</string>
+    <string name="crash_type">Error type</string>
+    <string name="crash_time">Time</string>
+    <string name="crash_continue">Continue</string>
+    <string name="settings_developer">Developer</string>
+    <string name="settings_crash">Crash the app</string>
 </resources>

@@ -360,4 +360,12 @@
     <string name="todos_removed">Tugas dihapus</string>
     <string name="todos_cleared">Tugas selesai dihapus</string>
     <string name="todos_cd_delete">Hapus %1$s</string>
+    <string name="crash_title">Terjadi kesalahan</string>
+    <string name="crash_body">Aplikasi tertutup tiba-tiba sebelumnya. Kamu bisa melanjutkan.</string>
+    <string name="crash_details">Detail</string>
+    <string name="crash_type">Jenis error</string>
+    <string name="crash_time">Waktu</string>
+    <string name="crash_continue">Lanjutkan</string>
+    <string name="settings_developer">Pengembang</string>
+    <string name="settings_crash">Buat aplikasi crash</string>
 </resources>

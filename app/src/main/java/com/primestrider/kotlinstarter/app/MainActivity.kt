@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.primestrider.kotlinstarter.app.navigation.MainShell
+import com.primestrider.kotlinstarter.core.crash.CrashFallbackScreen
 import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
@@ -43,7 +44,10 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             AppTheme(darkTheme = darkTheme) {
-                CompositionLocalProvider(LocalMessenger provides messenger) { MainShell() }
+                CompositionLocalProvider(LocalMessenger provides messenger) {
+                    val crash = viewModel.lastCrash.collectAsState().value
+                    if (crash != null) CrashFallbackScreen(crash, onContinue = viewModel::dismissCrash) else MainShell()
+                }
             }
         }
     }

@@ -1,10 +1,14 @@
 package com.primestrider.kotlinstarter.feature.example.settings
 
 import androidx.compose.material3.Surface
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
@@ -56,5 +60,12 @@ class SettingsScreenTest {
         show()
         rule.onNodeWithText("Bahasa Indonesia").performClick()
         assertEquals(AppLanguage.ID, language)
+    }
+
+    @Test
+    fun developerCrashButtonShownInDebugBuilds() {
+        show()
+        rule.onNodeWithTag(SETTINGS_LIST_TAG).performScrollToNode(hasText("Crash the app"))
+        rule.onNodeWithText("Crash the app").assertIsDisplayed()
     }
 }

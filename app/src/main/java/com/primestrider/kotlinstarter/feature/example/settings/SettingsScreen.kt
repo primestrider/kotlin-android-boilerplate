@@ -17,14 +17,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
+import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
+import com.primestrider.kotlinstarter.core.designsystem.component.SectionHeader
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.i18n.AppLanguage
 import com.primestrider.kotlinstarter.feature.example.ThemeModeSelector
+
+const val SETTINGS_LIST_TAG = "settings_list"
 
 @Composable
 fun SettingsScreen(
@@ -48,6 +55,7 @@ private fun SettingsContent(
     Column(
         modifier
             .fillMaxSize()
+            .testTag(SETTINGS_LIST_TAG)
             .verticalScroll(rememberScrollState())
             .padding(Spacing.s4),
         verticalArrangement = Arrangement.spacedBy(Spacing.s4),
@@ -71,6 +79,15 @@ private fun SettingsContent(
                     Text(language.nativeName, Modifier.padding(start = Spacing.s3))
                 }
             }
+        }
+        if (BuildConfig.DEBUG) {
+            // Debug builds only: lets you try the crash fallback shown on the next launch.
+            SectionHeader(stringResource(R.string.settings_developer))
+            AppButton(
+                stringResource(R.string.settings_crash),
+                onClick = { throw IllegalStateException("Test crash from Settings") },
+                variant = ButtonVariant.DESTRUCTIVE,
+            )
         }
     }
 }
