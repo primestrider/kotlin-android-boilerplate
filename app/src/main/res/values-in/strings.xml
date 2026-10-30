@@ -286,4 +286,5 @@
     <string name="components_info_status_value">Dikirim</string>
     <string name="components_info_address">Alamat</string>
     <string name="component_avatar_more">%1$d lainnya</string>
+    <string name="auth_session_expired">Sesi kamu sudah berakhir. Silakan masuk lagi.</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.primestrider.kotlinstarter.core.network
 
 import com.primestrider.kotlinstarter.BuildConfig
+import com.primestrider.kotlinstarter.core.auth.AuthInterceptor
+import com.primestrider.kotlinstarter.core.auth.TokenAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,12 +31,18 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun okHttpClient(): OkHttpClient =
+    fun okHttpClient(
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator,
+    ): OkHttpClient =
         OkHttpClient
             .Builder()
             .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            // Before logging, so the logged request shows the (redacted) Authorization header.
+            .addInterceptor(authInterceptor)
+            .authenticator(tokenAuthenticator)
             .apply {
                 addInterceptor(
                     HttpLoggingInterceptor().apply {
