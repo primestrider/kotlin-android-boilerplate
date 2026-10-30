@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Kotlin Starter</string>
+    <string name="common_action_back">Kembali</string>
+    <string name="example_home_features_title">Fitur</string>
+    <string name="example_home_features_description">Layar nyata yang tersambung ke modul bawaan starter ini</string>
+    <string name="example_home_styling_title">Gaya</string>
+    <string name="example_home_styling_description">Token desain dan cara penerapannya</string>
+    <string name="settings_title">Pengaturan</string>
+    <string name="settings_theme_label">Skema warna</string>
+    <string name="settings_theme_system">Sistem</string>
+    <string name="settings_theme_light">Terang</string>
+    <string name="settings_theme_dark">Gelap</string>
+    <string name="settings_language_label">Bahasa aplikasi</string>
+    <string name="example_styling_colors_title">Warna</string>
+    <string name="example_styling_colors_subtitle">Warna semantik, palet, dan utilitas warna teks</string>
+    <string name="example_styling_typography_title">Tipografi</string>
+    <string name="example_styling_typography_subtitle">Ukuran, ketebalan, perataan, dan dekorasi font</string>
+    <string name="example_styling_spacing_title">Jarak</string>
+    <string name="example_styling_spacing_subtitle">Padding, margin, gap, dan margin negatif</string>
+    <string name="example_styling_sizing_title">Ukuran</string>
+    <string name="example_styling_sizing_subtitle">Lebar, tinggi, min/maks, dan rasio aspek</string>
+    <string name="example_styling_layout_title">Tata Letak</string>
+    <string name="example_styling_layout_subtitle">Baris, kolom, perataan, posisi, dan grid</string>
+    <string name="example_styling_appearance_title">Tampilan</string>
+    <string name="example_styling_appearance_subtitle">Border, radius, bayangan, dan opasitas</string>
+    <string name="example_styling_theme_title">Tema</string>
+    <string name="example_styling_theme_subtitle">Mode gelap dengan preferensi Sistem / Terang / Gelap yang tersimpan</string>
+</resources>

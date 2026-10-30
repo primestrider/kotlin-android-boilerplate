@@ -1,3 +1,28 @@
 <resources>
     <string name="app_name">Kotlin Starter</string>
+    <string name="common_action_back">Back</string>
+    <string name="example_home_features_title">Features</string>
+    <string name="example_home_features_description">Real screens wired to the built-in starter modules</string>
+    <string name="example_home_styling_title">Styling</string>
+    <string name="example_home_styling_description">Design tokens and how they are applied</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_theme_label">Color scheme</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_language_label">App language</string>
+    <string name="example_styling_colors_title">Colors</string>
+    <string name="example_styling_colors_subtitle">Semantic colors, palette, and text color utilities</string>
+    <string name="example_styling_typography_title">Typography</string>
+    <string name="example_styling_typography_subtitle">Font size, weight, alignment, and decoration</string>
+    <string name="example_styling_spacing_title">Spacing</string>
+    <string name="example_styling_spacing_subtitle">Padding, margin, gap, and negative margin</string>
+    <string name="example_styling_sizing_title">Sizing</string>
+    <string name="example_styling_sizing_subtitle">Width, height, min/max, and aspect ratio</string>
+    <string name="example_styling_layout_title">Layout</string>
+    <string name="example_styling_layout_subtitle">Rows, columns, alignment, position, and grid</string>
+    <string name="example_styling_appearance_title">Appearance</string>
+    <string name="example_styling_appearance_subtitle">Border, radius, shadow, and opacity</string>
+    <string name="example_styling_theme_title">Theme</string>
+    <string name="example_styling_theme_subtitle">Dark mode with a persisted System / Light / Dark preference</string>
 </resources>
