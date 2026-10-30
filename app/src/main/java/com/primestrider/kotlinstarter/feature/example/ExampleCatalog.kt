@@ -40,6 +40,11 @@ val exampleSections: List<ExampleSection> =
                         R.string.example_components_actions_subtitle,
                         ActionsRoute,
                     ),
+                    ExampleEntry(
+                        R.string.example_components_inputs_title,
+                        R.string.example_components_inputs_subtitle,
+                        InputsRoute,
+                    ),
                 ),
         ),
         ExampleSection(
