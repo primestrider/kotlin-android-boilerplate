@@ -3,9 +3,9 @@ package com.primestrider.kotlinstarter.core.designsystem.component
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
@@ -83,16 +84,15 @@ fun AvatarGroup(
     max: Int = 4,
     size: AvatarSize = AvatarSize.MEDIUM,
 ) {
-    val overlap = size.dp / 4
-    val shown = names.take(max)
+    val shown = names.take(max.coerceAtLeast(0))
+    val hidden = names.size - shown.size
     val ring = Modifier.border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)
-    Row(modifier) {
-        shown.forEachIndexed { index, name ->
-            Avatar(name, ring.offset(x = -overlap * index), size)
-        }
-        val hidden = names.size - shown.size
+    val more = stringResource(R.string.component_avatar_more, hidden)
+    // Negative spacing overlaps the avatars and keeps the group's measured width tight.
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(-size.dp / 4)) {
+        shown.forEach { name -> Avatar(name, ring, size) }
         if (hidden > 0) {
-            AvatarCircle("+$hidden", size, CircleShape, ring.offset(x = -overlap * shown.size))
+            AvatarCircle("+$hidden", size, CircleShape, ring.semantics { contentDescription = more })
         }
     }
 }
@@ -108,7 +108,7 @@ private fun AvatarCircle(
         modifier.size(size.dp).background(MaterialTheme.colorScheme.primaryContainer, shape),
         contentAlignment = Alignment.Center,
     ) {
-        Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onPrimaryContainer)
+        Text(label, style = size.textStyle(), color = MaterialTheme.colorScheme.onPrimaryContainer)
     }
 }
 
@@ -119,4 +119,13 @@ private fun AvatarStatus.color(): Color =
         AvatarStatus.OFFLINE -> MaterialTheme.colorScheme.outline
         AvatarStatus.BUSY -> MaterialTheme.colorScheme.error
         AvatarStatus.AWAY -> AppThemeTokens.colors.warning
+    }
+
+@Composable
+private fun AvatarSize.textStyle(): TextStyle =
+    when (this) {
+        AvatarSize.SMALL -> MaterialTheme.typography.labelSmall
+        AvatarSize.MEDIUM -> MaterialTheme.typography.labelLarge
+        AvatarSize.LARGE -> MaterialTheme.typography.titleSmall
+        AvatarSize.XLARGE -> MaterialTheme.typography.titleLarge
     }

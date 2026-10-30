@@ -16,7 +16,7 @@ Behavior:
 
 - Switching tabs uses `navigate(graph) { popUpTo(start) { saveState = true }; launchSingleTop = true; restoreState = true }`, so each tab keeps its own back stack.
 - Re-selecting the current tab pops it to its start route.
-- Back at the root of a non-Home tab returns to Home (Home's start destination stays underneath every tab switch); back at Home's root leaves the app.
+- Back at the root of a non-Home tab switches to Home and restores Home's saved stack (a `BackHandler` composed after the `NavHost`, so Home's stale saved state is never resurrected later); back at Home's root leaves the app.
 - The `NavHost` consumes the shell's bottom inset, so screens use `AppScaffold` normally without a double navigation-bar gap.
 
 ## Route objects
@@ -29,7 +29,7 @@ Each destination is a `@Serializable` object or data class:
 ## Registering a destination
 
 1. Add a `@Serializable` route object.
-2. Add `composable<MyRoute> { ... }` to the graph of the tab it belongs to (`homeGraph`, `componentsGraph`, `profileGraph` in `AppNavHost.kt`). Destinations can be navigated to from any tab; they stay in the tab whose graph declares them.
+2. Add `composable<MyRoute> { ... }` to the graph of the tab it belongs to (`homeGraph`, `componentsGraph`, `profileGraph` in `AppNavHost.kt`). Navigate only to destinations of the current tab (or switch tabs first): navigating into another tab's graph pushes the page onto the current stack and the selected tab flips to the declaring tab.
 3. To list it on an index, add an `ExampleEntry(title, subtitle, route)` to `exampleSections` (Home) or `componentEntries` (Components) in `feature/example/ExampleCatalog.kt`.
 4. A new top-level tab means a new `TopLevelTab` entry, a graph object and a `NavGraphBuilder` extension.
 

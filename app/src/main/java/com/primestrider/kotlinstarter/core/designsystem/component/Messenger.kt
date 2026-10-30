@@ -33,7 +33,6 @@ import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -77,7 +76,8 @@ data class UiMessage(
 /**
  * App-wide message queue. Inject it into a ViewModel, or read [LocalMessenger] in a composable.
  * A buffered channel delivers each message once and keeps messages sent before the UI collects
- * (e.g. during rotation).
+ * (e.g. during rotation). Up to 64 messages are buffered; beyond that the newest are dropped.
+ * Keep [UiMessage.onAction] lambdas short-lived: they live until the message is shown.
  */
 @Singleton
 class Messenger
@@ -111,7 +111,8 @@ private data class MessageVisuals(
 }
 
 /**
- * Collects [messenger] and shows each message as a snackbar. A newer message replaces the one on screen.
+ * Collects [messenger] and shows each message as a snackbar, one after another in the order sent
+ * ([SnackbarHostState] queues them), so a burst of messages is never cut short.
  * Put it in the root `Scaffold`'s `snackbarHost` slot.
  */
 @Composable
@@ -122,7 +123,7 @@ fun MessengerHost(
 ) {
     val resources = LocalResources.current
     LaunchedEffect(messenger, hostState) {
-        messenger.messages.collectLatest { message ->
+        messenger.messages.collect { message ->
             val visuals =
                 MessageVisuals(
                     message = message.text.resolve(resources),

@@ -21,6 +21,7 @@ import com.primestrider.kotlinstarter.feature.example.HOME_LIST_TAG
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -76,6 +77,35 @@ class MainShellTest {
         openColors()
         tab("Home")
         composeRule.onNodeWithTag(HOME_LIST_TAG).assertIsDisplayed()
+        composeRule.onNodeWithText("Semantic colors").assertDoesNotExist()
+    }
+
+    /** Back from another tab's root shows Home as the user left it, and Home stays that way afterwards. */
+    @Test
+    fun back_to_home_restores_and_keeps_home_state() {
+        openColors()
+        tab("Profile")
+        pressBack()
+        composeRule.onNodeWithText("Semantic colors").assertExists()
+        tab("Components")
+        tab("Home")
+        composeRule.onNodeWithText("Semantic colors").assertExists()
+        pressBack()
+        composeRule.onNodeWithTag(HOME_LIST_TAG).assertIsDisplayed()
+        tab("Components")
+        tab("Home")
+        composeRule.onNodeWithText("Semantic colors").assertDoesNotExist()
+    }
+
+    @Test
+    fun back_at_home_root_leaves_the_app() {
+        pressBack()
+        assertTrue(composeRule.activity.isFinishing)
+    }
+
+    private fun pressBack() {
+        composeRule.runOnUiThread { composeRule.activity.onBackPressedDispatcher.onBackPressed() }
+        composeRule.waitForIdle()
     }
 
     @Test

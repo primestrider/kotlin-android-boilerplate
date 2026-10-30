@@ -25,7 +25,7 @@ val componentEntries: List<ExampleEntry> =
         ExampleEntry(R.string.example_components_feedback_title, R.string.example_components_feedback_subtitle, FeedbackRoute),
     )
 
-/** Home tab content. Sections in order: Features, SDK, Styling. Components and Settings have their own tabs. */
+/** Home tab content: Features, then Styling (SDK demos join between them later). Components and Settings have their own tabs. */
 val exampleSections: List<ExampleSection> =
     listOf(
         ExampleSection(

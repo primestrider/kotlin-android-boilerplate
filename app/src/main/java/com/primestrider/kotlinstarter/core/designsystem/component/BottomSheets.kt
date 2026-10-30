@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import kotlinx.coroutines.launch
 
@@ -91,11 +93,12 @@ fun <T> OptionsBottomSheet(
     selected: T?,
     onSelect: (T) -> Unit,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
     var chosen by remember { mutableStateOf(false) }
-    SheetFrame(onDismiss, Modifier, title, dismissible = true, sheetState = sheetState) {
+    SheetFrame(onDismiss, modifier, title, dismissible = true, sheetState = sheetState) {
         Column(Modifier.selectableGroup()) {
             options.forEach { option ->
                 Row(
@@ -113,7 +116,8 @@ fun <T> OptionsBottomSheet(
                                     onDismiss()
                                 }
                             },
-                        ).padding(vertical = Spacing.s3),
+                        ).heightIn(min = 48.dp)
+                        .padding(vertical = Spacing.s3),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Spacing.s3),
                 ) {

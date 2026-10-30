@@ -25,7 +25,8 @@ enum class ButtonVariant { PRIMARY, SECONDARY, OUTLINED, TEXT, DESTRUCTIVE }
 
 /**
  * Button with a built-in loading state: while [loading] it shows a spinner, reports disabled,
- * and ignores clicks, so a double tap runs the action once.
+ * and ignores clicks. Set [loading] synchronously in the click handler (before any suspend call) so a
+ * fast double tap cannot run the action twice.
  */
 @Composable
 fun AppButton(

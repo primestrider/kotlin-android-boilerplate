@@ -16,7 +16,7 @@ Rules:
 | `AppScaffold`, `AppTopBar` | `AppScaffold.kt` | Every screen: title, optional back arrow (`onBack = null` hides it), actions, snackbar/FAB slots |
 | `AppNavigationBar`, `NavBarItem` | `AppNavigationBar.kt` | Bottom navigation for top-level destinations, with optional count badge ("99+") |
 | `AppButton`, `ButtonVariant` | `AppButton.kt` | Any button: `PRIMARY`, `SECONDARY` (tonal), `OUTLINED`, `TEXT`, `DESTRUCTIVE`; `loading = true` shows a spinner, reports disabled and ignores clicks (no double submit); `fullWidth`, `leadingIcon` |
-| `AppTextField` | `TextFields.kt` | Text input with label, placeholder, `errorText` (wins over `supportingText`), `maxLength` + counter, keyboard type and IME action |
+| `AppTextField` | `TextFields.kt` | Full-width text input with label, placeholder, `errorText` (wins over `supportingText`), `maxLength` (counted in characters, emoji-safe) with an "n/max" counter, keyboard type and IME action |
 | `PasswordTextField` | `TextFields.kt` | Password input with its own show/hide toggle |
 | `SearchField` | `TextFields.kt` | Search box with a clear button once there is a query |
 | `SelectField`, `SelectOption` | `SelectField.kt` | Pick one value from a dropdown; disabled options are shown but not selectable |
@@ -26,8 +26,12 @@ Rules:
 | `Messenger`, `UiMessage`, `UiText`, `MessageVariant` | `Messenger.kt` | App-wide snackbar messages (info / success / warning / error, optional action) from anywhere, see below |
 | `MessengerHost` | `Messenger.kt` | Renders the messages; already placed in `MainShell`'s `snackbarHost` |
 | `LoadingState`, `EmptyState`, `ErrorState` | `StateViews.kt` | Whole-area states of a screen or section: spinner, nothing-yet with optional action, failure with Retry |
-| `LoadingOverlay` | `StateViews.kt` | Blocking spinner over its parent `Box` while a critical action runs; swallows touches |
+| `LoadingOverlay` | `StateViews.kt` | Blocking spinner over its parent `Box` while a critical action runs; swallows touches and is announced only as "Loading" |
 | `Banner`, `BannerVariant` | `Banner.kt` | Inline alert in the page (info / success / warning / error) with optional action and dismiss |
+| `Avatar`, `AvatarGroup`, `AvatarSize`, `AvatarStatus`, `initialsOf` | `Avatar.kt` | Initials avatar (sizes 32/40/48/64dp, circle or custom shape, presence dot announced to TalkBack); overlapping group with "+N" overflow. Image avatars come with networking |
+| `Skeleton`, `SkeletonText` | `Skeleton.kt` | Pulsing placeholders while content loads; `SkeletonText` is announced as "Loading" |
+| `SectionHeader` | `SectionHeader.kt` | Section title marked as an accessibility heading, with an optional "See all" style action |
+| `InfoRow` | `InfoRow.kt` | Label / value pairs (order id, status, address); long values wrap |
 
 ## Showing messages
 
@@ -35,9 +39,5 @@ Rules:
 - From a ViewModel: inject `Messenger` (it is a Hilt `@Singleton`) and call the same methods; see `FeedbackViewModel`.
 - Prefer `UiText.Resource` so the text follows the app language; `UiText.Plain` is for text that is already final (e.g. a server message).
 - `UiMessage(text, variant, actionLabel, onAction, long)` adds an action ("Undo", "Retry"); `onAction` runs only if the user taps it.
-- Messages are queued in a buffered channel: one sent while no screen is collecting (rotation, before the UI starts) is shown once the host collects. A newer message replaces the one on screen.
+- Messages are queued in a buffered channel (up to 64): one sent while no screen is collecting (rotation, before the UI starts) is shown once the host collects, and several are shown one after another in order. Keep `onAction` lambdas short-lived; they live until the message is shown.
 - `MainActivity` provides `LocalMessenger`; tests that replace the activity content must provide it too (see `MainShellTest`).
-| `Avatar`, `AvatarGroup`, `AvatarSize`, `AvatarStatus`, `initialsOf` | `Avatar.kt` | Initials avatar (sizes 32/40/48/64dp, circle or custom shape, presence dot announced to TalkBack); overlapping group with "+N" overflow. Image avatars come with networking |
-| `Skeleton`, `SkeletonText` | `Skeleton.kt` | Pulsing placeholders while content loads; `SkeletonText` is announced as "Loading" |
-| `SectionHeader` | `SectionHeader.kt` | Section title marked as an accessibility heading, with an optional "See all" style action |
-| `InfoRow` | `InfoRow.kt` | Label / value pairs (order id, status, address); long values wrap |

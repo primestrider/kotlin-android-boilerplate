@@ -285,4 +285,5 @@
     <string name="components_info_status">Status</string>
     <string name="components_info_status_value">Dikirim</string>
     <string name="components_info_address">Alamat</string>
+    <string name="component_avatar_more">%1$d lainnya</string>
 </resources>

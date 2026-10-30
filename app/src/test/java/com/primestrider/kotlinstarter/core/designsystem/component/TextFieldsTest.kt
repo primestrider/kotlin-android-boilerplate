@@ -55,6 +55,26 @@ class TextFieldsTest {
     }
 
     @Test
+    fun max_length_never_splits_an_emoji() {
+        rule.setContent {
+            var value by remember { mutableStateOf("") }
+            AppTheme(false) { AppTextField(value, { value = it }, label = "Note", maxLength = 2, modifier = Modifier.testTag("f")) }
+        }
+        rule.onNodeWithTag("f").performTextInput("a😀b")
+        assertEquals("a😀", drawn("f"))
+        rule.onNodeWithText("2/2").assertExists()
+    }
+
+    @Test
+    fun counter_stays_next_to_supporting_text() {
+        rule.setContent {
+            AppTheme(false) { AppTextField("abc", {}, label = "Bio", supportingText = "Shown on your profile", maxLength = 10) }
+        }
+        rule.onNodeWithText("Shown on your profile").assertExists()
+        rule.onNodeWithText("3/10").assertExists()
+    }
+
+    @Test
     fun password_is_masked_until_shown() {
         rule.setContent {
             var value by remember { mutableStateOf("") }

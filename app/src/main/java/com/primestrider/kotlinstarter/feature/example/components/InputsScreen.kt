@@ -49,6 +49,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppTextField
 import com.primestrider.kotlinstarter.core.designsystem.component.PasswordTextField
+import com.primestrider.kotlinstarter.core.designsystem.component.SearchField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
@@ -112,7 +113,9 @@ private fun TextFieldsSection() {
     var name by rememberSaveable { mutableStateOf("") }
     var username by rememberSaveable { mutableStateOf("admin") }
     var bio by rememberSaveable { mutableStateOf("") }
+    var query by rememberSaveable { mutableStateOf("") }
     DemoSection(R.string.components_section_text_fields) {
+        SearchField(query = query, onQueryChange = { query = it })
         TextField(
             value = name,
             onValueChange = { name = it },

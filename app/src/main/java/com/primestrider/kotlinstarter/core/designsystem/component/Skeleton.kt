@@ -44,7 +44,16 @@ fun Skeleton(
     modifier: Modifier = Modifier,
     shape: Shape = RoundedCornerShape(Radii.sm),
 ) {
-    Box(modifier.alpha(pulseAlpha()).background(MaterialTheme.colorScheme.surfaceContainerHigh, shape))
+    SkeletonBar(modifier, shape, pulseAlpha())
+}
+
+@Composable
+private fun SkeletonBar(
+    modifier: Modifier,
+    shape: Shape,
+    alpha: Float,
+) {
+    Box(modifier.alpha(alpha).background(MaterialTheme.colorScheme.surfaceContainerHigh, shape))
 }
 
 /** Placeholder paragraph of [lines] bars, the last one shorter; announced as "Loading". */
@@ -55,13 +64,15 @@ fun SkeletonText(
     lastLineFraction: Float = 0.6f,
 ) {
     val loading = stringResource(R.string.component_loading)
+    // One shared pulse for all bars instead of an infinite transition per bar.
+    val alpha = pulseAlpha()
     Column(
         modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = loading },
         verticalArrangement = Arrangement.spacedBy(Spacing.s2),
     ) {
         repeat(lines) { index ->
             val fraction = if (index == lines - 1) lastLineFraction else 1f
-            Skeleton(Modifier.fillMaxWidth(fraction).height(Spacing.s4))
+            SkeletonBar(Modifier.fillMaxWidth(fraction).height(Spacing.s4), RoundedCornerShape(Radii.sm), alpha)
         }
     }
 }

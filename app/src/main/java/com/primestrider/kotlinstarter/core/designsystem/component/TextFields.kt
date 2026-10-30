@@ -1,5 +1,7 @@
 package com.primestrider.kotlinstarter.core.designsystem.component
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -24,6 +26,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 
 /**
  * Outlined text field with the common extras: [errorText] (wins over [supportingText] and marks the
@@ -48,17 +51,22 @@ fun AppTextField(
     enabled: Boolean = true,
     visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
-    val counter = maxLength?.let { stringResource(R.string.component_counter, value.length, it) }
-    val supporting = errorText ?: supportingText ?: counter
+    val counter = maxLength?.let { stringResource(R.string.component_counter, value.codePointCount(0, value.length), it) }
+    val message = errorText ?: supportingText
     OutlinedTextField(
         value = value,
-        onValueChange = { onValueChange(if (maxLength != null) it.take(maxLength) else it) },
+        onValueChange = { onValueChange(if (maxLength != null) it.takeCodePoints(maxLength) else it) },
         label = { Text(label) },
         modifier = modifier.fillMaxWidth(),
         placeholder = placeholder?.let { { Text(it) } },
         leadingIcon = leadingIcon?.let { { Icon(it, contentDescription = null) } },
         trailingIcon = trailingIcon,
-        supportingText = supporting?.let { { Text(it) } },
+        supportingText =
+            if (message == null && counter == null) {
+                null
+            } else {
+                { SupportingRow(message, counter) }
+            },
         isError = errorText != null,
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         singleLine = singleLine,
@@ -128,3 +136,19 @@ fun SearchField(
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
     )
 }
+
+/** Message on the start, "n/max" counter on the end, as Material 3 lays them out. */
+@Composable
+private fun SupportingRow(
+    message: String?,
+    counter: String?,
+) {
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
+        Text(message.orEmpty(), modifier = Modifier.weight(1f))
+        counter?.let { Text(it) }
+    }
+}
+
+/** First [max] Unicode code points, so an emoji (a surrogate pair) is never cut in half. */
+internal fun String.takeCodePoints(max: Int): String =
+    if (codePointCount(0, length) <= max) this else substring(0, offsetByCodePoints(0, max))

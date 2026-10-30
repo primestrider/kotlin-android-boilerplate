@@ -1,5 +1,6 @@
 package com.primestrider.kotlinstarter.app.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -50,13 +51,13 @@ enum class TopLevelTab(
  *
  * - Switching tabs saves and restores each tab's back stack.
  * - Re-selecting the current tab pops it back to its root.
- * - Back at the root of a non-Home tab returns to Home: tab switches keep Home's start destination
- *   underneath (popUpTo the start destination), so Navigation's default back handles it.
+ * - Back at the root of a non-Home tab switches to Home, restoring Home's saved stack.
  */
 @Composable
 fun MainShell(navController: NavHostController = rememberNavController()) {
     val entry by navController.currentBackStackEntryAsState()
     val destination = entry?.destination
+    val atTabRoot = destination?.let { it.parent?.startDestinationId == it.id } ?: true
     val current =
         TopLevelTab.entries.firstOrNull { tab -> destination?.hierarchy?.any { it.hasRoute(tab.graphClass) } == true }
             ?: TopLevelTab.HOME
@@ -94,6 +95,12 @@ fun MainShell(navController: NavHostController = rememberNavController()) {
             homeGraph(navController)
             componentsGraph(navController)
             profileGraph()
+        }
+        // Composed after the NavHost so this callback wins over the NavHost's own back handling: back at
+        // another tab's root switches to Home with Home's saved stack, instead of a plain pop that would
+        // leave that saved stack behind and bring it back on a later tab switch.
+        BackHandler(enabled = current != TopLevelTab.HOME && atTabRoot) {
+            open(TopLevelTab.HOME)
         }
     }
 }

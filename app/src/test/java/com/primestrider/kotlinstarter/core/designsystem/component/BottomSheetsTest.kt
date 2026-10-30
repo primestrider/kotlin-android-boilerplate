@@ -3,9 +3,11 @@ package com.primestrider.kotlinstarter.core.designsystem.component
 import androidx.activity.ComponentActivity
 import androidx.activity.ComponentDialog
 import androidx.compose.material3.Text
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import org.junit.Assert.assertEquals
@@ -36,10 +38,29 @@ class BottomSheetsTest {
                 )
             }
         }
+        rule.mainClock.autoAdvance = false
         rule.onNodeWithText("Oldest").performClick()
+        rule.onNodeWithText("Oldest").performClick()
+        rule.mainClock.autoAdvance = true
         rule.waitForIdle()
         assertEquals(listOf(2), picked)
         assertEquals(1, dismisses)
+    }
+
+    @Test
+    fun option_rows_are_at_least_48dp_tall() {
+        rule.setContent {
+            AppTheme(false) {
+                OptionsBottomSheet(
+                    title = "Sort by",
+                    options = listOf(SelectOption(1, "Newest")),
+                    selected = 1,
+                    onSelect = {},
+                    onDismiss = {},
+                )
+            }
+        }
+        rule.onNodeWithText("Newest").assertHeightIsAtLeast(48.dp)
     }
 
     @Test

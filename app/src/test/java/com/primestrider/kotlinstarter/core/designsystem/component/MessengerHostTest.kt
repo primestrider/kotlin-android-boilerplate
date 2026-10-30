@@ -20,6 +20,21 @@ class MessengerHostTest {
     val rule = createComposeRule()
 
     @Test
+    fun messages_queued_before_the_host_are_all_shown_in_order() {
+        val messenger = Messenger()
+        messenger.info(UiText.Plain("First"))
+        messenger.info(UiText.Plain("Second"))
+        rule.setContent {
+            val hostState = remember { SnackbarHostState() }
+            AppTheme(false) { MessengerHost(messenger, hostState) }
+        }
+        rule.onNodeWithText("First").assertExists()
+        rule.mainClock.advanceTimeBy(SHORT_SNACKBAR_MS)
+        rule.waitForIdle()
+        rule.onNodeWithText("Second").assertExists()
+    }
+
+    @Test
     fun shows_message_and_runs_action() {
         val messenger = Messenger()
         var actions = 0
@@ -40,3 +55,6 @@ class MessengerHostTest {
         assertEquals(1, actions)
     }
 }
+
+/** M3 short snackbar duration (4 s) plus a margin for its exit animation. */
+private const val SHORT_SNACKBAR_MS = 5_000L
