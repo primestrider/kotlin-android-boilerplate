@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -22,29 +21,22 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -59,15 +51,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.Banner
+import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
+import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
@@ -316,76 +308,42 @@ private fun SkeletonBlock(
 @Composable
 private fun EmptyStateSection() {
     DemoSection(R.string.components_section_empty) {
-        Column(
-            Modifier.fillMaxWidth().padding(Spacing.s6),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Spacing.s2),
-        ) {
-            Icon(
-                Icons.Filled.Email,
-                contentDescription = null,
-                modifier = Modifier.size(Spacing.s12),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(stringResource(R.string.components_empty_title), style = MaterialTheme.typography.titleMedium)
-            Text(
-                stringResource(R.string.components_empty_description),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Button(onClick = {}) { Text(stringResource(R.string.components_empty_action)) }
-        }
+        EmptyState(
+            title = stringResource(R.string.components_empty_title),
+            description = stringResource(R.string.components_empty_description),
+            icon = Icons.Filled.Email,
+            actionLabel = stringResource(R.string.components_empty_action),
+            onAction = {},
+        )
     }
 }
 
-private data class BannerSpec(
+private data class BannerDemo(
     @StringRes val title: Int,
     @StringRes val body: Int,
-    val icon: ImageVector,
+    val variant: BannerVariant,
 )
+
+private val bannerDemos =
+    listOf(
+        BannerDemo(R.string.components_banner_info_title, R.string.components_banner_info_body, BannerVariant.INFO),
+        BannerDemo(R.string.components_banner_success_title, R.string.components_banner_success_body, BannerVariant.SUCCESS),
+        BannerDemo(R.string.components_banner_warning_title, R.string.components_banner_warning_body, BannerVariant.WARNING),
+        BannerDemo(R.string.components_banner_error_title, R.string.components_banner_error_body, BannerVariant.ERROR),
+    )
 
 @Composable
 private fun BannersSection() {
-    val colors = AppThemeTokens.colors
-    val banners =
-        listOf(
-            BannerSpec(R.string.components_banner_info_title, R.string.components_banner_info_body, Icons.Filled.Info) to colors.info,
-            BannerSpec(R.string.components_banner_success_title, R.string.components_banner_success_body, Icons.Filled.CheckCircle) to
-                colors.success,
-            BannerSpec(R.string.components_banner_warning_title, R.string.components_banner_warning_body, Icons.Filled.Warning) to
-                colors.warning,
-            BannerSpec(R.string.components_banner_error_title, R.string.components_banner_error_body, Icons.Filled.Warning) to
-                colors.destructive,
-        )
     val visible = rememberSaveableStateList(true, true, true, true)
     DemoSection(R.string.components_section_banners) {
-        banners.forEachIndexed { index, (spec, accent) ->
-            if (visible[index]) Banner(spec, accent, onDismiss = { visible[index] = false })
-        }
-    }
-}
-
-@Composable
-private fun Banner(
-    spec: BannerSpec,
-    accent: Color,
-    onDismiss: () -> Unit,
-) {
-    val title = stringResource(spec.title)
-    Surface(
-        shape = RoundedCornerShape(Radii.lg),
-        color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = BorderStroke(1.dp, accent),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        Row(Modifier.padding(Spacing.s3), horizontalArrangement = Arrangement.spacedBy(Spacing.s3)) {
-            Icon(spec.icon, contentDescription = null, tint = accent)
-            Column(Modifier.weight(1f)) {
-                Text(title, style = MaterialTheme.typography.titleSmall)
-                Text(stringResource(spec.body), style = MaterialTheme.typography.bodyMedium)
-            }
-            IconButton(onClick = onDismiss) {
-                Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.components_cd_dismiss, title))
+        bannerDemos.forEachIndexed { index, banner ->
+            if (visible[index]) {
+                Banner(
+                    title = stringResource(banner.title),
+                    message = stringResource(banner.body),
+                    variant = banner.variant,
+                    onDismiss = { visible[index] = false },
+                )
             }
         }
     }

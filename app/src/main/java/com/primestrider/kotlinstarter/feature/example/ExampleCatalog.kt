@@ -22,6 +22,7 @@ val componentEntries: List<ExampleEntry> =
         ExampleEntry(R.string.example_components_inputs_title, R.string.example_components_inputs_subtitle, InputsRoute),
         ExampleEntry(R.string.example_components_display_title, R.string.example_components_display_subtitle, DisplayRoute),
         ExampleEntry(R.string.example_components_overlays_title, R.string.example_components_overlays_subtitle, OverlaysRoute),
+        ExampleEntry(R.string.example_components_feedback_title, R.string.example_components_feedback_subtitle, FeedbackRoute),
     )
 
 /** Home tab content. Sections in order: Features, SDK, Styling. Components and Settings have their own tabs. */

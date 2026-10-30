@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.app
 
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
@@ -13,6 +14,8 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.app.navigation.MainShell
+import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
+import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import com.primestrider.kotlinstarter.feature.example.HOME_LIST_TAG
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -24,6 +27,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import javax.inject.Inject
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -35,9 +39,15 @@ class MainShellTest {
     @get:Rule
     val rules: RuleChain = RuleChain.outerRule(hiltRule).around(composeRule)
 
+    @Inject
+    lateinit var messenger: Messenger
+
     @Before
     fun setUp() {
-        composeRule.activity.setContent { AppTheme(darkTheme = false) { MainShell() } }
+        hiltRule.inject()
+        composeRule.activity.setContent {
+            CompositionLocalProvider(LocalMessenger provides messenger) { AppTheme(darkTheme = false) { MainShell() } }
+        }
         composeRule.waitForIdle()
     }
 

@@ -51,11 +51,4 @@ class OverlaysScreenTest {
         rule.waitForIdle()
         rule.onNodeWithText("Sorted by: Oldest").assertExists()
     }
-
-    @Test
-    fun snackbar_undo_restores() {
-        rule.onNodeWithText("Delete with undo").performScrollTo().performClick()
-        rule.onNodeWithText("Undo").performClick()
-        rule.onNodeWithText("Restored").assertExists()
-    }
 }

@@ -13,7 +13,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,10 +23,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.RichTooltip
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
@@ -38,13 +33,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppBottomSheet
@@ -57,19 +50,16 @@ import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import kotlinx.coroutines.launch
 
-/** Material 3 dialogs, bottom sheet, snackbars, menus and tooltips. */
+/** Dialogs, bottom sheets, menus and tooltips (snackbars live on the Feedback page). */
 @Composable
 fun OverlaysScreen(onBack: () -> Unit) {
-    val snackbarHostState = remember { SnackbarHostState() }
     ExamplePageScaffold(
         title = R.string.example_components_overlays_title,
         subtitle = R.string.example_components_overlays_subtitle,
         onBack = onBack,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) {
         DialogsSection()
         BottomSheetSection()
-        SnackbarSection(snackbarHostState)
         MenuSection()
         TooltipSection()
     }
@@ -143,49 +133,6 @@ private fun BottomSheetSection() {
             Text(stringResource(R.string.components_sheet_custom_body))
             AppButton(stringResource(R.string.components_sheet_done), onClick = { customOpen = false }, fullWidth = true)
         }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun SnackbarSection(hostState: SnackbarHostState) {
-    val scope = rememberCoroutineScope()
-    val resources = LocalResources.current
-    val messages =
-        listOf(
-            R.string.components_snackbar_success to R.string.components_snackbar_success_message,
-            R.string.components_snackbar_error to R.string.components_snackbar_error_message,
-            R.string.components_snackbar_warning to R.string.components_snackbar_warning_message,
-            R.string.components_snackbar_info to R.string.components_snackbar_info_message,
-        )
-    DemoSection(R.string.components_section_snackbar) {
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(Spacing.s2),
-            verticalArrangement = Arrangement.spacedBy(Spacing.s2),
-        ) {
-            messages.forEach { (label, message) ->
-                OutlinedButton(onClick = {
-                    scope.launch {
-                        hostState.currentSnackbarData?.dismiss()
-                        hostState.showSnackbar(resources.getString(message), duration = SnackbarDuration.Short)
-                    }
-                }) { Text(stringResource(label)) }
-            }
-        }
-        Button(onClick = {
-            scope.launch {
-                hostState.currentSnackbarData?.dismiss()
-                val result =
-                    hostState.showSnackbar(
-                        message = resources.getString(R.string.components_snackbar_deleted),
-                        actionLabel = resources.getString(R.string.components_snackbar_undo),
-                        duration = SnackbarDuration.Short,
-                    )
-                if (result == SnackbarResult.ActionPerformed) {
-                    hostState.showSnackbar(resources.getString(R.string.components_snackbar_restored), duration = SnackbarDuration.Short)
-                }
-            }
-        }) { Text(stringResource(R.string.components_snackbar_delete_undo)) }
     }
 }
 

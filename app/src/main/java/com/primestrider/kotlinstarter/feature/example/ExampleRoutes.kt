@@ -44,3 +44,6 @@ data object FormExampleRoute
 
 @Serializable
 data object ComponentsHomeRoute
+
+@Serializable
+data object FeedbackRoute

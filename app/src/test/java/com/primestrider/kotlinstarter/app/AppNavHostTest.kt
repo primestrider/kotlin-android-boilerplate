@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.app
 
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -9,6 +10,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.app.navigation.MainShell
+import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
+import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import com.primestrider.kotlinstarter.feature.example.componentEntries
 import com.primestrider.kotlinstarter.feature.example.exampleSections
@@ -21,6 +24,7 @@ import org.junit.Test
 import org.junit.rules.RuleChain
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import javax.inject.Inject
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -32,13 +36,17 @@ class AppNavHostTest {
     @get:Rule
     val rules: RuleChain = RuleChain.outerRule(hiltRule).around(composeRule)
 
+    @Inject
+    lateinit var messenger: Messenger
+
     @Test
     fun everyCatalogEntryIsRegisteredAndShowsItsPage() {
+        hiltRule.inject()
         lateinit var navController: NavHostController
         // Replaces MainActivity's own content so the test controls the NavHostController.
         composeRule.activity.setContent {
             navController = rememberNavController()
-            AppTheme(darkTheme = false) { MainShell(navController) }
+            CompositionLocalProvider(LocalMessenger provides messenger) { AppTheme(darkTheme = false) { MainShell(navController) } }
         }
         composeRule.waitForIdle()
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()

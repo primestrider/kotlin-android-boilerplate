@@ -8,18 +8,25 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.primestrider.kotlinstarter.app.navigation.MainShell
+import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
+import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.designsystem.theme.resolveDarkTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val viewModel: AppViewModel by viewModels()
+
+    @Inject
+    lateinit var messenger: Messenger
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val splash = installSplashScreen()
@@ -36,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             AppTheme(darkTheme = darkTheme) {
-                MainShell()
+                CompositionLocalProvider(LocalMessenger provides messenger) { MainShell() }
             }
         }
     }

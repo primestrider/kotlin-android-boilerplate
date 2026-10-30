@@ -14,6 +14,7 @@ import com.primestrider.kotlinstarter.feature.example.ColorsRoute
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeScreen
 import com.primestrider.kotlinstarter.feature.example.DisplayRoute
+import com.primestrider.kotlinstarter.feature.example.FeedbackRoute
 import com.primestrider.kotlinstarter.feature.example.FormExampleRoute
 import com.primestrider.kotlinstarter.feature.example.HomeScreen
 import com.primestrider.kotlinstarter.feature.example.InputsRoute
@@ -27,6 +28,8 @@ import com.primestrider.kotlinstarter.feature.example.TypographyRoute
 import com.primestrider.kotlinstarter.feature.example.componentEntries
 import com.primestrider.kotlinstarter.feature.example.components.ActionsScreen
 import com.primestrider.kotlinstarter.feature.example.components.DisplayScreen
+import com.primestrider.kotlinstarter.feature.example.components.FeedbackScreen
+import com.primestrider.kotlinstarter.feature.example.components.FeedbackViewModel
 import com.primestrider.kotlinstarter.feature.example.components.InputsScreen
 import com.primestrider.kotlinstarter.feature.example.components.OverlaysScreen
 import com.primestrider.kotlinstarter.feature.example.exampleSections
@@ -100,6 +103,10 @@ fun NavGraphBuilder.componentsGraph(navController: NavHostController) {
         composable<InputsRoute> { InputsScreen(onBack = back) }
         composable<DisplayRoute> { DisplayScreen(onBack = back) }
         composable<OverlaysRoute> { OverlaysScreen(onBack = back) }
+        composable<FeedbackRoute> {
+            val viewModel: FeedbackViewModel = hiltViewModel()
+            FeedbackScreen(onBack = back, onSaveSucceeded = viewModel::saveSucceeded, onSaveFailed = viewModel::saveFailed)
+        }
     }
 }
 

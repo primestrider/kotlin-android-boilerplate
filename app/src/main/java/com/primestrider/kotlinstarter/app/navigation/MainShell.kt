@@ -8,8 +8,10 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -22,6 +24,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppNavigationBar
+import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
+import com.primestrider.kotlinstarter.core.designsystem.component.MessengerHost
 import com.primestrider.kotlinstarter.core.designsystem.component.NavBarItem
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
 import com.primestrider.kotlinstarter.feature.example.SettingsRoute
@@ -68,7 +72,9 @@ fun MainShell(navController: NavHostController = rememberNavController()) {
         }
     }
 
+    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
+        snackbarHost = { MessengerHost(LocalMessenger.current, snackbarHostState) },
         bottomBar = {
             AppNavigationBar(
                 items = TopLevelTab.entries.map { NavBarItem(stringResource(it.label), it.icon) },
