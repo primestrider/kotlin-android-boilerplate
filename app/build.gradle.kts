@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
@@ -8,6 +9,19 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ktlint)
 }
+
+// API base URL: local.properties `api.url`, else env API_URL, else DummyJSON (keep the trailing slash).
+val apiUrl: String =
+    Properties()
+        .apply {
+            rootProject
+                .file("local.properties")
+                .takeIf { it.exists() }
+                ?.reader()
+                ?.use { load(it) }
+        }.getProperty("api.url")
+        ?: System.getenv("API_URL")
+        ?: "https://dummyjson.com/"
 
 android {
     namespace = "com.primestrider.kotlinstarter"
@@ -21,6 +35,7 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+        buildConfigField("String", "API_URL", "\"$apiUrl\"")
     }
 
     buildTypes {
@@ -84,6 +99,12 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
 
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinx.serialization)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.logging.interceptor)
+
+    testImplementation(libs.okhttp.mockwebserver3)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
