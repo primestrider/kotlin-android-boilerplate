@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.app.navigation
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -75,6 +76,8 @@ fun MainShell(navController: NavHostController = rememberNavController()) {
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         snackbarHost = { MessengerHost(LocalMessenger.current, snackbarHostState) },
+        // Only the bottom bar is the shell's; screens handle the status bar with their own AppScaffold.
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
         bottomBar = {
             AppNavigationBar(
                 items = TopLevelTab.entries.map { NavBarItem(stringResource(it.label), it.icon) },
