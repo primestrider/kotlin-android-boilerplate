@@ -14,6 +14,7 @@ import com.primestrider.kotlinstarter.feature.example.ActionsRoute
 import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
 import com.primestrider.kotlinstarter.feature.example.ColorsRoute
 import com.primestrider.kotlinstarter.feature.example.DisplayRoute
+import com.primestrider.kotlinstarter.feature.example.FormExampleRoute
 import com.primestrider.kotlinstarter.feature.example.HomeScreen
 import com.primestrider.kotlinstarter.feature.example.InputsRoute
 import com.primestrider.kotlinstarter.feature.example.LayoutRoute
@@ -28,6 +29,8 @@ import com.primestrider.kotlinstarter.feature.example.components.DisplayScreen
 import com.primestrider.kotlinstarter.feature.example.components.InputsScreen
 import com.primestrider.kotlinstarter.feature.example.components.OverlaysScreen
 import com.primestrider.kotlinstarter.feature.example.exampleSections
+import com.primestrider.kotlinstarter.feature.example.form.FormExampleScreen
+import com.primestrider.kotlinstarter.feature.example.form.FormExampleViewModel
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsViewModel
 import com.primestrider.kotlinstarter.feature.example.styling.AppearanceScreen
@@ -65,6 +68,17 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     state = state,
                     onThemeModeChange = viewModel::setThemeMode,
                     onLanguageChange = viewModel::setLanguage,
+                    onBack = back,
+                )
+            }
+            composable<FormExampleRoute> {
+                val viewModel: FormExampleViewModel = hiltViewModel()
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                FormExampleScreen(
+                    state = state,
+                    onChange = viewModel::onChange,
+                    onSubmit = viewModel::submit,
+                    onClear = viewModel::clear,
                     onBack = back,
                 )
             }

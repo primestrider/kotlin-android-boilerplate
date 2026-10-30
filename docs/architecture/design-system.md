@@ -77,6 +77,31 @@ All styles use Plus Jakarta Sans (400 to 800).
 
 ## Showcase pages
 
-`feature/example/styling/` holds seven pages (Colors, Typography, Spacing, Sizing, Layout, Appearance, Theme) built on `StylingScaffold`. They read tokens from `AppThemeTokens`, `MaterialTheme`, `Spacing`, `Radii`, `FontSize`, and `Palette` (swatches only). The Theme page reuses `ThemeModeSelector`, the same System / Light / Dark control as Settings.
+`feature/example/styling/` holds seven pages (Colors, Typography, Spacing, Sizing, Layout, Appearance, Theme) built on `ExamplePageScaffold` (`feature/example/ExamplePageScaffold.kt`). They read tokens from `AppThemeTokens`, `MaterialTheme`, `Spacing`, `Radii`, `FontSize`, and `Palette` (swatches only). The Theme page reuses `ThemeModeSelector`, the same System / Light / Dark control as Settings.
 
 RN's `helpers` page (`view()`, `space()`, `gridCol()`) is intentionally not ported: those are React Native style-object utilities with no Compose counterpart (use `Modifier`, `Arrangement`, and `LazyVerticalGrid` directly).
+
+## Using components
+
+There is no wrapper component library. Screens call Jetpack Compose / Material 3 composables directly (`Button`, `OutlinedTextField`, `AlertDialog`, `ModalBottomSheet`, `SnackbarHost`, …). Because every `ColorScheme` role is mapped to a token (see above), stock components already use the brand colors in light and dark mode; pass `colors = …Defaults.xxxColors(...)` only for a deliberate variant, such as a destructive button using `colorScheme.error`.
+
+Examples live in `feature/example/components/`, one page per group:
+
+| Page | File | Shows |
+| --- | --- | --- |
+| Actions | `ActionsScreen.kt` | Button variants, loading button, icon buttons, FABs, chips |
+| Inputs | `InputsScreen.kt` | Text fields, keyboard types, password toggle, checkbox / tri-state, radio, switch, select (`ExposedDropdownMenuBox`), sliders, segmented buttons, tabs |
+| Display | `DisplayScreen.kt` | Cards, list items, badges, dividers, progress, plus patterns M3 lacks: initials avatar, skeleton, empty state, banner alert |
+| Overlays | `OverlaysScreen.kt` | Dialogs (incl. non-dismissable), bottom sheet, snackbars with undo, dropdown menu, tooltips |
+
+`feature/example/form/` shows a validated form: pure `validate(FormValues)` rules, a `FormExampleViewModel` that validates on submit and re-validates on change, and a stateless `FormExampleScreen`.
+
+Conventions the examples follow:
+
+- Make the whole row the touch target for checkboxes, radios and switches (`Modifier.toggleable` / `selectable` with a `Role`) and pass `null` as the control's own callback.
+- Give icon-only buttons a translated `contentDescription`.
+- Use `maxLines` + `TextOverflow.Ellipsis` for single-line rows so trailing content stays on screen.
+- Disable a button while its action runs, so a double tap runs it once.
+- Material icons come from `material-icons-core` only; the extended set is not a dependency.
+
+To add a component example: put it in the page that matches its group (or add a page: route in `ExampleRoutes.kt`, `composable<…>` in `AppNavHost`, entry in the Components section of `ExampleCatalog.kt`), add its strings to `values/` and `values-in/`, and cover its behavior in a Robolectric test next to the page's existing test.

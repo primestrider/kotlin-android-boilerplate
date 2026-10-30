@@ -28,6 +28,11 @@ val exampleSections: List<ExampleSection> =
                         subtitle = R.string.example_home_settings_subtitle,
                         route = SettingsRoute,
                     ),
+                    ExampleEntry(
+                        title = R.string.example_form_title,
+                        subtitle = R.string.example_form_subtitle,
+                        route = FormExampleRoute,
+                    ),
                 ),
         ),
         ExampleSection(

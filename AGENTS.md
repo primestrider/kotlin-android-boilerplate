@@ -17,7 +17,7 @@ app/                         # MainActivity, AppViewModel, navigation (AppNavHos
 core/storage/                # DataStore module and preference keys
 core/designsystem/theme/     # palette, semantic colors, spacing, radii, typography, AppTheme
 core/i18n/                   # AppLanguage, LanguageController
-feature/example/             # example catalog, Home, Settings, styling pages (deletable)
+feature/example/             # example catalog, Home, Settings, component + styling pages, form example (deletable)
 ```
 
 Tests mirror the main source tree under `app/src/test/`.
@@ -33,12 +33,12 @@ Tests mirror the main source tree under `app/src/test/`.
 
 ## Example routes and adding a page
 
-Routes in `feature/example/ExampleRoutes.kt`: `SettingsRoute`, and the styling pages `ColorsRoute`, `TypographyRoute`, `SpacingRoute`, `SizingRoute`, `LayoutRoute`, `AppearanceRoute`, `ThemeRoute`. `HomeRoute` is in `app/navigation/AppNavHost.kt`.
+Routes in `feature/example/ExampleRoutes.kt`: `SettingsRoute`, `FormExampleRoute`; the component pages `ActionsRoute`, `InputsRoute`, `DisplayRoute`, `OverlaysRoute`; and the styling pages `ColorsRoute`, `TypographyRoute`, `SpacingRoute`, `SizingRoute`, `LayoutRoute`, `AppearanceRoute`, `ThemeRoute`. `HomeRoute` is in `app/navigation/AppNavHost.kt`.
 
 To add an example page:
 
 1. Add a `@Serializable` route object to `ExampleRoutes.kt`.
-2. Write a stateless `XxxScreen(..., onBack)` (styling pages use `StylingScaffold`).
+2. Write a stateless `XxxScreen(..., onBack)` on top of `ExamplePageScaffold`.
 3. Register `composable<XxxRoute>` in `AppNavHost`.
 4. Add an `ExampleEntry` to a section in `ExampleCatalog.kt`, with title/subtitle strings in both `values/` and `values-in/`.
 5. Cover it in a Robolectric test.
