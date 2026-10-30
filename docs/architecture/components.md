@@ -20,3 +20,6 @@ Rules:
 | `PasswordTextField` | `TextFields.kt` | Password input with its own show/hide toggle |
 | `SearchField` | `TextFields.kt` | Search box with a clear button once there is a query |
 | `SelectField`, `SelectOption` | `SelectField.kt` | Pick one value from a dropdown; disabled options are shown but not selectable |
+| `ConfirmDialog` | `Dialogs.kt` | Confirmation modal: `destructive` styles the confirm action, `dismissible = false` ignores back/outside taps, `dismissLabel = null` hides the dismiss button |
+| `AppBottomSheet` | `BottomSheets.kt` | Modal bottom sheet with a title and any content; `dismissible = false` keeps it open on back, swipe and outside taps |
+| `OptionsBottomSheet` | `BottomSheets.kt` | Single choice from a sheet (sort, filter); a tap hides the sheet, reports `onSelect` once, then `onDismiss` |

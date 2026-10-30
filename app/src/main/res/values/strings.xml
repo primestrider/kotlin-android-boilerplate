@@ -189,7 +189,6 @@
     <string name="components_dialog_delete_text">This cannot be undone.</string>
     <string name="components_dialog_blocking_title">Terms updated</string>
     <string name="components_dialog_blocking_text">Accept the new terms to continue. Back and outside taps are ignored.</string>
-    <string name="components_dialog_cancel">Cancel</string>
     <string name="components_dialog_delete">Delete</string>
     <string name="components_dialog_accept">Accept</string>
     <string name="components_sheet_open">Open bottom sheet</string>
@@ -253,4 +252,9 @@
     <string name="component_hide_password">Hide password</string>
     <string name="component_search">Search</string>
     <string name="component_clear_search">Clear search</string>
+    <string name="component_cancel">Cancel</string>
+    <string name="components_sheet_open_custom">Open custom sheet</string>
+    <string name="components_sheet_custom_title">Custom content</string>
+    <string name="components_sheet_custom_body">AppBottomSheet takes any content: text, forms, or actions.</string>
+    <string name="components_sheet_done">Done</string>
 </resources>

@@ -2,14 +2,10 @@ package com.primestrider.kotlinstarter.feature.example.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -17,7 +13,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -26,10 +21,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RichTooltip
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -40,7 +33,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,9 +46,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.window.DialogProperties
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.AppBottomSheet
+import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
+import com.primestrider.kotlinstarter.core.designsystem.component.ConfirmDialog
+import com.primestrider.kotlinstarter.core.designsystem.component.OptionsBottomSheet
+import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -95,70 +90,58 @@ private fun DialogsSection() {
         }
     }
     if (showDelete) {
-        AlertDialog(
-            onDismissRequest = { showDelete = false },
-            icon = { Icon(Icons.Filled.Delete, contentDescription = null) },
-            title = { Text(stringResource(R.string.components_dialog_delete_title)) },
-            text = { Text(stringResource(R.string.components_dialog_delete_text)) },
-            confirmButton = {
-                TextButton(onClick = { showDelete = false }) {
-                    Text(stringResource(R.string.components_dialog_delete), color = MaterialTheme.colorScheme.error)
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDelete = false }) { Text(stringResource(R.string.components_dialog_cancel)) }
-            },
+        ConfirmDialog(
+            title = stringResource(R.string.components_dialog_delete_title),
+            message = stringResource(R.string.components_dialog_delete_text),
+            confirmLabel = stringResource(R.string.components_dialog_delete),
+            onConfirm = { showDelete = false },
+            onDismiss = { showDelete = false },
+            icon = Icons.Filled.Delete,
+            destructive = true,
         )
     }
     if (showBlocking) {
-        AlertDialog(
-            onDismissRequest = {},
-            title = { Text(stringResource(R.string.components_dialog_blocking_title)) },
-            text = { Text(stringResource(R.string.components_dialog_blocking_text)) },
-            confirmButton = {
-                Button(onClick = { showBlocking = false }) { Text(stringResource(R.string.components_dialog_accept)) }
-            },
-            properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false),
+        ConfirmDialog(
+            title = stringResource(R.string.components_dialog_blocking_title),
+            message = stringResource(R.string.components_dialog_blocking_text),
+            confirmLabel = stringResource(R.string.components_dialog_accept),
+            onConfirm = { showBlocking = false },
+            onDismiss = { showBlocking = false },
+            dismissLabel = null,
+            dismissible = false,
         )
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun BottomSheetSection() {
-    var open by rememberSaveable { mutableStateOf(false) }
+    var sortOpen by rememberSaveable { mutableStateOf(false) }
+    var customOpen by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableIntStateOf(0) }
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     DemoSection(R.string.components_section_bottom_sheet) {
-        OutlinedButton(onClick = { open = true }) { Text(stringResource(R.string.components_sheet_open)) }
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.s2),
+            verticalArrangement = Arrangement.spacedBy(Spacing.s2),
+        ) {
+            OutlinedButton(onClick = { sortOpen = true }) { Text(stringResource(R.string.components_sheet_open)) }
+            OutlinedButton(onClick = { customOpen = true }) { Text(stringResource(R.string.components_sheet_open_custom)) }
+        }
         Text(stringResource(R.string.components_sheet_sorted_by, stringResource(sortOptions[selected])))
     }
-    if (open) {
-        ModalBottomSheet(onDismissRequest = { open = false }, sheetState = sheetState) {
-            Text(
-                stringResource(R.string.components_select_label),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(horizontal = Spacing.s4, vertical = Spacing.s2),
-            )
-            Column(Modifier.selectableGroup().padding(bottom = Spacing.s6)) {
-                sortOptions.forEachIndexed { index, option ->
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .selectable(selected = selected == index, role = Role.RadioButton, onClick = {
-                                selected = index
-                                scope.launch { sheetState.hide() }.invokeOnCompletion { open = false }
-                            })
-                            .padding(horizontal = Spacing.s4, vertical = Spacing.s3),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(Spacing.s3),
-                    ) {
-                        RadioButton(selected = selected == index, onClick = null)
-                        Text(stringResource(option))
-                    }
-                }
-            }
+    if (sortOpen) {
+        OptionsBottomSheet(
+            title = stringResource(R.string.components_select_label),
+            options = sortOptions.mapIndexed { index, label -> SelectOption(index, stringResource(label)) },
+            selected = selected,
+            onSelect = { selected = it },
+            onDismiss = { sortOpen = false },
+        )
+    }
+    if (customOpen) {
+        AppBottomSheet(onDismiss = { customOpen = false }, title = stringResource(R.string.components_sheet_custom_title)) {
+            Text(stringResource(R.string.components_sheet_custom_body))
+            AppButton(stringResource(R.string.components_sheet_done), onClick = { customOpen = false }, fullWidth = true)
         }
     }
 }

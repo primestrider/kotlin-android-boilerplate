@@ -189,7 +189,6 @@
     <string name="components_dialog_delete_text">Tindakan ini tidak bisa dibatalkan.</string>
     <string name="components_dialog_blocking_title">Syarat diperbarui</string>
     <string name="components_dialog_blocking_text">Setujui syarat baru untuk melanjutkan. Tombol kembali dan ketukan di luar diabaikan.</string>
-    <string name="components_dialog_cancel">Batal</string>
     <string name="components_dialog_delete">Hapus</string>
     <string name="components_dialog_accept">Setuju</string>
     <string name="components_sheet_open">Buka bottom sheet</string>
@@ -253,4 +252,9 @@
     <string name="component_hide_password">Sembunyikan kata sandi</string>
     <string name="component_search">Cari</string>
     <string name="component_clear_search">Hapus pencarian</string>
+    <string name="component_cancel">Batal</string>
+    <string name="components_sheet_open_custom">Buka sheet kustom</string>
+    <string name="components_sheet_custom_title">Konten kustom</string>
+    <string name="components_sheet_custom_body">AppBottomSheet menerima konten apa pun: teks, formulir, atau aksi.</string>
+    <string name="components_sheet_done">Selesai</string>
 </resources>
