@@ -45,6 +45,7 @@ import retrofit2.http.POST
 import java.io.IOException
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import javax.inject.Provider
 import kotlin.time.Duration.Companion.seconds
 
@@ -194,7 +195,7 @@ class AuthFlowTest {
                 object : Dispatcher() {
                     override fun dispatch(request: RecordedRequest): MockResponse {
                         bearers += request.headers["Authorization"]
-                        if (bearers.size == 1) release.await()
+                        if (bearers.size == 1) check(release.await(5, TimeUnit.SECONDS)) { "test never released the held request" }
                         return response(401)
                     }
                 }

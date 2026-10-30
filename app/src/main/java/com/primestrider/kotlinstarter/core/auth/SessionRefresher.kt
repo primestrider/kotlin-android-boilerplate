@@ -61,11 +61,12 @@ class SessionRefresher
         suspend fun refresh(failedAccessToken: String?): RefreshOutcome {
             val attempt =
                 synchronized(lock) {
-                    val current = repository.session.value?.tokens ?: return RefreshOutcome.SignedOut
+                    val session = repository.session.value ?: return RefreshOutcome.SignedOut
+                    val current = session.tokens
                     if (current.accessToken != failedAccessToken) {
                         // Retry with the stored token only when this session itself refreshed since the failed
                         // request was sent. A token of a previous session must never be retried with this one's.
-                        val refreshedSince = failedAccessToken != null && repository.isSupersededToken(failedAccessToken)
+                        val refreshedSince = failedAccessToken != null && repository.isSupersededToken(failedAccessToken, session)
                         return if (refreshedSince) RefreshOutcome.Refreshed(current.accessToken) else RefreshOutcome.SignedOut
                     }
                     // Join only an attempt for this session; one left over from a previous session is not ours.

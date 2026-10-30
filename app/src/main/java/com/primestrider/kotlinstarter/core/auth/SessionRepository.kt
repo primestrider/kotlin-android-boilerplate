@@ -76,14 +76,17 @@ class SessionRepository
         fun accessToken(): String? = _session.value?.tokens?.accessToken
 
         /**
-         * True when [token] is an access token the current session itself replaced by a refresh. False for
-         * the current token, for a token of a previous session, and while signed out.
+         * True when [token] is an access token that [session] (a value read from [session]) replaced by a
+         * refresh. False for its current token, for a token of another session, and once [session] is no
+         * longer current (signed out, another sign-in, or refreshed again: the set then belongs to the newer
+         * snapshot). Pass the same snapshot the decision is based on, so both come from one session state.
          */
-        internal fun isSupersededToken(token: String): Boolean {
-            // Session first: seeing a session guarantees seeing the set written before it.
-            val current = _session.value ?: return false
+        internal fun isSupersededToken(
+            token: String,
+            session: Session,
+        ): Boolean {
             val replaced = superseded ?: return false
-            return replaced.session === current && token in replaced.tokens
+            return replaced.session === session && token in replaced.tokens
         }
 
         suspend fun signIn(session: Session) {
@@ -110,7 +113,7 @@ class SessionRepository
                 val updated = current.copy(tokens = tokens)
                 write(updated)
                 val earlier = superseded?.takeIf { it.session === current }?.tokens.orEmpty()
-                superseded = SupersededTokens(updated, earlier + current.tokens.accessToken)
+                superseded = SupersededTokens(updated, (earlier + current.tokens.accessToken).takeLast(MAX_SUPERSEDED_TOKENS))
                 _session.value = updated
                 true
             }
@@ -188,11 +191,17 @@ class SessionRepository
         }
     }
 
-/** The access tokens [session] has replaced; only meaningful while [session] is the current one. */
+/** The access tokens [session] has replaced, oldest first; only meaningful while [session] is the current one. */
 private class SupersededTokens(
     val session: Session,
-    val tokens: Set<String>,
+    val tokens: List<String>,
 )
+
+/**
+ * How many replaced access tokens a session remembers. A request still open across this many refreshes
+ * is long dead, so older ones only cost memory: they then get `SignedOut`, i.e. the caller sees the 401.
+ */
+private const val MAX_SUPERSEDED_TOKENS = 8
 
 /**
  * True when stored session data can never be decrypted or parsed: a failed authentication tag, a key that

@@ -86,7 +86,7 @@ retry 401 again -> authenticator gives up (priorResponse != null), caller gets t
   outcome, so a flaky network costs one refresh attempt, not one per call. A 401 joins only an
   attempt started for the current session's refresh token; otherwise it starts its own.
 - **Outdated tokens:** `SessionRepository` remembers, in memory only, the access tokens the current
-  session replaced through `updateTokens`; `signIn` and every sign-out forget them
+  session replaced through `updateTokens` (the last 8); `signIn` and every sign-out forget them
   (`isSupersededToken`). A call whose failed token was superseded within the current session
   retries with the stored token without waiting. A failed token that is neither current nor
   superseded belongs to a previous session: it gets `SignedOut` without calling the adapter or

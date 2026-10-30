@@ -82,6 +82,7 @@ class SessionRefresherTest {
             assertEquals(RefreshOutcome.SignedOut, first.await())
             assertEquals(RefreshOutcome.Refreshed("b2"), second.await())
             assertEquals(AuthTokens("b2", "r3"), repository.session.value?.tokens)
+            assertFalse(refresher.hasAttemptInFlight)
         }
 
     @Test

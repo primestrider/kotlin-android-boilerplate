@@ -63,17 +63,34 @@ class SessionRepositoryTest {
             repository.signIn(sample)
             assertTrue(repository.updateTokens("refresh", AuthTokens("a2", "r2")))
             assertTrue(repository.updateTokens("r2", AuthTokens("a3", "r3")))
-            assertTrue(repository.isSupersededToken("access"))
-            assertTrue(repository.isSupersededToken("a2"))
-            assertFalse(repository.isSupersededToken("a3"))
+            val refreshed = repository.session.value!!
+            assertTrue(repository.isSupersededToken("access", refreshed))
+            assertTrue(repository.isSupersededToken("a2", refreshed))
+            assertFalse(repository.isSupersededToken("a3", refreshed))
             assertFalse(repository.updateTokens("stale", AuthTokens("x", "y")))
-            assertFalse(repository.isSupersededToken("a3"))
+            assertFalse(repository.isSupersededToken("a3", refreshed))
 
             repository.signIn(sample)
-            assertFalse(repository.isSupersededToken("a2"))
+            assertFalse(repository.isSupersededToken("a2", sample))
+            assertFalse(repository.isSupersededToken("a2", refreshed))
             assertTrue(repository.updateTokens("refresh", AuthTokens("a2", "r2")))
+            val beforeSignOut = repository.session.value!!
             repository.signOut(SignOutReason.USER)
-            assertFalse(repository.isSupersededToken("access"))
+            assertFalse(repository.isSupersededToken("access", beforeSignOut))
+        }
+
+    @Test
+    fun onlyTheMostRecentlyReplacedAccessTokensAreKept() =
+        runTest {
+            val repository = repo(InMemoryPreferencesDataStore())
+            advanceUntilIdle()
+            repository.signIn(Session(sample.user, AuthTokens("a0", "r0")))
+            for (i in 1..10) assertTrue(repository.updateTokens("r${i - 1}", AuthTokens("a$i", "r$i")))
+            val current = repository.session.value!!
+            assertFalse(repository.isSupersededToken("a0", current))
+            assertFalse(repository.isSupersededToken("a1", current))
+            for (i in 2..9) assertTrue("a$i", repository.isSupersededToken("a$i", current))
+            assertFalse(repository.isSupersededToken("a10", current))
         }
 
     @Test
