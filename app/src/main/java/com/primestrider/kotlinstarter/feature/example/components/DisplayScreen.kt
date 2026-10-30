@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -52,9 +53,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,12 +66,14 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
+import com.primestrider.kotlinstarter.feature.example.rememberSaveableStateList
 import kotlin.math.roundToInt
 
 internal const val PROGRESS_BAR_TAG = "display_progress"
@@ -114,7 +116,7 @@ fun DisplayScreen(onBack: () -> Unit) {
 
 @Composable
 private fun CardsSection() {
-    var taps by remember { mutableIntStateOf(0) }
+    var taps by rememberSaveable { mutableIntStateOf(0) }
     DemoSection(R.string.components_section_cards) {
         Card(Modifier.fillMaxWidth()) { CardText(R.string.components_card_filled) }
         ElevatedCard(Modifier.fillMaxWidth()) { CardText(R.string.components_card_elevated) }
@@ -137,7 +139,7 @@ private fun CardText(
 
 @Composable
 private fun ListItemsSection() {
-    var enabled by remember { mutableStateOf(true) }
+    var enabled by rememberSaveable { mutableStateOf(true) }
     DemoSection(R.string.components_section_list_items) {
         ListItem(
             headlineContent = { Text(stringResource(R.string.components_list_profile)) },
@@ -205,7 +207,7 @@ private fun DividersSection() {
 
 @Composable
 private fun ProgressSection() {
-    var progress by remember { mutableFloatStateOf(0.4f) }
+    var progress by rememberSaveable { mutableFloatStateOf(0.4f) }
     DemoSection(R.string.components_section_progress) {
         Text(stringResource(R.string.components_progress_value, (progress * 100).roundToInt()))
         LinearProgressIndicator(progress = { progress }, modifier = Modifier.fillMaxWidth().testTag(PROGRESS_BAR_TAG))
@@ -228,11 +230,11 @@ private fun AvatarsSection() {
     val names = listOf("Ada Lovelace", "Grace Hopper", "Alan Turing", "Margaret Hamilton", "Linus Torvalds", "Barbara Liskov")
     DemoSection(R.string.components_section_avatars) {
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s4), verticalAlignment = Alignment.CenterVertically) {
-            InitialsAvatar("Ada Lovelace", Spacing.s8, CircleShape)
-            InitialsAvatar("Grace Hopper", Spacing.s12, CircleShape)
-            InitialsAvatar("Alan Turing", Spacing.s12, RoundedCornerShape(Radii.md))
+            InitialsAvatar(initialsOf("Ada Lovelace"), Spacing.s8, CircleShape)
+            InitialsAvatar(initialsOf("Grace Hopper"), Spacing.s12, CircleShape)
+            InitialsAvatar(initialsOf("Alan Turing"), Spacing.s12, RoundedCornerShape(Radii.md))
             Box {
-                InitialsAvatar("Margaret Hamilton", Spacing.s12, CircleShape)
+                InitialsAvatar(initialsOf("Margaret Hamilton"), Spacing.s12, CircleShape)
                 Box(
                     Modifier
                         .align(Alignment.BottomEnd)
@@ -246,7 +248,7 @@ private fun AvatarsSection() {
         Row {
             names.take(visible).forEachIndexed { index, name ->
                 InitialsAvatar(
-                    name,
+                    initialsOf(name),
                     Spacing.s10,
                     CircleShape,
                     Modifier
@@ -261,12 +263,11 @@ private fun AvatarsSection() {
 
 @Composable
 private fun InitialsAvatar(
-    name: String,
+    label: String,
     size: Dp,
     shape: Shape,
     modifier: Modifier = Modifier,
 ) {
-    val label = if (name.startsWith("+")) name else initialsOf(name)
     Box(
         modifier
             .size(size)
@@ -279,7 +280,7 @@ private fun InitialsAvatar(
 
 @Composable
 private fun SkeletonSection() {
-    var loaded by remember { mutableStateOf(false) }
+    var loaded by rememberSaveable { mutableStateOf(false) }
     val pulse by rememberInfiniteTransition(label = "skeleton").animateFloat(
         initialValue = 0.4f,
         targetValue = 1f,
@@ -298,7 +299,9 @@ private fun SkeletonSection() {
                 }
             }
         }
-        TextButton(onClick = { loaded = !loaded }) { Text(stringResource(R.string.components_skeleton_loaded)) }
+        TextButton(onClick = {
+            loaded = !loaded
+        }) { Text(stringResource(if (loaded) R.string.components_skeleton_show else R.string.components_skeleton_loaded)) }
     }
 }
 
@@ -354,7 +357,7 @@ private fun BannersSection() {
             BannerSpec(R.string.components_banner_error_title, R.string.components_banner_error_body, Icons.Filled.Warning) to
                 colors.destructive,
         )
-    val visible = remember { mutableStateListOf(true, true, true, true) }
+    val visible = rememberSaveableStateList(true, true, true, true)
     DemoSection(R.string.components_section_banners) {
         banners.forEachIndexed { index, (spec, accent) ->
             if (visible[index]) Banner(spec, accent, onDismiss = { visible[index] = false })
@@ -372,7 +375,7 @@ private fun Banner(
     Surface(
         shape = RoundedCornerShape(Radii.lg),
         color = MaterialTheme.colorScheme.surfaceContainerLow,
-        border = androidx.compose.foundation.BorderStroke(Spacing.s0_5 / 2, accent),
+        border = BorderStroke(1.dp, accent),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(Modifier.padding(Spacing.s3), horizontalArrangement = Arrangement.spacedBy(Spacing.s3)) {

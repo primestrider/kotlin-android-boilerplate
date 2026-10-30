@@ -41,10 +41,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +54,7 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
+import com.primestrider.kotlinstarter.feature.example.rememberSaveableStateList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -148,7 +149,7 @@ private fun LoadingButtonSection() {
 
 @Composable
 private fun IconButtonsSection() {
-    var favorite by remember { mutableStateOf(false) }
+    var favorite by rememberSaveable { mutableStateOf(false) }
     DemoSection(R.string.components_section_icon_buttons) {
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
             IconButton(onClick = {}) { Icon(Icons.Filled.Edit, stringResource(R.string.components_cd_edit)) }
@@ -185,8 +186,8 @@ private fun FabSection() {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ChipsSection() {
-    var filterSelected by remember { mutableStateOf(false) }
-    val tags = remember { mutableStateListOf("Kotlin", "Compose", "Android") }
+    var filterSelected by rememberSaveable { mutableStateOf(false) }
+    val tags = rememberSaveableStateList("Kotlin", "Compose", "Android")
     DemoSection(R.string.components_section_chips) {
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(Spacing.s2),

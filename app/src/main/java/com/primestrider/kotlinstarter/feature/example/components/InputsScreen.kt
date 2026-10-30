@@ -43,9 +43,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,12 +60,14 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
+import com.primestrider.kotlinstarter.feature.example.rememberSaveableStateList
 import kotlin.math.roundToInt
 
 internal const val PASSWORD_FIELD_TAG = "inputs_password"
 internal const val PARENT_CHECKBOX_TAG = "inputs_parent_checkbox"
 internal const val SELECT_FIELD_TAG = "inputs_select"
 internal const val TAB_ROW_TAG = "inputs_tabs"
+internal const val SECONDARY_TAB_ROW_TAG = "inputs_secondary_tabs"
 
 private const val BIO_MAX = 200
 
@@ -113,9 +115,9 @@ fun InputsScreen(onBack: () -> Unit) {
 
 @Composable
 private fun TextFieldsSection() {
-    var name by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("admin") }
-    var bio by remember { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
+    var username by rememberSaveable { mutableStateOf("admin") }
+    var bio by rememberSaveable { mutableStateOf("") }
     DemoSection(R.string.components_section_text_fields) {
         TextField(
             value = name,
@@ -157,11 +159,11 @@ private fun TextFieldsSection() {
 
 @Composable
 private fun KeyboardTypesSection() {
-    var email by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
-    var amount by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
+    var email by rememberSaveable { mutableStateOf("") }
+    var phone by rememberSaveable { mutableStateOf("") }
+    var amount by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
     DemoSection(R.string.components_section_keyboard) {
         KeyboardField(email, { email = it }, R.string.components_field_email, KeyboardType.Email)
         KeyboardField(phone, { phone = it }, R.string.components_field_phone, KeyboardType.Phone)
@@ -208,10 +210,10 @@ private fun KeyboardField(
 
 @Composable
 private fun SelectionSection() {
-    var terms by remember { mutableStateOf(false) }
-    val channels = remember { mutableStateListOf(false, false, false) }
-    var delivery by remember { mutableIntStateOf(0) }
-    var wifiOnly by remember { mutableStateOf(true) }
+    var terms by rememberSaveable { mutableStateOf(false) }
+    val channels = rememberSaveableStateList(false, false, false)
+    var delivery by rememberSaveable { mutableIntStateOf(0) }
+    var wifiOnly by rememberSaveable { mutableStateOf(true) }
     val parentState =
         when {
             channels.all { it } -> ToggleableState.On
@@ -295,8 +297,8 @@ private fun LabeledRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SelectSection() {
-    var expanded by remember { mutableStateOf(false) }
-    var selected by remember { mutableIntStateOf(0) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var selected by rememberSaveable { mutableIntStateOf(0) }
     DemoSection(R.string.components_section_select) {
         ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
             OutlinedTextField(
@@ -328,7 +330,7 @@ private fun SelectSection() {
 
 @Composable
 private fun SlidersSection() {
-    var volume by remember { mutableFloatStateOf(40f) }
+    var volume by rememberSaveable { mutableFloatStateOf(40f) }
     var range by remember { mutableStateOf(20f..80f) }
     DemoSection(R.string.components_section_sliders) {
         Text(stringResource(R.string.components_slider_value, volume.roundToInt()))
@@ -342,6 +344,12 @@ private fun SlidersSection() {
 @Composable
 private fun SegmentedAndTabsSection() {
     val periods = listOf(R.string.components_segment_day, R.string.components_segment_week, R.string.components_segment_month)
+    val periodContent =
+        listOf(
+            R.string.components_period_day_content,
+            R.string.components_period_week_content,
+            R.string.components_period_month_content,
+        )
     val styles = listOf(R.string.components_segment_bold, R.string.components_segment_italic, R.string.components_segment_underline)
     val tabs = listOf(R.string.components_tab_for_you, R.string.components_tab_following, R.string.components_tab_trending)
     val tabContent =
@@ -350,10 +358,10 @@ private fun SegmentedAndTabsSection() {
             R.string.components_tab_following_content,
             R.string.components_tab_trending_content,
         )
-    var period by remember { mutableIntStateOf(1) }
-    val styleChecked = remember { mutableStateListOf(true, false, false) }
-    var primaryTab by remember { mutableIntStateOf(0) }
-    var secondaryTab by remember { mutableIntStateOf(0) }
+    var period by rememberSaveable { mutableIntStateOf(1) }
+    val styleChecked = rememberSaveableStateList(true, false, false)
+    var primaryTab by rememberSaveable { mutableIntStateOf(0) }
+    var secondaryTab by rememberSaveable { mutableIntStateOf(0) }
     DemoSection(R.string.components_section_segmented_tabs) {
         SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
             periods.forEachIndexed { index, label ->
@@ -379,10 +387,11 @@ private fun SegmentedAndTabsSection() {
             }
         }
         Text(stringResource(tabContent[primaryTab]), Modifier.padding(vertical = Spacing.s2))
-        SecondaryTabRow(selectedTabIndex = secondaryTab) {
+        SecondaryTabRow(selectedTabIndex = secondaryTab, modifier = Modifier.testTag(SECONDARY_TAB_ROW_TAG)) {
             periods.forEachIndexed { index, label ->
                 Tab(selected = secondaryTab == index, onClick = { secondaryTab = index }, text = { Text(stringResource(label)) })
             }
         }
+        Text(stringResource(periodContent[secondaryTab]), Modifier.padding(vertical = Spacing.s2))
     }
 }

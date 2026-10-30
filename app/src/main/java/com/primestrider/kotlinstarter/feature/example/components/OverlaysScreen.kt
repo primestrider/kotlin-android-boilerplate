@@ -48,10 +48,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.window.DialogProperties
@@ -79,12 +80,16 @@ fun OverlaysScreen(onBack: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun DialogsSection() {
-    var showDelete by remember { mutableStateOf(false) }
-    var showBlocking by remember { mutableStateOf(false) }
+    var showDelete by rememberSaveable { mutableStateOf(false) }
+    var showBlocking by rememberSaveable { mutableStateOf(false) }
     DemoSection(R.string.components_section_dialogs) {
-        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.s2),
+            verticalArrangement = Arrangement.spacedBy(Spacing.s2),
+        ) {
             OutlinedButton(onClick = { showDelete = true }) { Text(stringResource(R.string.components_dialog_open)) }
             OutlinedButton(onClick = { showBlocking = true }) { Text(stringResource(R.string.components_dialog_open_blocking)) }
         }
@@ -121,8 +126,8 @@ private fun DialogsSection() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BottomSheetSection() {
-    var open by remember { mutableStateOf(false) }
-    var selected by remember { mutableIntStateOf(0) }
+    var open by rememberSaveable { mutableStateOf(false) }
+    var selected by rememberSaveable { mutableIntStateOf(0) }
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     DemoSection(R.string.components_section_bottom_sheet) {
@@ -162,7 +167,7 @@ private fun BottomSheetSection() {
 @Composable
 private fun SnackbarSection(hostState: SnackbarHostState) {
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+    val resources = LocalResources.current
     val messages =
         listOf(
             R.string.components_snackbar_success to R.string.components_snackbar_success_message,
@@ -171,12 +176,15 @@ private fun SnackbarSection(hostState: SnackbarHostState) {
             R.string.components_snackbar_info to R.string.components_snackbar_info_message,
         )
     DemoSection(R.string.components_section_snackbar) {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Spacing.s2),
+            verticalArrangement = Arrangement.spacedBy(Spacing.s2),
+        ) {
             messages.forEach { (label, message) ->
                 OutlinedButton(onClick = {
                     scope.launch {
                         hostState.currentSnackbarData?.dismiss()
-                        hostState.showSnackbar(context.getString(message), duration = SnackbarDuration.Short)
+                        hostState.showSnackbar(resources.getString(message), duration = SnackbarDuration.Short)
                     }
                 }) { Text(stringResource(label)) }
             }
@@ -186,12 +194,12 @@ private fun SnackbarSection(hostState: SnackbarHostState) {
                 hostState.currentSnackbarData?.dismiss()
                 val result =
                     hostState.showSnackbar(
-                        message = context.getString(R.string.components_snackbar_deleted),
-                        actionLabel = context.getString(R.string.components_snackbar_undo),
+                        message = resources.getString(R.string.components_snackbar_deleted),
+                        actionLabel = resources.getString(R.string.components_snackbar_undo),
                         duration = SnackbarDuration.Short,
                     )
                 if (result == SnackbarResult.ActionPerformed) {
-                    hostState.showSnackbar(context.getString(R.string.components_snackbar_restored), duration = SnackbarDuration.Short)
+                    hostState.showSnackbar(resources.getString(R.string.components_snackbar_restored), duration = SnackbarDuration.Short)
                 }
             }
         }) { Text(stringResource(R.string.components_snackbar_delete_undo)) }
@@ -200,8 +208,8 @@ private fun SnackbarSection(hostState: SnackbarHostState) {
 
 @Composable
 private fun MenuSection() {
-    var expanded by remember { mutableStateOf(false) }
-    var lastAction by remember { mutableStateOf<Int?>(null) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var lastAction by rememberSaveable { mutableStateOf<Int?>(null) }
     DemoSection(R.string.components_section_menus) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box {

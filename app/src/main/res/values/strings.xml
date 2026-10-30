@@ -245,4 +245,8 @@
     <string name="form_error_password_required">Password is required</string>
     <string name="form_error_password_min">Password must be at least 8 characters</string>
     <string name="form_error_bio_max">Bio too long</string>
+    <string name="components_period_day_content">Today\'s summary</string>
+    <string name="components_period_week_content">This week\'s summary</string>
+    <string name="components_period_month_content">This month\'s summary</string>
+    <string name="components_skeleton_show">Show skeleton</string>
 </resources>

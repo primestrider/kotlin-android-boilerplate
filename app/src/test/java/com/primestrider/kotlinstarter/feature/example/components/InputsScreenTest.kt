@@ -4,6 +4,9 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertTextContains
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -66,6 +69,13 @@ class InputsScreenTest {
         rule.onNodeWithTag(SELECT_FIELD_TAG).performScrollTo().performClick()
         rule.onNodeWithText("Oldest").performClick()
         rule.onNodeWithTag(SELECT_FIELD_TAG).assertTextContains("Oldest")
+    }
+
+    @Test
+    fun secondary_tabs_switch_content() {
+        val monthTab = hasText("Month") and hasAnyAncestor(hasTestTag(SECONDARY_TAB_ROW_TAG))
+        rule.onNode(monthTab).performScrollTo().performClick()
+        rule.onNodeWithText("This month's summary").assertExists()
     }
 
     @Test

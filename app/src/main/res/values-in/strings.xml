@@ -245,4 +245,8 @@
     <string name="form_error_password_required">Kata sandi wajib diisi</string>
     <string name="form_error_password_min">Kata sandi minimal 8 karakter</string>
     <string name="form_error_bio_max">Bio terlalu panjang</string>
+    <string name="components_period_day_content">Ringkasan hari ini</string>
+    <string name="components_period_week_content">Ringkasan minggu ini</string>
+    <string name="components_period_month_content">Ringkasan bulan ini</string>
+    <string name="components_skeleton_show">Tampilkan skeleton</string>
 </resources>

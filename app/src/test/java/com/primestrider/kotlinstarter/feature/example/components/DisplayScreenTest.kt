@@ -51,6 +51,14 @@ class DisplayScreenTest {
     }
 
     @Test
+    fun skeleton_toggle_label_follows_state() {
+        rule.onNodeWithText("Show content").performScrollTo().performClick()
+        rule.onNodeWithText("Show skeleton").assertExists()
+        rule.onNodeWithText("Show skeleton").performClick()
+        rule.onNodeWithText("Show content").assertExists()
+    }
+
+    @Test
     fun badge_caps_at_99_plus() {
         rule.onNodeWithText("99+").performScrollTo().assertIsDisplayed()
     }
