@@ -274,4 +274,15 @@
     <string name="component_error_title">Something went wrong</string>
     <string name="component_loading">Loading</string>
     <string name="component_dismiss">Dismiss %1$s</string>
+    <string name="component_status_online">Online</string>
+    <string name="component_status_offline">Offline</string>
+    <string name="component_status_busy">Busy</string>
+    <string name="component_status_away">Away</string>
+    <string name="components_section_header_info">Section header and info rows</string>
+    <string name="components_header_recent">Recent orders</string>
+    <string name="components_header_see_all">See all</string>
+    <string name="components_info_order">Order</string>
+    <string name="components_info_status">Status</string>
+    <string name="components_info_status_value">Shipped</string>
+    <string name="components_info_address">Address</string>
 </resources>

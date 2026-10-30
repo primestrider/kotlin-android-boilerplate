@@ -1,20 +1,11 @@
 package com.primestrider.kotlinstarter.feature.example.components
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -50,17 +41,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.Avatar
+import com.primestrider.kotlinstarter.core.designsystem.component.AvatarGroup
+import com.primestrider.kotlinstarter.core.designsystem.component.AvatarSize
+import com.primestrider.kotlinstarter.core.designsystem.component.AvatarStatus
 import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
-import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
+import com.primestrider.kotlinstarter.core.designsystem.component.InfoRow
+import com.primestrider.kotlinstarter.core.designsystem.component.SectionHeader
+import com.primestrider.kotlinstarter.core.designsystem.component.Skeleton
+import com.primestrider.kotlinstarter.core.designsystem.component.SkeletonText
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.DemoSection
@@ -75,16 +70,6 @@ internal const val LONG_HEADLINE =
 
 private const val PROGRESS_STEP = 0.1f
 private const val BADGE_MAX = 99
-
-/** First letter of the first two words, uppercased; `"?"` when the name is blank. */
-internal fun initialsOf(name: String): String =
-    name
-        .trim()
-        .split(Regex("\\s+"))
-        .filter { it.isNotEmpty() }
-        .take(2)
-        .joinToString("") { it.first().uppercase() }
-        .ifEmpty { "?" }
 
 /** Material 3 display components, plus avatar / skeleton / empty-state / banner patterns M3 does not ship. */
 @Composable
@@ -101,6 +86,7 @@ fun DisplayScreen(onBack: () -> Unit) {
         ProgressSection()
         AvatarsSection()
         SkeletonSection()
+        HeaderInfoSection()
         EmptyStateSection()
         BannersSection()
     }
@@ -222,87 +208,45 @@ private fun AvatarsSection() {
     val names = listOf("Ada Lovelace", "Grace Hopper", "Alan Turing", "Margaret Hamilton", "Linus Torvalds", "Barbara Liskov")
     DemoSection(R.string.components_section_avatars) {
         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s4), verticalAlignment = Alignment.CenterVertically) {
-            InitialsAvatar(initialsOf("Ada Lovelace"), Spacing.s8, CircleShape)
-            InitialsAvatar(initialsOf("Grace Hopper"), Spacing.s12, CircleShape)
-            InitialsAvatar(initialsOf("Alan Turing"), Spacing.s12, RoundedCornerShape(Radii.md))
-            Box {
-                InitialsAvatar(initialsOf("Margaret Hamilton"), Spacing.s12, CircleShape)
-                Box(
-                    Modifier
-                        .align(Alignment.BottomEnd)
-                        .size(Spacing.s3)
-                        .background(AppThemeTokens.colors.success, CircleShape)
-                        .border(Spacing.s0_5, MaterialTheme.colorScheme.surface, CircleShape),
-                )
-            }
+            Avatar("Ada Lovelace", size = AvatarSize.SMALL)
+            Avatar("Grace Hopper", size = AvatarSize.LARGE)
+            Avatar("Alan Turing", size = AvatarSize.LARGE, shape = RoundedCornerShape(Radii.md))
+            Avatar("Margaret Hamilton", size = AvatarSize.XLARGE, status = AvatarStatus.ONLINE)
         }
-        val visible = 4
-        Row {
-            names.take(visible).forEachIndexed { index, name ->
-                InitialsAvatar(
-                    initialsOf(name),
-                    Spacing.s10,
-                    CircleShape,
-                    Modifier
-                        .offset(x = -Spacing.s3 * index)
-                        .border(Spacing.s0_5, MaterialTheme.colorScheme.surface, CircleShape),
-                )
-            }
-            InitialsAvatar("+${names.size - visible}", Spacing.s10, CircleShape, Modifier.offset(x = -Spacing.s3 * visible))
-        }
-    }
-}
-
-@Composable
-private fun InitialsAvatar(
-    label: String,
-    size: Dp,
-    shape: Shape,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier
-            .size(size)
-            .background(MaterialTheme.colorScheme.primaryContainer, shape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onPrimaryContainer)
+        AvatarGroup(names, max = 4)
     }
 }
 
 @Composable
 private fun SkeletonSection() {
     var loaded by rememberSaveable { mutableStateOf(false) }
-    val pulse by rememberInfiniteTransition(label = "skeleton").animateFloat(
-        initialValue = 0.4f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(tween(durationMillis = 800), RepeatMode.Reverse),
-        label = "skeleton-alpha",
-    )
     DemoSection(R.string.components_section_skeleton) {
         if (loaded) {
             Text(stringResource(R.string.components_skeleton_content))
         } else {
-            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s3), modifier = Modifier.alpha(pulse)) {
-                SkeletonBlock(Modifier.size(Spacing.s12), CircleShape)
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-                    SkeletonBlock(Modifier.fillMaxWidth().height(Spacing.s4))
-                    SkeletonBlock(Modifier.fillMaxWidth(0.6f).height(Spacing.s4))
-                }
+            Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s3)) {
+                Skeleton(Modifier.size(Spacing.s12), CircleShape)
+                SkeletonText(lines = 2, modifier = Modifier.weight(1f))
             }
         }
-        TextButton(onClick = {
-            loaded = !loaded
-        }) { Text(stringResource(if (loaded) R.string.components_skeleton_show else R.string.components_skeleton_loaded)) }
+        TextButton(onClick = { loaded = !loaded }) {
+            Text(stringResource(if (loaded) R.string.components_skeleton_show else R.string.components_skeleton_loaded))
+        }
     }
 }
 
 @Composable
-private fun SkeletonBlock(
-    modifier: Modifier,
-    shape: Shape = RoundedCornerShape(Radii.sm),
-) {
-    Box(modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh, shape))
+private fun HeaderInfoSection() {
+    DemoSection(R.string.components_section_header_info) {
+        SectionHeader(
+            title = stringResource(R.string.components_header_recent),
+            actionLabel = stringResource(R.string.components_header_see_all),
+            onAction = {},
+        )
+        InfoRow(stringResource(R.string.components_info_order), "#INV-2026-10-0042")
+        InfoRow(stringResource(R.string.components_info_status), stringResource(R.string.components_info_status_value))
+        InfoRow(stringResource(R.string.components_info_address), "Jl. Merdeka No. 17, Kebayoran Baru, Jakarta Selatan 12110")
+    }
 }
 
 @Composable

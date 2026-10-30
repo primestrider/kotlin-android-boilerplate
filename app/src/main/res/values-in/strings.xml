@@ -274,4 +274,15 @@
     <string name="component_error_title">Terjadi kesalahan</string>
     <string name="component_loading">Memuat</string>
     <string name="component_dismiss">Tutup %1$s</string>
+    <string name="component_status_online">Online</string>
+    <string name="component_status_offline">Offline</string>
+    <string name="component_status_busy">Sibuk</string>
+    <string name="component_status_away">Tidak di tempat</string>
+    <string name="components_section_header_info">Judul bagian dan baris info</string>
+    <string name="components_header_recent">Pesanan terbaru</string>
+    <string name="components_header_see_all">Lihat semua</string>
+    <string name="components_info_order">Pesanan</string>
+    <string name="components_info_status">Status</string>
+    <string name="components_info_status_value">Dikirim</string>
+    <string name="components_info_address">Alamat</string>
 </resources>

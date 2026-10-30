@@ -37,3 +37,7 @@ Rules:
 - `UiMessage(text, variant, actionLabel, onAction, long)` adds an action ("Undo", "Retry"); `onAction` runs only if the user taps it.
 - Messages are queued in a buffered channel: one sent while no screen is collecting (rotation, before the UI starts) is shown once the host collects. A newer message replaces the one on screen.
 - `MainActivity` provides `LocalMessenger`; tests that replace the activity content must provide it too (see `MainShellTest`).
+| `Avatar`, `AvatarGroup`, `AvatarSize`, `AvatarStatus`, `initialsOf` | `Avatar.kt` | Initials avatar (sizes 32/40/48/64dp, circle or custom shape, presence dot announced to TalkBack); overlapping group with "+N" overflow. Image avatars come with networking |
+| `Skeleton`, `SkeletonText` | `Skeleton.kt` | Pulsing placeholders while content loads; `SkeletonText` is announced as "Loading" |
+| `SectionHeader` | `SectionHeader.kt` | Section title marked as an accessibility heading, with an optional "See all" style action |
+| `InfoRow` | `InfoRow.kt` | Label / value pairs (order id, status, address); long values wrap |
