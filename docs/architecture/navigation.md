@@ -10,7 +10,7 @@ The app uses Navigation Compose with type-safe routes (kotlinx.serialization) in
 | --- | --- | --- | --- |
 | Home | `HomeGraph` | `HomeRoute` | example index, Form, styling pages |
 | Components | `ComponentsGraph` | `ComponentsHomeRoute` | component example pages |
-| Profile | `ProfileGraph` | `SettingsRoute` | Settings (Account joins with the auth plan) |
+| Profile | `ProfileGraph` | `ProfileRoute` | Profile hub, Settings, sign-in, protected Account |
 
 Behavior:
 
@@ -41,3 +41,21 @@ Each destination is a `@Serializable` object or data class:
 ## Adding a protected graph later
 
 Wrap protected destinations in a nested graph, e.g. `navigation<ProtectedGraph>(startDestination = ...)`, and redirect to sign-in (`navigate { popUpTo(...) }`) from an auth state exposed by a ViewModel. Public routes (sign-in, onboarding) stay outside the tabs.
+
+## Profile graph and the protected route pattern
+
+`ProfileRoute` (start) reads the session and shows either a sign-in prompt or the signed-in user's row, plus a Settings row. From it: `SignInRoute`, `AccountRoute` (protected) and `SettingsRoute`.
+
+To protect a route, collect the session in its `composable<...>` block and redirect when it is null:
+
+```kotlin
+composable<AccountRoute> {
+    val session by viewModel.session.collectAsStateWithLifecycle()
+    LaunchedEffect(session == null) {
+        if (session == null) navController.navigate(SignInRoute) { popUpTo<AccountRoute> { inclusive = true } }
+    }
+    session?.let { AccountScreen(session = it, ...) }
+}
+```
+
+The guard reacts to the session flow, so it covers a user sign-out and a token expiry alike, and the protected page is replaced (not stacked), so back from sign-in never returns to it. After a successful sign-in, `SignInRoute` navigates to `AccountRoute` with `popUpTo<SignInRoute> { inclusive = true }`.

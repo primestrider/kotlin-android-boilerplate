@@ -67,7 +67,7 @@ class MainShellTest {
     fun tabs_keep_their_back_stacks() {
         openColors()
         tab("Profile")
-        composeRule.onNodeWithText("Color scheme").assertIsDisplayed()
+        composeRule.onNodeWithText("You are not signed in").assertIsDisplayed()
         tab("Home")
         composeRule.onNodeWithText("Semantic colors").assertExists()
     }

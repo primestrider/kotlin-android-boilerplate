@@ -301,4 +301,17 @@
     <string name="auth_error_network">Cannot reach the server. Check your connection.</string>
     <string name="auth_error_generic">Something went wrong. Please try again.</string>
     <string name="auth_signed_in">Welcome back</string>
+    <string name="auth_profile_signed_out_title">You are not signed in</string>
+    <string name="auth_profile_signed_out_body">Sign in to see your account.</string>
+    <string name="auth_account_title">Account</string>
+    <string name="auth_account_subtitle">A screen only a signed-in session can reach</string>
+    <string name="auth_server_profile">Server profile</string>
+    <string name="auth_load_profile">Load from /auth/me</string>
+    <string name="auth_sign_out">Sign out</string>
+    <string name="auth_sign_out_confirm_title">Sign out?</string>
+    <string name="auth_sign_out_confirm_body">You will need to sign in again to see your account.</string>
+    <string name="auth_signed_out">Signed out</string>
+    <string name="auth_sign_out_failed">Could not sign out. Please try again.</string>
+    <string name="auth_info_id">ID</string>
+    <string name="auth_info_email">Email</string>
 </resources>

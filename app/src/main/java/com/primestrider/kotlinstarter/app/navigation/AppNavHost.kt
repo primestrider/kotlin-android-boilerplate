@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.primestrider.kotlinstarter.feature.example.AccountRoute
 import com.primestrider.kotlinstarter.feature.example.ActionsRoute
 import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
 import com.primestrider.kotlinstarter.feature.example.ColorsRoute
@@ -21,12 +22,16 @@ import com.primestrider.kotlinstarter.feature.example.HomeScreen
 import com.primestrider.kotlinstarter.feature.example.InputsRoute
 import com.primestrider.kotlinstarter.feature.example.LayoutRoute
 import com.primestrider.kotlinstarter.feature.example.OverlaysRoute
+import com.primestrider.kotlinstarter.feature.example.ProfileRoute
 import com.primestrider.kotlinstarter.feature.example.SettingsRoute
 import com.primestrider.kotlinstarter.feature.example.SignInRoute
 import com.primestrider.kotlinstarter.feature.example.SizingRoute
 import com.primestrider.kotlinstarter.feature.example.SpacingRoute
 import com.primestrider.kotlinstarter.feature.example.ThemeRoute
 import com.primestrider.kotlinstarter.feature.example.TypographyRoute
+import com.primestrider.kotlinstarter.feature.example.auth.AccountScreen
+import com.primestrider.kotlinstarter.feature.example.auth.AccountViewModel
+import com.primestrider.kotlinstarter.feature.example.auth.ProfileScreen
 import com.primestrider.kotlinstarter.feature.example.auth.SignInScreen
 import com.primestrider.kotlinstarter.feature.example.auth.SignInViewModel
 import com.primestrider.kotlinstarter.feature.example.componentEntries
@@ -114,9 +119,25 @@ fun NavGraphBuilder.componentsGraph(navController: NavHostController) {
     }
 }
 
-/** Profile tab: Settings today; the signed-in account joins it with the auth plan. */
+/**
+ * Profile tab: the Profile hub (start), Settings, sign-in, and the protected Account page.
+ * Account guard: whenever the session is gone while Account is showing (sign-out or expiry), it is replaced by sign-in,
+ * so back from sign-in never returns to Account.
+ */
 fun NavGraphBuilder.profileGraph(navController: NavHostController) {
-    navigation<ProfileGraph>(startDestination = SettingsRoute) {
+    val back: () -> Unit = { navController.popBackStack() }
+    navigation<ProfileGraph>(startDestination = ProfileRoute) {
+        composable<ProfileRoute> {
+            // The account state holder doubles as the session source for the hub.
+            val viewModel: AccountViewModel = hiltViewModel()
+            val session by viewModel.session.collectAsStateWithLifecycle()
+            ProfileScreen(
+                session = session,
+                onSignIn = { navController.navigate(SignInRoute) },
+                onOpenAccount = { navController.navigate(AccountRoute) },
+                onOpenSettings = { navController.navigate(SettingsRoute) },
+            )
+        }
         composable<SettingsRoute> {
             val viewModel: SettingsViewModel = hiltViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()
@@ -128,15 +149,16 @@ fun NavGraphBuilder.profileGraph(navController: NavHostController) {
                 state = state,
                 onThemeModeChange = viewModel::setThemeMode,
                 onLanguageChange = viewModel::setLanguage,
-                onBack = null,
+                onBack = back,
             )
         }
         composable<SignInRoute> {
             val viewModel: SignInViewModel = hiltViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()
-            // Task 5 navigates to the account page here; until then sign-in just returns.
             LaunchedEffect(viewModel) {
-                viewModel.signedIn.collect { navController.popBackStack() }
+                viewModel.signedIn.collect {
+                    navController.navigate(AccountRoute) { popUpTo<SignInRoute> { inclusive = true } }
+                }
             }
             SignInScreen(
                 state = state,
@@ -145,8 +167,28 @@ fun NavGraphBuilder.profileGraph(navController: NavHostController) {
                 onShortLivedChange = viewModel::onShortLivedChange,
                 onFillDemo = viewModel::fillDemo,
                 onSubmit = viewModel::submit,
-                onBack = { navController.popBackStack() },
+                onBack = back,
             )
+        }
+        composable<AccountRoute> {
+            val viewModel: AccountViewModel = hiltViewModel()
+            val session by viewModel.session.collectAsStateWithLifecycle()
+            val profile by viewModel.profile.collectAsStateWithLifecycle()
+            val current = session
+            LaunchedEffect(current == null) {
+                if (current == null) {
+                    navController.navigate(SignInRoute) { popUpTo<AccountRoute> { inclusive = true } }
+                }
+            }
+            if (current != null) {
+                AccountScreen(
+                    session = current,
+                    profile = profile,
+                    onLoadProfile = viewModel::loadProfile,
+                    onSignOut = viewModel::signOut,
+                    onBack = back,
+                )
+            }
         }
     }
 }

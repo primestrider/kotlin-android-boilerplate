@@ -50,3 +50,10 @@ data object FeedbackRoute
 
 @Serializable
 data object SignInRoute
+
+@Serializable
+data object ProfileRoute
+
+/** Protected: only reachable with a session; see the guard in `profileGraph`. */
+@Serializable
+data object AccountRoute

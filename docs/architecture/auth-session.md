@@ -87,3 +87,19 @@ retry 401 again -> authenticator gives up (priorResponse != null), caller gets t
   exists for sign-in: the adapter's login API is built on the app `Retrofit`, whose client needs the
   authenticator, which needs the refresher, which needs the adapter. `TokenAuthenticator` therefore
   keeps taking a `Provider<SessionRefresher>` to break that cycle.
+
+## Sign-out and the protected Account page
+
+- **Sign-out:** `AccountViewModel.signOut()` calls `SessionRepository.signOut(USER)` and shows an info message.
+  The call runs uncancellable, and a storage failure shows an error message and keeps the user signed in.
+- **Guard:** a protected route (the example's `AccountRoute`) collects `SessionRepository.session` and, when it
+  becomes null, navigates to sign-in popping itself inclusive. That one rule covers a user sign-out and a token
+  expiry (`SignOutReason.EXPIRED`, which also shows the expiry message). See `navigation.md`.
+- **Cold start:** the splash waits for the stored session, so a signed-in start goes straight to the app with no sign-in flash.
+
+## Swapping the backend
+
+1. Implement `AuthAdapter` (`signIn`, `refresh`) for your API. Build `refresh` on `@RefreshRetrofit` and throw an `IOException` when the server is unreachable.
+2. Bind it instead of `DummyJsonAuthAdapter` (replace the `@Binds` in `ExampleAuthModule`, or delete `feature/example/auth` and add your own module).
+3. Keep `@Anonymous` on the login and refresh methods so they never carry a bearer token or trigger the 401 flow.
+4. Set the base URL with `api.url` in `local.properties` or the `API_URL` environment variable.

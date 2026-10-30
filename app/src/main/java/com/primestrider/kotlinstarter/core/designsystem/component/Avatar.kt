@@ -13,14 +13,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil3.compose.SubcomposeAsyncImage
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 
@@ -52,7 +55,10 @@ fun initialsOf(name: String): String =
         .joinToString("") { it.first().uppercase() }
         .ifEmpty { "?" }
 
-/** Initials avatar with an optional presence dot; announced as the name (plus status). */
+/**
+ * Avatar with an optional presence dot; announced as the name (plus status). Shows the initials, or the image at
+ * [imageUrl] once it has loaded (initials stay while loading and when loading fails).
+ */
 @Composable
 fun Avatar(
     name: String,
@@ -60,10 +66,23 @@ fun Avatar(
     size: AvatarSize = AvatarSize.MEDIUM,
     shape: Shape = CircleShape,
     status: AvatarStatus? = null,
+    imageUrl: String? = null,
 ) {
     val description = status?.let { "$name, ${stringResource(it.label)}" } ?: name
     Box(modifier.semantics(mergeDescendants = true) { contentDescription = description }) {
-        AvatarCircle(initialsOf(name), size, shape)
+        val initials = initialsOf(name)
+        if (imageUrl == null) {
+            AvatarCircle(initials, size, shape)
+        } else {
+            SubcomposeAsyncImage(
+                model = imageUrl,
+                contentDescription = null,
+                modifier = Modifier.size(size.dp).clip(shape),
+                contentScale = ContentScale.Crop,
+                loading = { AvatarCircle(initials, size, shape) },
+                error = { AvatarCircle(initials, size, shape) },
+            )
+        }
         if (status != null) {
             Box(
                 Modifier

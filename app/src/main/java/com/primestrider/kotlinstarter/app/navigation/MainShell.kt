@@ -30,7 +30,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
 import com.primestrider.kotlinstarter.core.designsystem.component.MessengerHost
 import com.primestrider.kotlinstarter.core.designsystem.component.NavBarItem
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
-import com.primestrider.kotlinstarter.feature.example.SettingsRoute
+import com.primestrider.kotlinstarter.feature.example.ProfileRoute
 import kotlin.reflect.KClass
 
 /** Top-level destinations shown in the bottom navigation bar, in display order. */
@@ -43,7 +43,7 @@ enum class TopLevelTab(
 ) {
     HOME(R.string.nav_home, Icons.Filled.Home, HomeGraph, HomeRoute, HomeGraph::class),
     COMPONENTS(R.string.nav_components, Icons.AutoMirrored.Filled.List, ComponentsGraph, ComponentsHomeRoute, ComponentsGraph::class),
-    PROFILE(R.string.nav_profile, Icons.Filled.Person, ProfileGraph, SettingsRoute, ProfileGraph::class),
+    PROFILE(R.string.nav_profile, Icons.Filled.Person, ProfileGraph, ProfileRoute, ProfileGraph::class),
 }
 
 /**

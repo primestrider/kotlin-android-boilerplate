@@ -30,6 +30,19 @@ class AvatarTest {
     }
 
     @Test
+    fun null_image_url_still_shows_initials() {
+        rule.setContent { AppTheme(false) { Avatar("Ada Lovelace", imageUrl = null) } }
+        rule.onNodeWithText("AL", useUnmergedTree = true).assertExists()
+    }
+
+    @Test
+    fun unreachable_image_url_keeps_initials() {
+        rule.setContent { AppTheme(false) { Avatar("Ada Lovelace", imageUrl = "http://127.0.0.1:1/missing.png") } }
+        rule.waitForIdle()
+        rule.onNodeWithText("AL", useUnmergedTree = true).assertExists()
+    }
+
+    @Test
     fun status_is_announced() {
         rule.setContent { AppTheme(false) { Avatar("Ada Lovelace", status = AvatarStatus.ONLINE) } }
         rule.onNode(hasContentDescription("Online", substring = true)).assertExists()
