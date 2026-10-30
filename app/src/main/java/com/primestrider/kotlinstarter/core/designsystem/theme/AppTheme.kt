@@ -42,6 +42,19 @@ private fun AppColors.toColorScheme(dark: Boolean): ColorScheme {
             onTertiary = Palette.white,
             surfaceTint = primary,
             scrim = Palette.black,
+            // "Fixed" roles keep the same value in light and dark by Material 3 design.
+            primaryFixed = Palette.Primary.c100,
+            primaryFixedDim = Palette.Primary.c200,
+            onPrimaryFixed = Palette.Primary.c900,
+            onPrimaryFixedVariant = Palette.Primary.c700,
+            secondaryFixed = Palette.Gray.c100,
+            secondaryFixedDim = Palette.Gray.c200,
+            onSecondaryFixed = Palette.Gray.c900,
+            onSecondaryFixedVariant = Palette.Gray.c700,
+            tertiaryFixed = Palette.Blue.c100,
+            tertiaryFixedDim = Palette.Blue.c200,
+            onTertiaryFixed = Palette.Blue.c900,
+            onTertiaryFixedVariant = Palette.Blue.c700,
         )
     return if (dark) {
         base.copy(

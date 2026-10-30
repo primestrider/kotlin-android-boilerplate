@@ -4,8 +4,10 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -54,6 +56,8 @@ fun ExamplePageScaffold(
             Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .consumeWindowInsets(padding)
+                .imePadding()
                 .verticalScroll(rememberScrollState())
                 .padding(Spacing.s4),
             verticalArrangement = Arrangement.spacedBy(Spacing.s4),
@@ -68,7 +72,7 @@ fun ExamplePageScaffold(
     }
 }
 
-/** Titled group of demo content inside a styling page. */
+/** Titled group of demo content inside an example page. */
 @Composable
 internal fun DemoSection(
     @StringRes title: Int,

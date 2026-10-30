@@ -3,6 +3,7 @@ package com.primestrider.kotlinstarter.feature.example.form
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,6 +34,8 @@ class FormExampleViewModel
         private val _state = MutableStateFlow(FormUiState())
         val state: StateFlow<FormUiState> = _state.asStateFlow()
 
+        private var submitJob: Job? = null
+
         fun onChange(
             field: FormField,
             value: String,
@@ -59,13 +62,15 @@ class FormExampleViewModel
 
             val submittedValues = current.values
             _state.update { it.copy(submitting = true) }
-            viewModelScope.launch {
-                delay(SUBMIT_DELAY_MS)
-                _state.update { it.copy(submitting = false, submitted = submittedValues) }
-            }
+            submitJob =
+                viewModelScope.launch {
+                    delay(SUBMIT_DELAY_MS)
+                    _state.update { it.copy(submitting = false, submitted = submittedValues) }
+                }
         }
 
         fun clear() {
+            submitJob?.cancel()
             _state.value = FormUiState()
         }
     }

@@ -59,6 +59,31 @@ class AppThemeTest {
         assertTrue("Roles still at the M3 baseline: $unmapped", unmapped.isEmpty())
     }
 
+    /**
+     * Every `ColorScheme` role, found by reflection so a role added by a Material 3 upgrade is checked too.
+     * Compose `Color` is an inline class, so each getter returns a raw `long`.
+     */
+    private fun allRoles(scheme: ColorScheme): Map<String, Color> =
+        ColorScheme::class.java.methods
+            .filter { it.name.startsWith("get") && it.parameterCount == 0 && it.returnType == java.lang.Long.TYPE }
+            .associate { it.name.removePrefix("get").substringBefore('-') to Color((it.invoke(scheme) as Long).toULong()) }
+
+    private val tokenColors: Set<Color> =
+        Palette.scales.flatMap { (_, steps) -> steps.map { it.second } }.toSet() + setOf(Palette.white, Palette.black)
+
+    private fun assertEveryRoleIsAToken(dark: Boolean) {
+        val roles = allRoles(captureScheme(dark))
+        assertTrue("Found too few roles by reflection: ${roles.keys}", roles.size >= 40)
+        val offPalette = roles.filterValues { it !in tokenColors }.keys
+        assertTrue("Roles not mapped to a palette token (dark=$dark): $offPalette", offPalette.isEmpty())
+    }
+
+    @Test
+    fun every_role_is_a_token_in_light() = assertEveryRoleIsAToken(dark = false)
+
+    @Test
+    fun every_role_is_a_token_in_dark() = assertEveryRoleIsAToken(dark = true)
+
     @Test
     fun all_roles_are_mapped_in_light() {
         val scheme = captureScheme(dark = false)

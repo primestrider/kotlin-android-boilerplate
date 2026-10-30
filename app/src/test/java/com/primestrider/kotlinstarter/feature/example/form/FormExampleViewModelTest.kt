@@ -88,6 +88,19 @@ class FormExampleViewModelTest {
         }
 
     @Test
+    fun clear_during_submit_discards_result() =
+        runTest(dispatcher) {
+            val vm = FormExampleViewModel()
+            vm.fillValid()
+            vm.submit()
+            runCurrent()
+            vm.clear()
+            advanceTimeBy(SUBMIT_DELAY_MS)
+            runCurrent()
+            assertEquals(FormUiState(), vm.state.value)
+        }
+
+    @Test
     fun clear_resets_everything() {
         val vm = FormExampleViewModel()
         vm.submit()
