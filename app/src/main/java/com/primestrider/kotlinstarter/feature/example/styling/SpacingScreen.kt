@@ -1,12 +1,15 @@
 package com.primestrider.kotlinstarter.feature.example.styling
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
@@ -112,6 +116,52 @@ fun SpacingScreen(onBack: () -> Unit) {
                     }
                     Text("gap ${gap.value.toInt()}dp", style = MaterialTheme.typography.labelMedium)
                 }
+            }
+        }
+        StylingSection(R.string.styling_section_margin) {
+            // Compose has no margin modifier: outer spacing is padding applied before the border/background.
+            listOf(Spacing.s1, Spacing.s4, Spacing.s8).forEach { margin ->
+                Box(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceVariant)) {
+                    Text(
+                        "margin ${margin.value.toInt()}dp",
+                        Modifier
+                            .padding(margin)
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), RoundedCornerShape(Radii.sm))
+                            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary), RoundedCornerShape(Radii.sm))
+                            .padding(Spacing.s2),
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                }
+            }
+        }
+        StylingSection(R.string.styling_section_negative_margin) {
+            // padding() rejects negative values, so a negative margin is a negative offset.
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(Radii.md))
+                    .padding(Spacing.s6),
+            ) {
+                Text(
+                    "offset y = -${Spacing.s4.value.toInt()}dp",
+                    Modifier
+                        .offset(y = -Spacing.s4)
+                        .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(Radii.sm))
+                        .padding(Spacing.s3),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                Text(
+                    "offset x = -${Spacing.s2.value.toInt()}dp",
+                    Modifier
+                        .offset(x = -Spacing.s2)
+                        .padding(top = Spacing.s2)
+                        .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(Radii.sm))
+                        .padding(Spacing.s3),
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    style = MaterialTheme.typography.labelMedium,
+                )
             }
         }
     }

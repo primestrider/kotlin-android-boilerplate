@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 data class SettingsUiState(
@@ -38,7 +39,18 @@ class SettingsViewModel
                 )
 
         fun setThemeMode(mode: ThemeMode) {
-            viewModelScope.launch { themeRepository.setThemeMode(mode) }
+            viewModelScope.launch {
+                try {
+                    themeRepository.setThemeMode(mode)
+                } catch (_: IOException) {
+                    // Persisting failed; the stored preference (and so the state) is unchanged.
+                }
+            }
+        }
+
+        /** Re-reads the app language, which can change outside the app (system language settings). */
+        fun refreshLanguage() {
+            language.value = languageController.current()
         }
 
         fun setLanguage(newLanguage: AppLanguage) {

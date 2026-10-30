@@ -1,14 +1,17 @@
 package com.primestrider.kotlinstarter.feature.example.styling
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppColors
@@ -49,6 +52,7 @@ fun ColorsScreen(onBack: () -> Unit) {
                 ColorSwatchRow(name, color)
             }
         }
+        StylingSection(R.string.styling_section_text_colors) { TextColorSamples() }
         StylingSection(R.string.styling_section_palette) {
             Palette.scales.forEach { (scale, steps) ->
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.s1)) {
@@ -59,5 +63,37 @@ fun ColorsScreen(onBack: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+/** Foreground-type tokens with the background each one is designed to sit on. */
+private fun textColorEntries(colors: AppColors): List<Triple<String, Color, Color?>> =
+    listOf(
+        Triple("foreground", colors.foreground, null),
+        Triple("muted", colors.muted, null),
+        Triple("mutedForeground", colors.mutedForeground, null),
+        Triple("primary", colors.primary, null),
+        Triple("destructive", colors.destructive, null),
+        Triple("success", colors.success, null),
+        Triple("warning", colors.warning, null),
+        Triple("info", colors.info, null),
+        Triple("cardForeground", colors.cardForeground, colors.card),
+        Triple("secondaryForeground", colors.secondaryForeground, colors.secondary),
+        Triple("primaryForeground", colors.primaryForeground, colors.primary),
+    )
+
+@Composable
+private fun TextColorSamples() {
+    val sample = stringResource(R.string.styling_sample_text)
+    textColorEntries(AppThemeTokens.colors).forEach { (name, color, background) ->
+        Text(
+            "$name — $sample",
+            Modifier
+                .fillMaxWidth()
+                .then(if (background != null) Modifier.background(background) else Modifier)
+                .padding(vertical = Spacing.s1),
+            color = color,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }

@@ -1,6 +1,9 @@
 package com.primestrider.kotlinstarter.feature.example
 
 import androidx.compose.material3.Surface
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -34,6 +37,14 @@ class HomeScreenTest {
         show {}
         rule.onNodeWithText("Features").assertIsDisplayed()
         rule.onNodeWithText("Settings").assertIsDisplayed()
+    }
+
+    @Test
+    fun settingsEntryExposesButtonRole() {
+        show {}
+        rule
+            .onNode(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.Button) and hasText("Settings"))
+            .assertIsDisplayed()
     }
 
     @Test

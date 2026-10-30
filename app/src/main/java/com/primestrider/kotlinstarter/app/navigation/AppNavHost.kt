@@ -4,6 +4,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -48,6 +49,10 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             composable<SettingsRoute> {
                 val viewModel: SettingsViewModel = hiltViewModel()
                 val state by viewModel.state.collectAsStateWithLifecycle()
+                LifecycleResumeEffect(Unit) {
+                    viewModel.refreshLanguage()
+                    onPauseOrDispose {}
+                }
                 SettingsScreen(
                     state = state,
                     onThemeModeChange = viewModel::setThemeMode,

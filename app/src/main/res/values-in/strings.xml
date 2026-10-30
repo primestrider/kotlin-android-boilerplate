@@ -29,6 +29,11 @@
     <string name="styling_sample_text">Pak Budi membeli tujuh kue bolu yang enak di pasar</string>
     <string name="styling_section_semantic_colors">Warna semantik</string>
     <string name="styling_section_palette">Palet</string>
+    <string name="styling_section_text_colors">Warna teks</string>
+    <string name="styling_section_text_alignment">Perataan teks</string>
+    <string name="styling_section_text_decoration">Dekorasi</string>
+    <string name="styling_section_margin">Margin</string>
+    <string name="styling_section_negative_margin">Margin negatif</string>
     <string name="styling_section_text_styles">Gaya teks</string>
     <string name="styling_section_font_sizes">Ukuran font</string>
     <string name="styling_section_font_weights">Ketebalan font</string>

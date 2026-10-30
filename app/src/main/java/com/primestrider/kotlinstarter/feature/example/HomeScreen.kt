@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 
@@ -52,7 +53,7 @@ fun HomeScreen(
                 Column(
                     Modifier
                         .fillMaxWidth()
-                        .clickable { onOpen(entry.route) }
+                        .clickable(role = Role.Button) { onOpen(entry.route) }
                         .padding(vertical = Spacing.s3),
                 ) {
                     Text(stringResource(entry.title), style = MaterialTheme.typography.titleMedium)

@@ -2,12 +2,16 @@ package com.primestrider.kotlinstarter.feature.example.styling
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.FontSize
 import com.primestrider.kotlinstarter.core.designsystem.theme.LetterSpacing
@@ -87,6 +91,8 @@ fun TypographyScreen(onBack: () -> Unit) {
         StylingSection(R.string.styling_section_font_weights) {
             weights.forEach { (value, weight) -> SampleLine("$value", TextStyle(fontWeight = weight)) }
         }
+        StylingSection(R.string.styling_section_text_alignment) { TextAlignmentSamples() }
+        StylingSection(R.string.styling_section_text_decoration) { TextDecorationSamples() }
         StylingSection(R.string.styling_section_letter_spacing) {
             spacings.forEach { (name, spacing) ->
                 SampleLine("$name · ${spacing.value}sp", TextStyle(letterSpacing = spacing))
@@ -99,6 +105,7 @@ fun TypographyScreen(onBack: () -> Unit) {
 private fun SampleLine(
     label: String,
     style: TextStyle,
+    text: String = stringResource(R.string.styling_sample_text),
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(Spacing.s0_5)) {
         Text(
@@ -107,8 +114,42 @@ private fun SampleLine(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            stringResource(R.string.styling_sample_text),
+            text,
             style = MaterialTheme.typography.bodyLarge.merge(style),
         )
     }
+}
+
+@Composable
+private fun TextAlignmentSamples() {
+    listOf(
+        "start" to TextAlign.Start,
+        "center" to TextAlign.Center,
+        "end" to TextAlign.End,
+        "justify" to TextAlign.Justify,
+    ).forEach { (name, align) ->
+        Column(verticalArrangement = Arrangement.spacedBy(Spacing.s0_5)) {
+            Text(
+                name,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                stringResource(R.string.styling_sample_text).repeat(2),
+                Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = align,
+            )
+        }
+    }
+}
+
+@Composable
+private fun TextDecorationSamples() {
+    SampleLine("underline", TextStyle(textDecoration = TextDecoration.Underline))
+    SampleLine("lineThrough", TextStyle(textDecoration = TextDecoration.LineThrough))
+    val sample = stringResource(R.string.styling_sample_text)
+    // Compose has no text-transform style; transform the string itself.
+    SampleLine("uppercase", TextStyle(), sample.uppercase())
+    SampleLine("lowercase", TextStyle(), sample.lowercase())
 }

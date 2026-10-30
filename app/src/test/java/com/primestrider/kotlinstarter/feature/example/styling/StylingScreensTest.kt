@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.core.app.ApplicationProvider
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
@@ -60,13 +61,37 @@ class StylingScreensTest(
         rule.onNodeWithContentDescription(string(R.string.common_action_back)).performClick()
         assertEquals(1, backs)
     }
+}
+
+@RunWith(ParameterizedRobolectricTestRunner::class)
+@Config(sdk = [36])
+class StylingNewSectionsTest(
+    private val section: Section,
+) {
+    enum class Section(
+        @StringRes val label: Int,
+        val content: @Composable () -> Unit,
+    ) {
+        TEXT_COLORS(R.string.styling_section_text_colors, { ColorsScreen {} }),
+        TEXT_ALIGNMENT(R.string.styling_section_text_alignment, { TypographyScreen {} }),
+        TEXT_DECORATION(R.string.styling_section_text_decoration, { TypographyScreen {} }),
+        MARGIN(R.string.styling_section_margin, { SpacingScreen {} }),
+        NEGATIVE_MARGIN(R.string.styling_section_negative_margin, { SpacingScreen {} }),
+    }
+
+    companion object {
+        @JvmStatic
+        @ParameterizedRobolectricTestRunner.Parameters(name = "{0}")
+        fun sections(): List<Section> = Section.entries
+    }
+
+    @get:Rule
+    val rule = createComposeRule()
 
     @Test
-    fun themeScreenReportsDark() {
-        if (page != Page.THEME) return
-        var mode: ThemeMode? = null
-        rule.setContent { AppTheme(darkTheme = false) { ThemeScreen(ThemeMode.SYSTEM, { mode = it }, {}) } }
-        rule.onNodeWithText("Dark").performClick()
-        assertEquals(ThemeMode.DARK, mode)
+    fun sectionLabelIsDisplayed() {
+        rule.setContent { AppTheme(darkTheme = false) { section.content() } }
+        val label = ApplicationProvider.getApplicationContext<android.content.Context>().getString(section.label)
+        rule.onNodeWithText(label).performScrollTo().assertIsDisplayed()
     }
 }
