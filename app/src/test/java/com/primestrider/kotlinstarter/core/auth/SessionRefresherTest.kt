@@ -1,7 +1,9 @@
 package com.primestrider.kotlinstarter.core.auth
 
 import com.primestrider.kotlinstarter.testing.GatedPreferencesDataStore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
@@ -10,6 +12,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Test
 import retrofit2.HttpException
@@ -101,6 +104,21 @@ class SessionRefresherTest {
             val outcomes = List(3) { async { refresher.refresh("a1") } }.awaitAll()
             assertEquals(List(3) { RefreshOutcome.NetworkFailure }, outcomes)
             assertEquals(1, adapter.refreshCount)
+        }
+
+    @Test
+    fun cancelledScopeIsNetworkFailureAndDoesNotWedgeLaterRefreshes() =
+        runTest {
+            val repository = signedInRepo()
+            val adapter = FakeAuthAdapter()
+            val deadScope = CoroutineScope(Job().apply { cancel() })
+            val refresher = SessionRefresher(repository, adapter, deadScope)
+            assertEquals(RefreshOutcome.NetworkFailure, refresher.refresh("a1"))
+            assertFalse(refresher.hasAttemptInFlight)
+            assertEquals(RefreshOutcome.NetworkFailure, refresher.refresh("a1"))
+            assertFalse(refresher.hasAttemptInFlight)
+            assertEquals(0, adapter.refreshCount)
+            assertEquals(tokens, repository.session.value?.tokens)
         }
 
     @Test

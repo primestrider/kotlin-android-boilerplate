@@ -38,7 +38,9 @@ class TokenAuthenticator
         }
 
         // OkHttp calls this on its own background thread, so blocking here is expected.
-        // Only IOExceptions may escape: anything else would crash the OkHttp thread.
+        // Non-IO exceptions are handled (the refresher catches them; cancellation becomes an
+        // IOException), since anything else would crash the OkHttp thread. Errors such as
+        // NotImplementedError still propagate.
         private fun refresh(failedToken: String): RefreshOutcome =
             try {
                 runBlocking { refresher.get().refresh(failedToken) }

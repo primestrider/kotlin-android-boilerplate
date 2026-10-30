@@ -109,10 +109,12 @@ class AuthFlowTest {
             }
     }
 
-    /** Holds the refresh until [count] requests reached the server, so every caller is waiting on it. */
+    /**
+     * Holds the refresh until [count] requests reached the server. Each holds a dispatcher slot
+     * until its call finishes, so with [count] = the per-host limit every slot is taken.
+     */
     private suspend fun awaitRequests(count: Int) {
         while (server.requestCount < count) delay(10)
-        delay(300)
     }
 
     @Test
@@ -169,7 +171,7 @@ class AuthFlowTest {
     fun rejectedRefreshSignsOutAsExpiredWithOneAttempt() =
         runTest {
             val rejected = HttpException(Response.error<Any>(401, "".toResponseBody()))
-            val adapter = FakeAuthAdapter(failure = rejected, onRefresh = { awaitRequests(3) })
+            val adapter = FakeAuthAdapter(failure = rejected)
             val api = signedInApi(adapter)
             alwaysUnauthorized()
             val results = List(3) { async { safeApiCall(json) { api.item() } } }.awaitAll()
@@ -179,17 +181,17 @@ class AuthFlowTest {
             assertEquals(1, adapter.refreshCount)
         }
 
+    // How many attempts the callers share depends on timing here; SessionRefresherTest pins it to one.
     @Test
     fun networkFailureDuringRefreshKeepsSessionAndIsNetworkError() =
         runTest {
-            val adapter = FakeAuthAdapter(failure = IOException("offline"), onRefresh = { awaitRequests(3) })
+            val adapter = FakeAuthAdapter(failure = IOException("offline"))
             val api = signedInApi(adapter)
             alwaysUnauthorized()
             val results = List(3) { async { safeApiCall(json) { api.item() } } }.awaitAll()
             assertEquals(List(3) { ApiResult.Failure(ApiError(null, null, isNetworkError = true)) }, results)
             assertEquals(AuthTokens("a1", "r1"), repository.session.value?.tokens)
             assertNull(repository.signOutReason.value)
-            assertEquals(1, adapter.refreshCount)
         }
 
     @Test

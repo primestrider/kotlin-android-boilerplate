@@ -76,9 +76,11 @@ retry 401 again -> authenticator gives up (priorResponse != null), caller gets t
   started in `KotlinStarterApp.onCreate`. It shows one error message (`auth_session_expired`) and
   clears the reason. The reason is memory-only, so the message is not repeated on cold start.
 - **Cancellation:** the attempt runs in the application scope. Cancelling the call that started it
-  does not cancel a refresh that is already in flight.
-- **Never crashes a network thread:** the refresher catches every failure, including a storage error
-  while signing out. The session then stays as it was and the caller gets the 401. Only
-  `IOException`s escape the authenticator.
+  does not cancel a refresh that is already in flight. If the attempt itself is cancelled (the scope
+  is shutting down), waiting callers get `NetworkFailure` and the next 401 starts a new attempt.
+- **Never crashes a network thread on an exception:** the refresher catches every exception,
+  including a storage error while signing out (the session then stays as it was and the caller
+  gets the 401), and the authenticator turns cancellation into an `IOException`. `Error`s (for
+  example `NotImplementedError` from an unfinished adapter) are not caught and still propagate.
 - **Dependency cycle:** the client needs the authenticator, which needs the refresher, which needs
   the adapter. `TokenAuthenticator` takes a `Provider<SessionRefresher>` to break the cycle.
