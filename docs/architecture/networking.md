@@ -21,8 +21,6 @@ Keep the trailing slash; Retrofit requires it. A blank value counts as unset.
 
 A plain `http://` URL (for example `http://10.0.2.2:3000/` for a local server from the emulator) is blocked by Android unless you add a network security config or cleartext allowance for it.
 
-A plain `http://` URL (for example `http://10.0.2.2:3000/` for a local server from the emulator) is blocked by Android unless you add a network security config or `usesCleartextTraffic` for it.
-
 ## `@Anonymous`
 
 Annotate a Retrofit method with `@Anonymous` to send it without the bearer token (login, refresh).
