@@ -7,7 +7,6 @@ import mockwebserver3.MockWebServer
 import okhttp3.MediaType.Companion.toMediaType
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
@@ -79,7 +78,7 @@ class SafeApiCallTest {
         runTest {
             server.close()
             val result = safeApiCall(json) { api.item() }
-            assertTrue(result is ApiResult.Failure && result.error.isNetworkError)
+            assertEquals(ApiResult.Failure(ApiError(null, null, isNetworkError = true)), result)
         }
 
     @Test

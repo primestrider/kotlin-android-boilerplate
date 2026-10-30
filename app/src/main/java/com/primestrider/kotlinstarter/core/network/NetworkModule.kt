@@ -36,14 +36,14 @@ object NetworkModule {
             .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .apply {
-                if (BuildConfig.DEBUG) {
-                    addInterceptor(
-                        HttpLoggingInterceptor().apply {
-                            level = HttpLoggingInterceptor.Level.BODY
-                            redactHeader("Authorization")
-                        },
-                    )
-                }
+                addInterceptor(
+                    HttpLoggingInterceptor().apply {
+                        level = loggingLevel(BuildConfig.DEBUG)
+                        redactHeader("Authorization")
+                        redactHeader("Cookie")
+                        redactHeader("Set-Cookie")
+                    },
+                )
             }.build()
 
     @Provides
@@ -59,3 +59,7 @@ object NetworkModule {
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()
 }
+
+/** Headers only in debug: bodies carry passwords and tokens, so they are never logged. */
+internal fun loggingLevel(debug: Boolean): HttpLoggingInterceptor.Level =
+    if (debug) HttpLoggingInterceptor.Level.HEADERS else HttpLoggingInterceptor.Level.NONE

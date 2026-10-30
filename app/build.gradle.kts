@@ -20,7 +20,8 @@ val apiUrl: String =
                 ?.reader()
                 ?.use { load(it) }
         }.getProperty("api.url")
-        ?: System.getenv("API_URL")
+        ?.takeIf { it.isNotBlank() }
+        ?: System.getenv("API_URL")?.takeIf { it.isNotBlank() }
         ?: "https://dummyjson.com/"
 
 android {
@@ -35,7 +36,7 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
-        buildConfigField("String", "API_URL", "\"$apiUrl\"")
+        buildConfigField("String", "API_URL", "\"${apiUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
     }
 
     buildTypes {

@@ -6,8 +6,8 @@ HTTP lives in `core/network`. Features never build their own client.
 
 `NetworkModule` provides a singleton `Json` (`ignoreUnknownKeys`, `explicitNulls = false`), an
 `OkHttpClient` (30 s connect/read/write timeouts) and a `Retrofit` bound to `BuildConfig.API_URL`
-with the kotlinx-serialization converter. Debug builds log request and response bodies; the
-`Authorization` header is redacted. Auth interceptors are added to this client by the auth layer.
+with the kotlinx-serialization converter. Debug builds log request and response headers only, never bodies (login and refresh carry passwords and tokens);
+`Authorization`, `Cookie` and `Set-Cookie` are redacted. Auth interceptors are added to this client by the auth layer.
 
 ## Base URL
 
@@ -17,7 +17,11 @@ with the kotlinx-serialization converter. Debug builds log request and response 
 2. environment variable `API_URL`
 3. `https://dummyjson.com/`
 
-Keep the trailing slash; Retrofit requires it.
+Keep the trailing slash; Retrofit requires it. A blank value counts as unset.
+
+A plain `http://` URL (for example `http://10.0.2.2:3000/` for a local server from the emulator) is blocked by Android unless you add a network security config or cleartext allowance for it.
+
+A plain `http://` URL (for example `http://10.0.2.2:3000/` for a local server from the emulator) is blocked by Android unless you add a network security config or `usesCleartextTraffic` for it.
 
 ## `@Anonymous`
 
