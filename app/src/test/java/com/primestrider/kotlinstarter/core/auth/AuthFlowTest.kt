@@ -16,6 +16,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import mockwebserver3.Dispatcher
@@ -42,6 +43,8 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
 import java.io.IOException
+import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.CountDownLatch
 import javax.inject.Provider
 import kotlin.time.Duration.Companion.seconds
 
@@ -147,6 +150,64 @@ class AuthFlowTest {
             assertNull(server.takeRequest().headers["Authorization"])
             assertEquals(1, server.requestCount)
             assertEquals(0, adapter.refreshCount)
+        }
+
+    @Test
+    fun callWithSameHostButAnotherSchemeCarriesNoBearer() =
+        runTest {
+            val adapter = FakeAuthAdapter()
+            val httpsUrl =
+                server
+                    .url("/")
+                    .toString()
+                    .replaceFirst("http:", "https:")
+                    .toHttpUrl()
+            val api = signedInApi(adapter, apiUrl = httpsUrl)
+            server.enqueue(response(401))
+            val result = safeApiCall(json) { api.item() }
+            assertEquals(401, (result as ApiResult.Failure).error.status)
+            assertNull(server.takeRequest().headers["Authorization"])
+            assertEquals(0, adapter.refreshCount)
+        }
+
+    @Test
+    fun callWithSameHostButAnotherPortCarriesNoBearer() =
+        runTest {
+            val adapter = FakeAuthAdapter()
+            val otherPortUrl = "http://${server.hostName}:${server.port + 1}/".toHttpUrl()
+            val api = signedInApi(adapter, apiUrl = otherPortUrl)
+            server.enqueue(response(401))
+            val result = safeApiCall(json) { api.item() }
+            assertEquals(401, (result as ApiResult.Failure).error.status)
+            assertNull(server.takeRequest().headers["Authorization"])
+            assertEquals(0, adapter.refreshCount)
+        }
+
+    @Test
+    fun lateUnauthorizedOfPreviousSessionIsNeverRetriedWithTheNextUsersBearer() =
+        runTest {
+            val adapter = FakeAuthAdapter()
+            val api = signedInApi(adapter)
+            val release = CountDownLatch(1)
+            val bearers = CopyOnWriteArrayList<String?>()
+            server.dispatcher =
+                object : Dispatcher() {
+                    override fun dispatch(request: RecordedRequest): MockResponse {
+                        bearers += request.headers["Authorization"]
+                        if (bearers.size == 1) release.await()
+                        return response(401)
+                    }
+                }
+            val call = async(Dispatchers.Default) { safeApiCall(json) { api.item() } }
+            withContext(Dispatchers.Default) { awaitRequests(1) }
+            repository.signOut(SignOutReason.USER)
+            repository.signIn(Session(AuthUser(2, "bob", "b@x.com", "Bob", "Smith"), AuthTokens("b1", "r2")))
+            release.countDown()
+            val result = call.await()
+            assertEquals(401, (result as ApiResult.Failure).error.status)
+            assertEquals(listOf<String?>("Bearer a1"), bearers.toList())
+            assertEquals(0, adapter.refreshCount)
+            assertEquals(AuthTokens("b1", "r2"), repository.session.value?.tokens)
         }
 
     @Test

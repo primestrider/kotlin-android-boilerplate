@@ -7,6 +7,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.job
 import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
@@ -35,7 +36,10 @@ sealed interface RefreshOutcome {
  *
  * An attempt only ever touches the session it started for (matched by refresh token): if the user signed
  * out or another session signed in meanwhile, its new tokens are dropped, a rejection signs no one out,
- * and the outcome is [RefreshOutcome.SignedOut].
+ * and the outcome is [RefreshOutcome.SignedOut]. Likewise a 401 joins only an attempt started for the current
+ * session, and a failed token other than the current one is retried with the current one only when the
+ * current session itself replaced it ([SessionRepository.isSupersededToken]); a token of a previous session
+ * gets [RefreshOutcome.SignedOut], so a late 401 is never replayed under another user's bearer.
  *
  * The attempt runs in the application scope, so cancelling the call that triggered it does not
  * cancel an in-flight refresh.
@@ -49,7 +53,7 @@ class SessionRefresher
         @ApplicationScope private val scope: CoroutineScope,
     ) {
         private val lock = Any()
-        private var inFlight: Deferred<RefreshOutcome>? = null
+        private var inFlight: InFlight? = null
 
         /** For tests: whether an attempt is currently registered for callers to join. */
         internal val hasAttemptInFlight: Boolean get() = synchronized(lock) { inFlight != null }
@@ -58,9 +62,14 @@ class SessionRefresher
             val attempt =
                 synchronized(lock) {
                     val current = repository.session.value?.tokens ?: return RefreshOutcome.SignedOut
-                    // Someone already refreshed since the failed request was sent.
-                    if (current.accessToken != failedAccessToken) return RefreshOutcome.Refreshed(current.accessToken)
-                    inFlight ?: startAttempt(current.refreshToken)
+                    if (current.accessToken != failedAccessToken) {
+                        // Retry with the stored token only when this session itself refreshed since the failed
+                        // request was sent. A token of a previous session must never be retried with this one's.
+                        val refreshedSince = failedAccessToken != null && repository.isSupersededToken(failedAccessToken)
+                        return if (refreshedSince) RefreshOutcome.Refreshed(current.accessToken) else RefreshOutcome.SignedOut
+                    }
+                    // Join only an attempt for this session; one left over from a previous session is not ours.
+                    inFlight?.takeIf { it.refreshToken == current.refreshToken }?.deferred ?: startAttempt(current.refreshToken)
                 }
             return try {
                 attempt.await()
@@ -76,18 +85,26 @@ class SessionRefresher
         private fun startAttempt(refreshToken: String): Deferred<RefreshOutcome> {
             val deferred =
                 scope.async {
+                    val self = coroutineContext.job
                     try {
                         attempt(refreshToken)
                     } finally {
                         // Cleared before the result is published, so no caller joins a finished attempt.
-                        synchronized(lock) { inFlight = null }
+                        // Only this attempt: a newer one (for another session) may have replaced it.
+                        synchronized(lock) { if (inFlight?.deferred === self) inFlight = null }
                     }
                 }
-            inFlight = deferred
+            inFlight = InFlight(refreshToken, deferred)
             // Also covers an attempt whose body never ran (scope already cancelled).
-            deferred.invokeOnCompletion { synchronized(lock) { if (inFlight === deferred) inFlight = null } }
+            deferred.invokeOnCompletion { synchronized(lock) { if (inFlight?.deferred === deferred) inFlight = null } }
             return deferred
         }
+
+        /** An attempt and the refresh token (so the session) it was started for. */
+        private class InFlight(
+            val refreshToken: String,
+            val deferred: Deferred<RefreshOutcome>,
+        )
 
         @Suppress("TooGenericExceptionCaught", "SwallowedException")
         private suspend fun attempt(refreshToken: String): RefreshOutcome {

@@ -16,6 +16,7 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import retrofit2.HttpException
 import retrofit2.Response
@@ -40,13 +41,47 @@ class SessionRefresherTest {
         repo(store).also { it.signIn(Session(user, tokens)) }
 
     @Test
-    fun staleFailedTokenReturnsCurrentTokenWithoutCallingAdapter() =
+    fun tokenSupersededInThisSessionReturnsCurrentTokenWithoutCallingAdapter() =
         runTest {
-            val repository = repo()
-            repository.signIn(Session(user, AuthTokens("a2", "r2")))
+            val repository = signedInRepo()
+            assertTrue(repository.updateTokens("r1", AuthTokens("a2", "r2")))
             val adapter = FakeAuthAdapter()
             assertEquals(RefreshOutcome.Refreshed("a2"), refresher(repository, adapter).refresh("a1"))
             assertEquals(0, adapter.refreshCount)
+        }
+
+    @Test
+    fun tokenOfAPreviousSessionIsSignedOutAndNeverRetriedWithTheNextUsersToken() =
+        runTest {
+            val repository = signedInRepo()
+            repository.signOut(SignOutReason.USER)
+            repository.signIn(Session(nextUser.user, AuthTokens("b1", "r2")))
+            val adapter = FakeAuthAdapter()
+            assertEquals(RefreshOutcome.SignedOut, refresher(repository, adapter).refresh("a1"))
+            assertEquals(0, adapter.refreshCount)
+            assertEquals(AuthTokens("b1", "r2"), repository.session.value?.tokens)
+            assertNull(repository.signOutReason.value)
+        }
+
+    @Test
+    fun nextUsersUnauthorizedStartsItsOwnAttemptInsteadOfJoiningThePreviousSessions() =
+        runTest {
+            val repository = signedInRepo()
+            val gate = CompletableDeferred<Unit>()
+            val adapter = FakeAuthAdapter(next = AuthTokens("b2", "r3"), onRefresh = { gate.await() })
+            val refresher = refresher(repository, adapter)
+            val first = async { refresher.refresh("a1") }
+            runCurrent()
+            repository.signOut(SignOutReason.USER)
+            repository.signIn(Session(nextUser.user, AuthTokens("b1", "r2")))
+            val second = async { refresher.refresh("b1") }
+            runCurrent()
+            assertEquals(2, adapter.refreshCount)
+            assertEquals("r2", adapter.lastRefreshToken)
+            gate.complete(Unit)
+            assertEquals(RefreshOutcome.SignedOut, first.await())
+            assertEquals(RefreshOutcome.Refreshed("b2"), second.await())
+            assertEquals(AuthTokens("b2", "r3"), repository.session.value?.tokens)
         }
 
     @Test

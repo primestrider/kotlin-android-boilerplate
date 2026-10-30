@@ -53,6 +53,13 @@ class SessionRepository
 
         private val lock = Mutex()
 
+        /**
+         * Access tokens the current session has replaced, tagged with the session they belong to so a reader
+         * never mixes one session with another session's tokens. Memory only. Written under [lock], before
+         * [_session], so a reader that sees a session also sees its set.
+         */
+        @Volatile private var superseded: SupersededTokens? = null
+
         init {
             scope.launch {
                 try {
@@ -68,10 +75,22 @@ class SessionRepository
 
         fun accessToken(): String? = _session.value?.tokens?.accessToken
 
+        /**
+         * True when [token] is an access token the current session itself replaced by a refresh. False for
+         * the current token, for a token of a previous session, and while signed out.
+         */
+        internal fun isSupersededToken(token: String): Boolean {
+            // Session first: seeing a session guarantees seeing the set written before it.
+            val current = _session.value ?: return false
+            val replaced = superseded ?: return false
+            return replaced.session === current && token in replaced.tokens
+        }
+
         suspend fun signIn(session: Session) {
             lock.withLock {
                 _signOutReason.value = null
                 write(session)
+                superseded = null
                 _session.value = session
             }
         }
@@ -90,6 +109,8 @@ class SessionRepository
                 if (current == null || current.tokens.refreshToken != expectedRefreshToken) return@withLock false
                 val updated = current.copy(tokens = tokens)
                 write(updated)
+                val earlier = superseded?.takeIf { it.session === current }?.tokens.orEmpty()
+                superseded = SupersededTokens(updated, earlier + current.tokens.accessToken)
                 _session.value = updated
                 true
             }
@@ -120,6 +141,7 @@ class SessionRepository
         /** Must be called holding [lock]. Storage first: if it fails, memory and disk both still say signed in. */
         private suspend fun clear(reason: SignOutReason) {
             dataStore.edit { it.remove(KEY) }
+            superseded = null
             _session.value = null
             _signOutReason.value = reason
         }
@@ -165,6 +187,12 @@ class SessionRepository
             val KEY = stringPreferencesKey("auth.session")
         }
     }
+
+/** The access tokens [session] has replaced; only meaningful while [session] is the current one. */
+private class SupersededTokens(
+    val session: Session,
+    val tokens: Set<String>,
+)
 
 /**
  * True when stored session data can never be decrypted or parsed: a failed authentication tag, a key that

@@ -56,6 +56,27 @@ class SessionRepositoryTest {
         }
 
     @Test
+    fun replacedAccessTokensAreSupersededOnlyWithinTheirSession() =
+        runTest {
+            val repository = repo(InMemoryPreferencesDataStore())
+            advanceUntilIdle()
+            repository.signIn(sample)
+            assertTrue(repository.updateTokens("refresh", AuthTokens("a2", "r2")))
+            assertTrue(repository.updateTokens("r2", AuthTokens("a3", "r3")))
+            assertTrue(repository.isSupersededToken("access"))
+            assertTrue(repository.isSupersededToken("a2"))
+            assertFalse(repository.isSupersededToken("a3"))
+            assertFalse(repository.updateTokens("stale", AuthTokens("x", "y")))
+            assertFalse(repository.isSupersededToken("a3"))
+
+            repository.signIn(sample)
+            assertFalse(repository.isSupersededToken("a2"))
+            assertTrue(repository.updateTokens("refresh", AuthTokens("a2", "r2")))
+            repository.signOut(SignOutReason.USER)
+            assertFalse(repository.isSupersededToken("access"))
+        }
+
+    @Test
     fun signInStoresEncryptedValue() =
         runTest {
             val store = InMemoryPreferencesDataStore()

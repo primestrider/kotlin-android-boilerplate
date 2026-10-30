@@ -9,8 +9,9 @@ import okhttp3.Response
 import javax.inject.Inject
 
 /**
- * Adds `Authorization: Bearer <accessToken>` to every request to the API host ([apiUrl]) except
- * `@Anonymous` ones. Requests to any other host (an image CDN, a third-party API) never get the token.
+ * Adds `Authorization: Bearer <accessToken>` to every request to the API origin ([apiUrl]: scheme, host, port) except
+ * `@Anonymous` ones. Requests to any other origin (an image CDN, a third-party API) never get the token,
+ * nor does the API host over another scheme or port.
  */
 class AuthInterceptor
     @Inject
@@ -26,8 +27,8 @@ class AuthInterceptor
         }
     }
 
-/** True when this request goes to the host of [apiUrl], the only host the bearer token is meant for. */
-internal fun Request.isForApi(apiUrl: HttpUrl): Boolean = url.host == apiUrl.host
+/** True when this request goes to the origin (scheme, host and port) of [apiUrl], the only one the bearer is meant for. */
+internal fun Request.isForApi(apiUrl: HttpUrl): Boolean = url.scheme == apiUrl.scheme && url.host == apiUrl.host && url.port == apiUrl.port
 
 internal const val AUTHORIZATION = "Authorization"
 private const val BEARER_PREFIX = "Bearer "

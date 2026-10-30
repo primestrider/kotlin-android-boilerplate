@@ -38,8 +38,9 @@ authenticator retries; `Authorization` is redacted.
 
 - **App client** (`OkHttpClient`, `Retrofit`): `AuthInterceptor` adds
   `Authorization: Bearer <accessToken>` while signed in, and `TokenAuthenticator` handles 401s.
-  Both act only on requests to the host of `BuildConfig.API_URL` (`@ApiBaseUrl`); a request to any
-  other host (an image CDN, a third-party API) never carries the token or triggers a refresh.
+  Both act only on requests to the origin of `BuildConfig.API_URL` (`@ApiBaseUrl`): same scheme,
+  host and port. A request to any other host (an image CDN, a third-party API), or to the API host
+  over another scheme or port, never carries the token or triggers a refresh.
   A Retrofit method annotated `@Anonymous` (`core/network`) is sent without the bearer. Use it
   for sign-in and any public endpoint.
 - **Refresh client** (`@RefreshClient OkHttpClient`, `@RefreshRetrofit Retrofit`): its own
@@ -60,11 +61,17 @@ rejected.
 request --AuthInterceptor (Bearer a1)--> server
         <-- 401 --
 TokenAuthenticator
-  gives up (401 reaches the caller) if: another host, @Anonymous, no bearer, or this was already the retry
+  gives up (401 reaches the caller) if: another origin, @Anonymous, no bearer, or this was already the retry
   else SessionRefresher.refresh(failed token "a1")
         signed out            -> SignedOut: give up, caller gets the 401
-        stored token != "a1"  -> someone already refreshed: Refreshed(stored), retry with it
+        stored token != "a1", -> this session already refreshed: Refreshed(stored), retry with it
+          "a1" superseded by
+          this session
+        stored token != "a1", -> "a1" belongs to a previous session: SignedOut, adapter not called,
+          not superseded         current user untouched, caller gets the 401
         refresh in flight     -> await that same attempt and share its outcome
+          for this session       (an attempt left over from a previous session is never joined:
+                                 a new attempt starts instead)
         else adapter.refresh(refreshToken "r1") over the refresh client
              tokens           -> updateTokens("r1", tokens) -> Refreshed("a2"): retry once with "Bearer a2"
                                  (session no longer "r1": SignedOut, tokens dropped)
@@ -74,9 +81,16 @@ TokenAuthenticator
 retry 401 again -> authenticator gives up (priorResponse != null), caller gets the 401
 ```
 
-- **Single flight:** the refresher keeps one in-flight `Deferred`. All concurrent 401s await that
-  attempt and get the same outcome, so a flaky network costs one refresh attempt, not one per call.
-  A call whose failed token is already outdated retries with the stored token without waiting.
+- **Single flight:** the refresher keeps one in-flight `Deferred`, tagged with the refresh token it
+  started for. All concurrent 401s of the current session await that attempt and get the same
+  outcome, so a flaky network costs one refresh attempt, not one per call. A 401 joins only an
+  attempt started for the current session's refresh token; otherwise it starts its own.
+- **Outdated tokens:** `SessionRepository` remembers, in memory only, the access tokens the current
+  session replaced through `updateTokens`; `signIn` and every sign-out forget them
+  (`isSupersededToken`). A call whose failed token was superseded within the current session
+  retries with the stored token without waiting. A failed token that is neither current nor
+  superseded belongs to a previous session: it gets `SignedOut` without calling the adapter or
+  signing out the current user, so a late 401 of user A is never replayed with user B's bearer.
 - **Network failure is not expiry:** if the refresh cannot reach the server, or the server answers
   5xx or 429, the user stays signed in and the call reports a network error. A rejected refresh
   (any other HTTP error) or any other failure signs out.
@@ -85,7 +99,9 @@ retry 401 again -> authenticator gives up (priorResponse != null), caller gets t
   reason)` compare it with the current session under the repository mutex and do nothing when it
   changed. So if the user signs out (or another user signs in) while a refresh is in flight, the
   late tokens are dropped, a late rejection signs no one out and shows no expiry message, and
-  waiting calls get `SignedOut` instead of a retry with someone else's bearer.
+  calls waiting on that attempt get `SignedOut` instead of a retry with someone else's bearer. A
+  401 of the old session that arrives after the switch is covered by the outdated-token rule above
+  (`SignedOut`), and a 401 of the new session starts its own attempt rather than joining the old one.
 - **Expiry:** signing out with `SignOutReason.EXPIRED` triggers `SessionExpiryAnnouncer`, which is
   started in `KotlinStarterApp.onCreate`. It shows one error message (`auth_session_expired`) and
   clears the reason. The reason is memory-only, so the message is not repeated on cold start.

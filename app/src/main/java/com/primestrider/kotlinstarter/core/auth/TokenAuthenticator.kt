@@ -15,7 +15,7 @@ import javax.inject.Provider
 
 /**
  * On a 401 of an authenticated request, refreshes once (shared with concurrent 401s) and retries
- * once with the new token. Gives up when the request is anonymous, went to a host other than [apiUrl],
+ * once with the new token. Gives up when the request is anonymous, went to an origin (scheme, host, port) other than [apiUrl],
  * carried no bearer, or was already the retry. A refresh that could not reach the server fails the
  * call with an [IOException], so the caller sees a network error rather than the 401.
  * [Provider] breaks the client -> refresher -> adapter -> client dependency cycle.
