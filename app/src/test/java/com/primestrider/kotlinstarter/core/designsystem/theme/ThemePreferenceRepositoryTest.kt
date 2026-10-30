@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assume.assumeFalse
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -68,11 +69,16 @@ class ThemePreferenceRepositoryTest {
         }
 
     @Test
-    fun corruptedFileEmitsSystem() =
+    fun corruptedFileRecoversWithDefaults() =
         runTest {
+            // DataStore replaces files via File.renameTo, which cannot overwrite on Windows, so the
+            // corruption handler's rewrite fails there regardless of configuration.
+            assumeFalse(System.getProperty("os.name").orEmpty().startsWith("Windows"))
             val file = File(tempFolder.root, "corrupt.preferences_pb")
             file.writeBytes(byteArrayOf(0x7f, 0x01, 0x02, 0x03, 0x55, 0x66, 0x77, 0x13))
             val store = createPreferencesDataStore(backgroundScope) { file }
+            // Read the store directly: the repository's IOException catch would mask a missing handler.
+            assertEquals(null, store.data.first()[StorageKeys.themeMode])
             assertEquals(ThemeMode.SYSTEM, ThemePreferenceRepository(store).themeMode.first())
         }
 }
