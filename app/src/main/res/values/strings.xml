@@ -287,4 +287,18 @@
     <string name="components_info_address">Address</string>
     <string name="component_avatar_more">%1$d more</string>
     <string name="auth_session_expired">Your session has expired. Please sign in again.</string>
+    <string name="auth_sign_in_title">Sign in</string>
+    <string name="auth_sign_in_subtitle">Retrofit, OkHttp and an encrypted token in DataStore</string>
+    <string name="auth_demo_title">Demo account</string>
+    <string name="auth_demo_description">DummyJSON accepts these credentials.</string>
+    <string name="auth_demo_fill">Fill the form</string>
+    <string name="auth_field_username">Username</string>
+    <string name="auth_field_password">Password</string>
+    <string name="auth_validation_username_min">Username must be at least 3 characters</string>
+    <string name="auth_validation_password_min">Password must be at least 6 characters</string>
+    <string name="auth_short_lived">Expire tokens after 1 minute (to try the refresh flow)</string>
+    <string name="auth_error_title">Could not sign in</string>
+    <string name="auth_error_network">Cannot reach the server. Check your connection.</string>
+    <string name="auth_error_generic">Something went wrong. Please try again.</string>
+    <string name="auth_signed_in">Welcome back</string>
 </resources>

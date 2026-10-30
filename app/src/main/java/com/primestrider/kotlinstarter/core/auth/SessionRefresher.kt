@@ -28,7 +28,8 @@ sealed interface RefreshOutcome {
  * Single-flight token refresh: concurrent callers await the same attempt and share its outcome.
  * An [IOException] from the adapter is a [RefreshOutcome.NetworkFailure] and keeps the session;
  * any other failure signs out with [SignOutReason.EXPIRED]. A cancelled attempt is also a
- * [RefreshOutcome.NetworkFailure]. Catches every exception; only the caller's own cancellation propagates.
+ * [RefreshOutcome.NetworkFailure]. Catches every [Exception]; only the caller's own cancellation propagates.
+ * [Error]s (e.g. `NotImplementedError` from an unfinished adapter) are not caught and still propagate.
  *
  * The attempt runs in the application scope, so cancelling the call that triggered it does not
  * cancel an in-flight refresh.

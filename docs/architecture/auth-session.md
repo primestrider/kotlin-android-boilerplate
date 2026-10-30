@@ -82,5 +82,8 @@ retry 401 again -> authenticator gives up (priorResponse != null), caller gets t
   including a storage error while signing out (the session then stays as it was and the caller
   gets the 401), and the authenticator turns cancellation into an `IOException`. `Error`s (for
   example `NotImplementedError` from an unfinished adapter) are not caught and still propagate.
-- **Dependency cycle:** the client needs the authenticator, which needs the refresher, which needs
-  the adapter. `TokenAuthenticator` takes a `Provider<SessionRefresher>` to break the cycle.
+- **Dependency cycle:** refresh now runs on `@RefreshRetrofit`, whose client has no authenticator, so
+  the client -> authenticator -> refresher -> adapter chain no longer exists for refresh. It still
+  exists for sign-in: the adapter's login API is built on the app `Retrofit`, whose client needs the
+  authenticator, which needs the refresher, which needs the adapter. `TokenAuthenticator` therefore
+  keeps taking a `Provider<SessionRefresher>` to break that cycle.

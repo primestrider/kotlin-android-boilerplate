@@ -47,3 +47,6 @@ data object ComponentsHomeRoute
 
 @Serializable
 data object FeedbackRoute
+
+@Serializable
+data object SignInRoute

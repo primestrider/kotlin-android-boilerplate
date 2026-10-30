@@ -287,4 +287,18 @@
     <string name="components_info_address">Alamat</string>
     <string name="component_avatar_more">%1$d lainnya</string>
     <string name="auth_session_expired">Sesi kamu sudah berakhir. Silakan masuk lagi.</string>
+    <string name="auth_sign_in_title">Masuk</string>
+    <string name="auth_sign_in_subtitle">Retrofit, OkHttp, dan token terenkripsi di DataStore</string>
+    <string name="auth_demo_title">Akun demo</string>
+    <string name="auth_demo_description">DummyJSON menerima kredensial ini.</string>
+    <string name="auth_demo_fill">Isi formulir</string>
+    <string name="auth_field_username">Nama pengguna</string>
+    <string name="auth_field_password">Kata sandi</string>
+    <string name="auth_validation_username_min">Nama pengguna minimal 3 karakter</string>
+    <string name="auth_validation_password_min">Kata sandi minimal 6 karakter</string>
+    <string name="auth_short_lived">Token kedaluwarsa setelah 1 menit (untuk mencoba alur refresh)</string>
+    <string name="auth_error_title">Gagal masuk</string>
+    <string name="auth_error_network">Tidak bisa terhubung ke server. Periksa koneksimu.</string>
+    <string name="auth_error_generic">Terjadi kesalahan. Silakan coba lagi.</string>
+    <string name="auth_signed_in">Selamat datang kembali</string>
 </resources>

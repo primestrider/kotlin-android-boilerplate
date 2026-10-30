@@ -94,7 +94,7 @@ fun MainShell(navController: NavHostController = rememberNavController()) {
         ) {
             homeGraph(navController)
             componentsGraph(navController)
-            profileGraph()
+            profileGraph(navController)
         }
         // Composed after the NavHost so this callback wins over the NavHost's own back handling: back at
         // another tab's root switches to Home with Home's saved stack, instead of a plain pop that would

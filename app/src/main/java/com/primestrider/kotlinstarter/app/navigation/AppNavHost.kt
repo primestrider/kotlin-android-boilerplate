@@ -1,5 +1,6 @@
 package com.primestrider.kotlinstarter.app.navigation
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -21,10 +22,13 @@ import com.primestrider.kotlinstarter.feature.example.InputsRoute
 import com.primestrider.kotlinstarter.feature.example.LayoutRoute
 import com.primestrider.kotlinstarter.feature.example.OverlaysRoute
 import com.primestrider.kotlinstarter.feature.example.SettingsRoute
+import com.primestrider.kotlinstarter.feature.example.SignInRoute
 import com.primestrider.kotlinstarter.feature.example.SizingRoute
 import com.primestrider.kotlinstarter.feature.example.SpacingRoute
 import com.primestrider.kotlinstarter.feature.example.ThemeRoute
 import com.primestrider.kotlinstarter.feature.example.TypographyRoute
+import com.primestrider.kotlinstarter.feature.example.auth.SignInScreen
+import com.primestrider.kotlinstarter.feature.example.auth.SignInViewModel
 import com.primestrider.kotlinstarter.feature.example.componentEntries
 import com.primestrider.kotlinstarter.feature.example.components.ActionsScreen
 import com.primestrider.kotlinstarter.feature.example.components.DisplayScreen
@@ -111,7 +115,7 @@ fun NavGraphBuilder.componentsGraph(navController: NavHostController) {
 }
 
 /** Profile tab: Settings today; the signed-in account joins it with the auth plan. */
-fun NavGraphBuilder.profileGraph() {
+fun NavGraphBuilder.profileGraph(navController: NavHostController) {
     navigation<ProfileGraph>(startDestination = SettingsRoute) {
         composable<SettingsRoute> {
             val viewModel: SettingsViewModel = hiltViewModel()
@@ -125,6 +129,23 @@ fun NavGraphBuilder.profileGraph() {
                 onThemeModeChange = viewModel::setThemeMode,
                 onLanguageChange = viewModel::setLanguage,
                 onBack = null,
+            )
+        }
+        composable<SignInRoute> {
+            val viewModel: SignInViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            // Task 5 navigates to the account page here; until then sign-in just returns.
+            LaunchedEffect(viewModel) {
+                viewModel.signedIn.collect { navController.popBackStack() }
+            }
+            SignInScreen(
+                state = state,
+                onUsernameChange = viewModel::onUsernameChange,
+                onPasswordChange = viewModel::onPasswordChange,
+                onShortLivedChange = viewModel::onShortLivedChange,
+                onFillDemo = viewModel::fillDemo,
+                onSubmit = viewModel::submit,
+                onBack = { navController.popBackStack() },
             )
         }
     }
