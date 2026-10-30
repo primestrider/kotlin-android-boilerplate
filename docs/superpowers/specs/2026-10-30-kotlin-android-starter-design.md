@@ -32,7 +32,7 @@ Prinsip utama: **paritas fitur dengan boilerplate RN**, diterjemahkan ke cara id
 ## 3. Constraints
 
 - Developer memakai **Windows**; semua harus bisa di-build dan dites di Windows (Gradle wrapper, tanpa skrip khusus macOS).
-- Proyek yang ada: AGP 8.13.2, Gradle 8.13, Kotlin 2.0.21, compileSdk/targetSdk 36, **minSdk 24**, template Views. Template Views diganti Compose. Versi boleh dinaikkan seperlunya **[call Claude]**; minSdk dipertahankan 24, fitur yang butuh API lebih tinggi wajib punya fallback yang ditampilkan jelas di layar **[call Claude]**.
+- Proyek yang ada: AGP 8.13.2, Gradle 8.13, Kotlin 2.0.21, compileSdk/targetSdk 36, **minSdk 24**, template Views. Template Views diganti Compose. Toolchain dinaikkan ke versi stabil terbaru per 2026-10-30 (permintaan user): **AGP 9.4.0, Gradle 9.6.0, Kotlin 2.4.21, compileSdk/targetSdk 37, JDK 17+ (di mesin user: JDK 21 via JBR Android Studio; platform android-37.0 dan build-tools 37.0.0 sudah terpasang)**. AGP 9 sudah punya Kotlin bawaan, jadi plugin `org.jetbrains.kotlin.android` dan blok `kotlinOptions` dihapus (konfigurasi lewat `kotlin { compilerOptions { … } }`); plugin Compose compiler & KSP mengikuti versi Kotlin. Library lain juga memakai versi stabil terbaru saat implementasi; minSdk dipertahankan 24, fitur yang butuh API lebih tinggi wajib punya fallback yang ditampilkan jelas di layar **[call Claude]**.
 - Semua dependensi lewat version catalog `gradle/libs.versions.toml`.
 
 ## 4. Stack (padanan RN → Kotlin)
@@ -49,7 +49,7 @@ Prinsip utama: **paritas fitur dengan boilerplate RN**, diterjemahkan ke cara id
 | Form/validasi | React Hook Form + Zod | State form di ViewModel + fungsi validator murni yang bisa dites **[call Claude]** |
 | i18n | i18next (en, id) | String resources `values/` + `values-in/`, ganti bahasa per-app via `AppCompatDelegate.setApplicationLocales` **[call Claude]** |
 | DB lokal | expo-sqlite | Room |
-| DI | (tidak ada) | Hilt **[call Claude]** |
+| DI | (tidak ada) | Hilt (dikonfirmasi user) |
 | Gambar remote | expo-image | Coil 3 **[call Claude]** |
 | Tes | Jest + Testing Library | JUnit + Turbine/coroutines-test untuk logika; Compose UI test dijalankan via Robolectric agar jalan di CI tanpa emulator **[call Claude]** |
 
