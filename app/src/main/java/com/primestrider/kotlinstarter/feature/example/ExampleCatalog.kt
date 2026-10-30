@@ -34,6 +34,7 @@ val exampleSections: List<ExampleSection> =
             entries =
                 listOf(
                     ExampleEntry(R.string.products_title, R.string.products_subtitle, ProductsRoute),
+                    ExampleEntry(R.string.todos_title, R.string.todos_subtitle, TodosRoute),
                     ExampleEntry(R.string.example_form_title, R.string.example_form_subtitle, FormExampleRoute),
                 ),
         ),

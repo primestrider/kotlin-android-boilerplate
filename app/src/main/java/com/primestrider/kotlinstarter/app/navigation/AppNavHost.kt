@@ -31,6 +31,7 @@ import com.primestrider.kotlinstarter.feature.example.SignInRoute
 import com.primestrider.kotlinstarter.feature.example.SizingRoute
 import com.primestrider.kotlinstarter.feature.example.SpacingRoute
 import com.primestrider.kotlinstarter.feature.example.ThemeRoute
+import com.primestrider.kotlinstarter.feature.example.TodosRoute
 import com.primestrider.kotlinstarter.feature.example.TypographyRoute
 import com.primestrider.kotlinstarter.feature.example.auth.AccountScreen
 import com.primestrider.kotlinstarter.feature.example.auth.AccountViewModel
@@ -60,6 +61,8 @@ import com.primestrider.kotlinstarter.feature.example.styling.SizingScreen
 import com.primestrider.kotlinstarter.feature.example.styling.SpacingScreen
 import com.primestrider.kotlinstarter.feature.example.styling.ThemeScreen
 import com.primestrider.kotlinstarter.feature.example.styling.TypographyScreen
+import com.primestrider.kotlinstarter.feature.example.todos.TodosScreen
+import com.primestrider.kotlinstarter.feature.example.todos.TodosViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -97,6 +100,20 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
             val viewModel: ProductDetailViewModel = hiltViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()
             ProductDetailScreen(state = state, onRetry = viewModel::retry, onAddToCart = viewModel::addToCart, onBack = back)
+        }
+        composable<TodosRoute> {
+            val viewModel: TodosViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            TodosScreen(
+                state = state,
+                onInputChange = viewModel::onInputChange,
+                onAdd = viewModel::add,
+                onToggle = viewModel::toggle,
+                onRemove = viewModel::remove,
+                onClearCompleted = viewModel::clearCompleted,
+                onFilterChange = viewModel::setFilter,
+                onBack = back,
+            )
         }
         composable<FormExampleRoute> {
             val viewModel: FormExampleViewModel = hiltViewModel()

@@ -65,3 +65,6 @@ data object ProductsRoute
 data class ProductDetailRoute(
     val id: Long,
 )
+
+@Serializable
+data object TodosRoute
