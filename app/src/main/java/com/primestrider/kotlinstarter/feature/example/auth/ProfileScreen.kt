@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.auth.Session
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
@@ -42,7 +43,7 @@ fun ProfileScreen(
                 )
             } else {
                 ListItem(
-                    modifier = Modifier.clickable(onClick = onOpenAccount),
+                    modifier = Modifier.clickable(role = Role.Button, onClick = onOpenAccount),
                     leadingContent = {
                         Avatar(
                             session.user.fullName,
@@ -57,7 +58,7 @@ fun ProfileScreen(
             }
             HorizontalDivider()
             ListItem(
-                modifier = Modifier.clickable(onClick = onOpenSettings),
+                modifier = Modifier.clickable(role = Role.Button, onClick = onOpenSettings),
                 headlineContent = { Text(stringResource(R.string.settings_title)) },
             )
         }

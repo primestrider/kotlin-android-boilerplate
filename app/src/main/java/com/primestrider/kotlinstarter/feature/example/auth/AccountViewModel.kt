@@ -14,9 +14,12 @@ import com.primestrider.kotlinstarter.core.network.safeApiCall
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
@@ -52,6 +55,16 @@ class AccountViewModel
         private val _profile = MutableStateFlow<ProfileLoad>(ProfileLoad.Idle)
         val profile: StateFlow<ProfileLoad> = _profile.asStateFlow()
 
+        private val _signingOut = MutableStateFlow(false)
+
+        /** True once the user asked to sign out; lets a protected route tell that from a session lost by expiry. */
+        val signingOut: StateFlow<Boolean> = _signingOut.asStateFlow()
+
+        private val _signedOut = Channel<Unit>(Channel.BUFFERED)
+
+        /** Emits once after a successful user sign-out. */
+        val signedOut: Flow<Unit> = _signedOut.receiveAsFlow()
+
         fun loadProfile() {
             if (_profile.value == ProfileLoad.Loading) return
             _profile.value = ProfileLoad.Loading
@@ -71,11 +84,14 @@ class AccountViewModel
                 // Leaving the screen mid-write must not leave the session half removed.
                 withContext(NonCancellable) {
                     try {
+                        _signingOut.value = true
                         repository.signOut(SignOutReason.USER)
                         messenger.info(UiText.Resource(R.string.auth_signed_out))
+                        _signedOut.send(Unit)
                     } catch (e: CancellationException) {
                         throw e
                     } catch (e: Exception) {
+                        _signingOut.value = false
                         messenger.error(UiText.Resource(R.string.auth_sign_out_failed))
                     }
                 }

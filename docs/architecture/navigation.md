@@ -46,16 +46,23 @@ Wrap protected destinations in a nested graph, e.g. `navigation<ProtectedGraph>(
 
 `ProfileRoute` (start) reads the session and shows either a sign-in prompt or the signed-in user's row, plus a Settings row. From it: `SignInRoute`, `AccountRoute` (protected) and `SettingsRoute`.
 
-To protect a route, collect the session in its `composable<...>` block and redirect when it is null:
+To protect a route, collect the session in its `composable<...>` block and redirect when it is lost. A deliberate sign-out is told apart from a lost session by the ViewModel (`signingOut` flag plus a one-shot `signedOut` event):
 
 ```kotlin
 composable<AccountRoute> {
     val session by viewModel.session.collectAsStateWithLifecycle()
-    LaunchedEffect(session == null) {
-        if (session == null) navController.navigate(SignInRoute) { popUpTo<AccountRoute> { inclusive = true } }
+    val signingOut by viewModel.signingOut.collectAsStateWithLifecycle()
+    LaunchedEffect(viewModel) {
+        viewModel.signedOut.collect { navController.popBackStack(ProfileRoute, inclusive = false) }
+    }
+    LaunchedEffect(session == null, signingOut) {
+        if (session == null && !signingOut) navController.navigate(SignInRoute) { popUpTo<AccountRoute> { inclusive = true } }
     }
     session?.let { AccountScreen(session = it, ...) }
 }
 ```
 
-The guard reacts to the session flow, so it covers a user sign-out and a token expiry alike, and the protected page is replaced (not stacked), so back from sign-in never returns to it. After a successful sign-in, `SignInRoute` navigates to `AccountRoute` with `popUpTo<SignInRoute> { inclusive = true }`.
+- **Expiry (or any session lost without the user asking):** Account is replaced by sign-in (popped inclusive), so back from sign-in never returns to it.
+- **User sign-out:** returns to the Profile hub, which then shows the signed-out prompt; back does not return to Account.
+
+After a successful sign-in, `SignInRoute` navigates to `AccountRoute` with `popUpTo<SignInRoute> { inclusive = true }`.

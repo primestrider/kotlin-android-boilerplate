@@ -174,9 +174,14 @@ fun NavGraphBuilder.profileGraph(navController: NavHostController) {
             val viewModel: AccountViewModel = hiltViewModel()
             val session by viewModel.session.collectAsStateWithLifecycle()
             val profile by viewModel.profile.collectAsStateWithLifecycle()
+            val signingOut by viewModel.signingOut.collectAsStateWithLifecycle()
             val current = session
-            LaunchedEffect(current == null) {
-                if (current == null) {
+            LaunchedEffect(viewModel) {
+                viewModel.signedOut.collect { navController.popBackStack(ProfileRoute, inclusive = false) }
+            }
+            // A session lost without the user asking (expiry) is replaced by sign-in; a deliberate sign-out returns to Profile.
+            LaunchedEffect(current == null, signingOut) {
+                if (current == null && !signingOut) {
                     navController.navigate(SignInRoute) { popUpTo<AccountRoute> { inclusive = true } }
                 }
             }

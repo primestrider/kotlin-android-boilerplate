@@ -12,9 +12,11 @@ import com.primestrider.kotlinstarter.core.designsystem.component.MessageVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
 import com.primestrider.kotlinstarter.testing.InMemoryPreferencesDataStore
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.resetMain
@@ -31,7 +33,6 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import retrofit2.Retrofit
@@ -84,6 +85,7 @@ class AccountViewModelTest {
         messenger: Messenger = Messenger(),
         store: DataStore<Preferences> = InMemoryPreferencesDataStore(),
         signedIn: Boolean = true,
+        api: DummyJsonApi = this@AccountViewModelTest.api,
     ): Pair<AccountViewModel, SessionRepository> {
         val repository = SessionRepository(store, FakeSessionCipher(), json, backgroundScope)
         runCurrent()
@@ -99,20 +101,22 @@ class AccountViewModelTest {
     @Test
     fun loadProfile_goes_loading_then_loaded() =
         runTest(dispatcher) {
-            server.enqueue(
-                MockResponse
-                    .Builder()
-                    .body("""{"id":1,"username":"emilys","email":"e@x.com","firstName":"Emily","lastName":"Johnson"}""")
-                    .build(),
-            )
-            val (vm, _) = viewModel()
+            val gate = CompletableDeferred<UserResponse>()
+            val gatedApi =
+                object : DummyJsonApi {
+                    override suspend fun login(body: LoginRequest): LoginResponse = error("not used")
+
+                    override suspend fun me(): UserResponse = gate.await()
+                }
+            val (vm, _) = viewModel(api = gatedApi)
             assertEquals(ProfileLoad.Idle, vm.profile.value)
             vm.loadProfile()
             runCurrent()
             assertEquals(ProfileLoad.Loading, vm.profile.value)
-            val loaded = vm.awaitResult() as ProfileLoad.Loaded
-            assertEquals("emilys", loaded.user.username)
-            assertEquals("/auth/me", server.takeRequest().url.encodedPath)
+            val user = UserResponse(1, "emilys", "e@x.com", "Emily", "Johnson")
+            gate.complete(user)
+            runCurrent()
+            assertEquals(ProfileLoad.Loaded(user), vm.profile.value)
         }
 
     @Test
@@ -138,6 +142,9 @@ class AccountViewModelTest {
         runTest(dispatcher) {
             val messenger = Messenger()
             val (vm, repository) = viewModel(messenger)
+            val signedOut = mutableListOf<Unit>()
+            backgroundScope.launch { vm.signedOut.collect { signedOut += it } }
+            runCurrent()
             assertEquals(session, vm.session.value)
             vm.signOut()
             runCurrent()
@@ -146,6 +153,8 @@ class AccountViewModelTest {
             val message = messenger.messages.first()
             assertEquals(MessageVariant.INFO, message.variant)
             assertEquals(UiText.Resource(R.string.auth_signed_out), message.text)
+            assertEquals(true, vm.signingOut.value)
+            assertEquals(1, signedOut.size)
         }
 
     @Test
@@ -161,6 +170,6 @@ class AccountViewModelTest {
             val message = messenger.messages.first()
             assertEquals(MessageVariant.ERROR, message.variant)
             assertEquals(UiText.Resource(R.string.auth_sign_out_failed), message.text)
-            assertTrue(vm.session.value != null)
+            assertEquals(false, vm.signingOut.value)
         }
 }

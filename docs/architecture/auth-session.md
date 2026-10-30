@@ -92,9 +92,11 @@ retry 401 again -> authenticator gives up (priorResponse != null), caller gets t
 
 - **Sign-out:** `AccountViewModel.signOut()` calls `SessionRepository.signOut(USER)` and shows an info message.
   The call runs uncancellable, and a storage failure shows an error message and keeps the user signed in.
-- **Guard:** a protected route (the example's `AccountRoute`) collects `SessionRepository.session` and, when it
-  becomes null, navigates to sign-in popping itself inclusive. That one rule covers a user sign-out and a token
-  expiry (`SignOutReason.EXPIRED`, which also shows the expiry message). See `navigation.md`.
+- **Guard:** a protected route (the example's `AccountRoute`) collects `SessionRepository.session`. Two paths:
+  - A session lost without the user asking (token expiry, `SignOutReason.EXPIRED`, which also shows the expiry
+    message) navigates to sign-in popping the route inclusive.
+  - A deliberate sign-out (`AccountViewModel.signingOut` is true, then the one-shot `signedOut` event) pops back to
+    the Profile hub instead, and the guard ignores the null session meanwhile. See `navigation.md`.
 - **Cold start:** the splash waits for the stored session, so a signed-in start goes straight to the app with no sign-in flash.
 
 ## Swapping the backend

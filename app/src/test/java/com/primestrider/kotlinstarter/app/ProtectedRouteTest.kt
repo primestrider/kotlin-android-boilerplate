@@ -6,10 +6,14 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isDialog
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -107,6 +111,20 @@ class ProtectedRouteTest {
     }
 
     @Test
+    fun user_sign_out_from_account_returns_to_profile_hub() {
+        composeRule.onNodeWithText("Emily Johnson").performClick()
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText("Sign out").performScrollTo().performClick()
+        composeRule.onNode(hasText("Sign out") and hasAnyAncestor(isDialog())).performClick()
+        composeRule.waitForIdle()
+        composeRule.onNodeWithText("You are not signed in").assertIsDisplayed()
+        composeRule.onNodeWithText("A screen only a signed-in session can reach").assertDoesNotExist()
+
+        pressBack()
+        composeRule.onNodeWithText("A screen only a signed-in session can reach").assertDoesNotExist()
+    }
+
+    @Test
     fun expiry_on_account_redirects_to_sign_in_and_back_skips_account() {
         composeRule.onNodeWithText("Emily Johnson").performClick()
         composeRule.waitForIdle()
@@ -114,7 +132,7 @@ class ProtectedRouteTest {
 
         runBlocking { repository.signOut(SignOutReason.EXPIRED) }
         composeRule.waitForIdle()
-        composeRule.onNodeWithText("Retrofit, OkHttp and an encrypted token in DataStore").assertIsDisplayed()
+        composeRule.onNode(hasText("Sign in") and hasClickAction().not()).assertIsDisplayed()
         composeRule.onNodeWithText("A screen only a signed-in session can reach").assertDoesNotExist()
 
         pressBack()
