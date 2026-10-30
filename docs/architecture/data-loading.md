@@ -71,3 +71,11 @@ The query lives in `SavedStateHandle`, so the search text and its results come b
 - **ViewModel:** subclass the repository to record queries; drive time with `StandardTestDispatcher` + `advanceTimeBy` (`ProductsViewModelTest`).
 - **Screen:** feed `flowOf(PagingData.from(items, loadStates)).collectAsLazyPagingItems()` to reach any load state without a network (`ProductsScreenTest`).
 - **Robolectric caveat:** `LazyPagingItems` delivers pages on Compose's process-wide `AndroidUiDispatcher.Main`, which an earlier test can leave stuck (Robolectric clears the main looper queue while a dispatch is scheduled). Paging screen tests call `resetAndroidUiDispatcher()` (`testing/`) in `@Before` and wait for content with `rule.waitUntil`.
+
+## Single objects
+
+`ProductDetailViewModel` shows the shape for one item: a `sealed interface` state (`Loading`, `Loaded`, `NotFound`, `Failed(ApiError)`), the id read with `savedStateHandle.toRoute<ProductDetailRoute>()`, an invalid id answered as `NotFound` without a request, HTTP 404 mapped to `NotFound` (no Retry: retrying cannot help) and every other failure to `Failed` with Retry. ViewModel tests that use `toRoute()` need Robolectric (it decodes through an `android.os.Bundle`).
+
+## Formatting
+
+`core/util/Formatters.kt`: `formatCurrency(amount, currencyCode, locale)` and `formatPercent(fraction, locale)`. In composables pass `currentLocale()` (the app language from `LocalConfiguration`), not `Locale.getDefault()`, so a per-app language change reformats prices.

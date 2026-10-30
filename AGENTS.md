@@ -20,8 +20,9 @@ core/auth/                   # encrypted SessionRepository, AuthAdapter seam, be
 core/designsystem/theme/     # palette, semantic colors, spacing, radii, typography, AppTheme
 core/designsystem/component/ # reusable components (see docs/architecture/components.md)
 core/i18n/                   # AppLanguage, LanguageController
+core/util/                   # formatCurrency, formatPercent, currentLocale
 feature/example/             # example catalog, Home, Profile hub, sign-in, protected Account, Settings, component + styling pages, form example (deletable)
-feature/example/products/    # Products list: Retrofit API, Paging 3 source, debounced search (docs/architecture/data-loading.md)
+feature/example/products/    # Products list + detail: Retrofit API, Paging 3 source, debounced search, tabs, add-to-cart sheet (docs/architecture/data-loading.md)
 feature/example/auth/        # DummyJSON AuthAdapter and its Hilt binding (ExampleAuthModule): swap the backend here
 ```
 

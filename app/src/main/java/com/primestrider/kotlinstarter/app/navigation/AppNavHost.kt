@@ -10,7 +10,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.feature.example.AccountRoute
 import com.primestrider.kotlinstarter.feature.example.ActionsRoute
 import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
@@ -18,7 +17,6 @@ import com.primestrider.kotlinstarter.feature.example.ColorsRoute
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeScreen
 import com.primestrider.kotlinstarter.feature.example.DisplayRoute
-import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.FeedbackRoute
 import com.primestrider.kotlinstarter.feature.example.FormExampleRoute
 import com.primestrider.kotlinstarter.feature.example.HomeScreen
@@ -49,6 +47,8 @@ import com.primestrider.kotlinstarter.feature.example.components.OverlaysScreen
 import com.primestrider.kotlinstarter.feature.example.exampleSections
 import com.primestrider.kotlinstarter.feature.example.form.FormExampleScreen
 import com.primestrider.kotlinstarter.feature.example.form.FormExampleViewModel
+import com.primestrider.kotlinstarter.feature.example.products.ProductDetailScreen
+import com.primestrider.kotlinstarter.feature.example.products.ProductDetailViewModel
 import com.primestrider.kotlinstarter.feature.example.products.ProductsScreen
 import com.primestrider.kotlinstarter.feature.example.products.ProductsViewModel
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsScreen
@@ -93,9 +93,10 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                 onBack = back,
             )
         }
-        // Placeholder until the detail screen lands.
         composable<ProductDetailRoute> {
-            ExamplePageScaffold(title = R.string.products_title, subtitle = R.string.products_subtitle, onBack = back) {}
+            val viewModel: ProductDetailViewModel = hiltViewModel()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+            ProductDetailScreen(state = state, onRetry = viewModel::retry, onAddToCart = viewModel::addToCart, onBack = back)
         }
         composable<FormExampleRoute> {
             val viewModel: FormExampleViewModel = hiltViewModel()

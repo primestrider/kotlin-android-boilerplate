@@ -32,19 +32,6 @@ class ProductsScreenTest {
 
     private val done = LoadState.NotLoading(endOfPaginationReached = false)
 
-    private fun product(id: Long) =
-        ProductDto(
-            id = id,
-            title = "Phone $id",
-            description = "d",
-            category = "smartphones",
-            price = 9.99,
-            discountPercentage = 0.0,
-            rating = 4.0,
-            stock = 0,
-            thumbnail = "https://example.org/$id.png",
-        )
-
     private fun show(
         items: List<ProductDto>,
         states: LoadStates,
@@ -61,7 +48,7 @@ class ProductsScreenTest {
 
     @Test
     fun append_error_keeps_items_and_offers_retry() {
-        show(listOf(product(1)), LoadStates(refresh = done, prepend = done, append = LoadState.Error(IOException())))
+        show(listOf(product(1, stock = 0)), LoadStates(refresh = done, prepend = done, append = LoadState.Error(IOException())))
         waitFor("Phone 1")
         waitFor("Try again")
     }
@@ -81,14 +68,14 @@ class ProductsScreenTest {
 
     @Test
     fun out_of_stock_is_labelled() {
-        show(listOf(product(1)), LoadStates(refresh = done, prepend = done, append = done))
+        show(listOf(product(1, stock = 0)), LoadStates(refresh = done, prepend = done, append = done))
         waitFor("Out of stock")
     }
 
     @Test
     fun clicking_a_row_opens_it() {
         var opened: Long? = null
-        show(listOf(product(7)), LoadStates(refresh = done, prepend = done, append = done), onOpen = { opened = it })
+        show(listOf(product(7, stock = 0)), LoadStates(refresh = done, prepend = done, append = done), onOpen = { opened = it })
         waitFor("Phone 7")
         rule.onNodeWithText("Phone 7").performClick()
         assertEquals(7L, opened)

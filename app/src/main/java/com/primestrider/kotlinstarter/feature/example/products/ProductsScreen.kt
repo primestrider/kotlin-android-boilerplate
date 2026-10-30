@@ -40,7 +40,8 @@ import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.network.asApiError
 import com.primestrider.kotlinstarter.core.network.userMessage
-import java.util.Locale
+import com.primestrider.kotlinstarter.core.util.currentLocale
+import com.primestrider.kotlinstarter.core.util.formatCurrency
 
 private const val SKELETON_ROWS = 6
 
@@ -153,8 +154,7 @@ private fun ProductRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            // Temporary: Task 2 replaces this with the locale-aware currency formatter.
-            Text(String.format(Locale.US, "$%.2f", product.price), style = MaterialTheme.typography.bodyMedium)
+            Text(formatCurrency(product.price, locale = currentLocale()), style = MaterialTheme.typography.bodyMedium)
         }
         if (product.stock > 0) {
             Text(
