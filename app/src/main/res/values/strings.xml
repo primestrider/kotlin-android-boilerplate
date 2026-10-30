@@ -25,4 +25,5 @@
     <string name="example_styling_appearance_subtitle">Border, radius, shadow, and opacity</string>
     <string name="example_styling_theme_title">Theme</string>
     <string name="example_styling_theme_subtitle">Dark mode with a persisted System / Light / Dark preference</string>
+    <string name="example_home_settings_subtitle">Color scheme and app language</string>
 </resources>

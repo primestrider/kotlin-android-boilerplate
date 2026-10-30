@@ -25,4 +25,5 @@
     <string name="example_styling_appearance_subtitle">Border, radius, bayangan, dan opasitas</string>
     <string name="example_styling_theme_title">Tema</string>
     <string name="example_styling_theme_subtitle">Mode gelap dengan preferensi Sistem / Terang / Gelap yang tersimpan</string>
+    <string name="example_home_settings_subtitle">Skema warna dan bahasa aplikasi</string>
 </resources>

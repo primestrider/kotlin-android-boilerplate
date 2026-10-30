@@ -1,14 +1,10 @@
 package com.primestrider.kotlinstarter.app
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.emptyPreferences
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreferenceRepository
+import com.primestrider.kotlinstarter.testing.InMemoryPreferencesDataStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -35,13 +31,7 @@ class AppViewModelTest {
     @Test
     fun themeModeIsNullUntilFirstValueThenSystem() =
         runTest {
-            val store =
-                object : DataStore<Preferences> {
-                    override val data: Flow<Preferences> = flowOf(emptyPreferences())
-
-                    override suspend fun updateData(transform: suspend (Preferences) -> Preferences): Preferences =
-                        throw UnsupportedOperationException()
-                }
+            val store = InMemoryPreferencesDataStore()
             val viewModel = AppViewModel(ThemePreferenceRepository(store))
             assertNull(viewModel.themeMode.value)
             advanceUntilIdle()

@@ -8,13 +8,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.app.navigation.AppNavHost
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.designsystem.theme.resolveDarkTheme
@@ -39,9 +36,7 @@ class MainActivity : AppCompatActivity() {
                 )
             }
             AppTheme(darkTheme = darkTheme) {
-                Surface {
-                    Text(stringResource(R.string.app_name))
-                }
+                AppNavHost()
             }
         }
     }
