@@ -1,23 +1,33 @@
 package com.primestrider.kotlinstarter.core.auth
 
+import com.primestrider.kotlinstarter.core.network.ApiBaseUrl
 import com.primestrider.kotlinstarter.core.network.isAnonymous
+import okhttp3.HttpUrl
 import okhttp3.Interceptor
+import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
 
-/** Adds `Authorization: Bearer <accessToken>` to every request except `@Anonymous` ones. */
+/**
+ * Adds `Authorization: Bearer <accessToken>` to every request to the API host ([apiUrl]) except
+ * `@Anonymous` ones. Requests to any other host (an image CDN, a third-party API) never get the token.
+ */
 class AuthInterceptor
     @Inject
     constructor(
         private val repository: SessionRepository,
+        @ApiBaseUrl private val apiUrl: HttpUrl,
     ) : Interceptor {
         override fun intercept(chain: Interceptor.Chain): Response {
             val request = chain.request()
             val token = repository.accessToken()
-            if (token == null || request.isAnonymous()) return chain.proceed(request)
+            if (token == null || !request.isForApi(apiUrl) || request.isAnonymous()) return chain.proceed(request)
             return chain.proceed(request.newBuilder().header(AUTHORIZATION, bearer(token)).build())
         }
     }
+
+/** True when this request goes to the host of [apiUrl], the only host the bearer token is meant for. */
+internal fun Request.isForApi(apiUrl: HttpUrl): Boolean = url.host == apiUrl.host
 
 internal const val AUTHORIZATION = "Authorization"
 private const val BEARER_PREFIX = "Bearer "

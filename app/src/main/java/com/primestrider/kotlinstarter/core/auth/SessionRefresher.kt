@@ -7,6 +7,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -26,10 +27,15 @@ sealed interface RefreshOutcome {
 
 /**
  * Single-flight token refresh: concurrent callers await the same attempt and share its outcome.
- * An [IOException] from the adapter is a [RefreshOutcome.NetworkFailure] and keeps the session;
- * any other failure signs out with [SignOutReason.EXPIRED]. A cancelled attempt is also a
- * [RefreshOutcome.NetworkFailure]. Catches every [Exception]; only the caller's own cancellation propagates.
- * [Error]s (e.g. `NotImplementedError` from an unfinished adapter) are not caught and still propagate.
+ * An [IOException], or an [HttpException] with a 5xx or 429 status, from the adapter is a
+ * [RefreshOutcome.NetworkFailure] and keeps the session; any other failure signs out with
+ * [SignOutReason.EXPIRED]. A cancelled attempt is also a [RefreshOutcome.NetworkFailure]. Catches every
+ * [Exception]; only the caller's own cancellation propagates. [Error]s (e.g. `NotImplementedError` from an
+ * unfinished adapter) are not caught and still propagate.
+ *
+ * An attempt only ever touches the session it started for (matched by refresh token): if the user signed
+ * out or another session signed in meanwhile, its new tokens are dropped, a rejection signs no one out,
+ * and the outcome is [RefreshOutcome.SignedOut].
  *
  * The attempt runs in the application scope, so cancelling the call that triggered it does not
  * cancel an in-flight refresh.
@@ -92,24 +98,28 @@ class SessionRefresher
                     throw e
                 } catch (e: IOException) {
                     return RefreshOutcome.NetworkFailure
+                } catch (e: HttpException) {
+                    return if (e.isTransient()) RefreshOutcome.NetworkFailure else expire(refreshToken)
                 } catch (e: Exception) {
-                    return expire()
+                    return expire(refreshToken)
                 }
             return try {
-                repository.updateTokens(tokens)
-                RefreshOutcome.Refreshed(tokens.accessToken)
+                // False when the user signed out or someone else signed in meanwhile: never retry for them.
+                val stored = repository.updateTokens(refreshToken, tokens)
+                if (stored) RefreshOutcome.Refreshed(tokens.accessToken) else RefreshOutcome.SignedOut
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 // The old refresh token is likely spent; without storing the new one the session is unusable.
-                expire()
+                expire(refreshToken)
             }
         }
 
         @Suppress("TooGenericExceptionCaught", "SwallowedException")
-        private suspend fun expire(): RefreshOutcome {
+        private suspend fun expire(refreshToken: String): RefreshOutcome {
             try {
-                if (repository.isSignedIn) repository.signOut(SignOutReason.EXPIRED)
+                // Only the session this attempt refreshed; a later sign-out or sign-in is left alone.
+                repository.signOutIfCurrent(refreshToken, SignOutReason.EXPIRED)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -118,3 +128,9 @@ class SessionRefresher
             return RefreshOutcome.SignedOut
         }
     }
+
+/** A server error or rate limit says nothing about the refresh token, so the session is kept. */
+private fun HttpException.isTransient(): Boolean = code() >= SERVER_ERROR || code() == TOO_MANY_REQUESTS
+
+private const val SERVER_ERROR = 500
+private const val TOO_MANY_REQUESTS = 429

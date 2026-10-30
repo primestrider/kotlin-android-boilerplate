@@ -4,10 +4,21 @@ HTTP lives in `core/network`. Features never build their own client.
 
 ## Client
 
-`NetworkModule` provides a singleton `Json` (`ignoreUnknownKeys`, `explicitNulls = false`), an
-`OkHttpClient` (30 s connect/read/write timeouts) and a `Retrofit` bound to `BuildConfig.API_URL`
-with the kotlinx-serialization converter. Debug builds log request and response headers only, never bodies (login and refresh carry passwords and tokens);
-`Authorization`, `Cookie` and `Set-Cookie` are redacted. Auth interceptors are added to this client by the auth layer.
+`NetworkModule` provides a singleton `Json` (`ignoreUnknownKeys`, `explicitNulls = false`) and two
+clients, both bound to `BuildConfig.API_URL` (`@ApiBaseUrl HttpUrl`) with the kotlinx-serialization
+converter:
+
+- **App client** (`OkHttpClient`, `Retrofit`): what features use. `AuthInterceptor` adds the bearer
+  token and `TokenAuthenticator` refreshes on 401 (see `auth-session.md`). Both act only on requests
+  whose host is the `API_URL` host, so a call to any other host (an image CDN, a third-party API)
+  never carries the token.
+- **Refresh client** (`@RefreshClient OkHttpClient`, `@RefreshRetrofit Retrofit`): its own
+  dispatcher, no bearer, no authenticator. Only the auth adapter's refresh call uses it.
+
+Both have 30 s connect, read and write timeouts and a 60 s timeout for the whole call. Debug builds
+log request and response headers only, never bodies (login and refresh carry passwords and
+tokens). The logger is a network interceptor, so it sees the final headers, including
+authenticator retries. `Authorization`, `Cookie` and `Set-Cookie` are redacted.
 
 ## Base URL
 
@@ -29,13 +40,15 @@ Interceptors check `request.isAnonymous()`.
 ## Errors
 
 Wrap every call in `safeApiCall(json) { api.something() }`. It returns `ApiResult.Success(data)` or
-`ApiResult.Failure(ApiError(message, status, isNetworkError))`:
+`ApiResult.Failure(ApiError(message, status, isNetworkError, data))`:
 
-| Cause | `message` | `status` | `isNetworkError` |
-| --- | --- | --- | --- |
-| HTTP error | `message` field of a JSON body, else null | HTTP code | false |
-| `IOException` | null | null | true |
-| Malformed response | null | null | false |
+| Cause | `message` | `status` | `isNetworkError` | `data` |
+| --- | --- | --- | --- | --- |
+| HTTP error | `message` field of a JSON body, else null | HTTP code | false | the body as a `JsonElement` when it is valid JSON, else null |
+| `IOException` | null | null | true | null |
+| Malformed response | null | null | false | null |
+
+Use `data` for structured error bodies, for example per-field validation errors of a 422.
 
 Cancellation is rethrown, never swallowed.
 

@@ -86,6 +86,13 @@ class AccountScreenTest {
     }
 
     @Test
+    fun failed_load_banner_is_titled_as_a_profile_error() {
+        show(ProfileLoad.Failed(ApiError(null, 500)))
+        rule.onNodeWithText("Could not load profile").assertExists()
+        rule.onNodeWithText("Could not sign in").assertDoesNotExist()
+    }
+
+    @Test
     fun sign_out_asks_first_and_only_confirm_signs_out() {
         show()
         rule.onNodeWithText("Sign out").performClick()

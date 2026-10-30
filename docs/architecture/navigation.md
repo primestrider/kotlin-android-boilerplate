@@ -46,17 +46,18 @@ Wrap protected destinations in a nested graph, e.g. `navigation<ProtectedGraph>(
 
 `ProfileRoute` (start) reads the session and shows either a sign-in prompt or the signed-in user's row, plus a Settings row. From it: `SignInRoute`, `AccountRoute` (protected) and `SettingsRoute`.
 
-To protect a route, collect the session in its `composable<...>` block and redirect when it is lost. A deliberate sign-out is told apart from a lost session by the ViewModel (`signingOut` flag plus a one-shot `signedOut` event):
+To protect a route, collect the session and `loaded` in its `composable<...>` block and redirect when the session is lost. Wait for `loaded`: after process death the route is restored before the stored session has been read, and a null session then only means "not known yet". A deliberate sign-out is told apart from a lost session by the ViewModel (`signingOut` flag plus a one-shot `signedOut` event):
 
 ```kotlin
 composable<AccountRoute> {
     val session by viewModel.session.collectAsStateWithLifecycle()
     val signingOut by viewModel.signingOut.collectAsStateWithLifecycle()
+    val loaded by viewModel.loaded.collectAsStateWithLifecycle()
     LaunchedEffect(viewModel) {
         viewModel.signedOut.collect { navController.popBackStack(ProfileRoute, inclusive = false) }
     }
-    LaunchedEffect(session == null, signingOut) {
-        if (session == null && !signingOut) navController.navigate(SignInRoute) { popUpTo<AccountRoute> { inclusive = true } }
+    LaunchedEffect(loaded, session == null, signingOut) {
+        if (loaded && session == null && !signingOut) navController.navigate(SignInRoute) { popUpTo<AccountRoute> { inclusive = true } }
     }
     session?.let { AccountScreen(session = it, ...) }
 }

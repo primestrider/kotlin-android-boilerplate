@@ -11,7 +11,9 @@ data class AuthResult(
  *
  * [refresh] must use the `@RefreshRetrofit` / `@RefreshClient` (`core/network`), never the app client:
  * the app client's dispatcher threads are blocked while a refresh runs. Throw an `IOException` when
- * the server cannot be reached (the session is kept); any other exception signs the user out.
+ * the server cannot be reached; that and an `HttpException` with a 5xx or 429 status keep the session.
+ * Any other exception (another HTTP error, a bad body) means the refresh token was rejected and signs
+ * the user out.
  */
 interface AuthAdapter {
     suspend fun signIn(credentials: SignInCredentials): AuthResult

@@ -13,6 +13,7 @@ import com.primestrider.kotlinstarter.core.network.ApiError
 import com.primestrider.kotlinstarter.core.network.ApiResult
 import com.primestrider.kotlinstarter.core.network.safeApiCall
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -105,14 +106,29 @@ class SignInViewModel
                     is ApiResult.Success -> {
                         // Leaving the screen mid-write must not drop the stored session, the message or the event.
                         withContext(NonCancellable) {
-                            repository.signIn(Session(result.data.user, result.data.tokens))
-                            _state.update { it.copy(loading = false) }
-                            messenger.success(UiText.Resource(R.string.auth_signed_in))
-                            _signedIn.send(Unit)
+                            if (storeSession(Session(result.data.user, result.data.tokens))) {
+                                _state.update { it.copy(loading = false) }
+                                messenger.success(UiText.Resource(R.string.auth_signed_in))
+                                _signedIn.send(Unit)
+                            } else {
+                                _state.update { it.copy(loading = false, error = ApiError(null)) }
+                            }
                         }
                     }
                     is ApiResult.Failure -> _state.update { it.copy(loading = false, error = result.error) }
                 }
             }
         }
+
+        /** False when the session could not be stored (storage or keystore failure): shown as the generic error. */
+        @Suppress("TooGenericExceptionCaught", "SwallowedException")
+        private suspend fun storeSession(session: Session): Boolean =
+            try {
+                repository.signIn(session)
+                true
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                false
+            }
     }

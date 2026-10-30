@@ -22,8 +22,12 @@ import mockwebserver3.Dispatcher
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import mockwebserver3.RecordedRequest
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Request
 import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -74,11 +78,14 @@ class AuthFlowTest {
             .create(type)
 
     /** The app's client with its default dispatcher limits. */
-    private suspend fun TestScope.signedInApi(adapter: AuthAdapter): TestApi {
+    private suspend fun TestScope.signedInApi(
+        adapter: AuthAdapter,
+        apiUrl: HttpUrl = server.url("/"),
+    ): TestApi {
         repository = SessionRepository(InMemoryPreferencesDataStore(), FakeSessionCipher(), json, backgroundScope)
         repository.signIn(Session(user, AuthTokens("a1", "r1")))
         val refresher = SessionRefresher(repository, adapter, refreshScope)
-        val client = NetworkModule.okHttpClient(AuthInterceptor(repository), TokenAuthenticator(Provider { refresher }))
+        val client = NetworkModule.okHttpClient(AuthInterceptor(repository, apiUrl), TokenAuthenticator(Provider { refresher }, apiUrl))
         return retrofitApi(client, TestApi::class.java)
     }
 
@@ -128,6 +135,39 @@ class AuthFlowTest {
             assertEquals("Bearer a1", server.takeRequest().headers["Authorization"])
             assertNull(server.takeRequest().headers["Authorization"])
         }
+
+    @Test
+    fun callToAnotherHostCarriesNoBearerAndIsNotRefreshed() =
+        runTest {
+            val adapter = FakeAuthAdapter()
+            val api = signedInApi(adapter, apiUrl = "https://api.example.com/".toHttpUrl())
+            server.enqueue(response(401))
+            val result = safeApiCall(json) { api.item() }
+            assertEquals(401, (result as ApiResult.Failure).error.status)
+            assertNull(server.takeRequest().headers["Authorization"])
+            assertEquals(1, server.requestCount)
+            assertEquals(0, adapter.refreshCount)
+        }
+
+    @Test
+    fun authenticatorIgnoresUnauthorizedFromAnotherHost() {
+        val authenticator = TokenAuthenticator(Provider { error("must not refresh") }, "https://api.example.com/".toHttpUrl())
+        val request =
+            Request
+                .Builder()
+                .url("https://elsewhere.example.org/item")
+                .header("Authorization", "Bearer a1")
+                .build()
+        val unauthorized =
+            okhttp3.Response
+                .Builder()
+                .request(request)
+                .protocol(Protocol.HTTP_1_1)
+                .code(401)
+                .message("Unauthorized")
+                .build()
+        assertNull(authenticator.authenticate(null, unauthorized))
+    }
 
     @Test
     fun unauthorizedIsRefreshedAndRetriedWithNewToken() =

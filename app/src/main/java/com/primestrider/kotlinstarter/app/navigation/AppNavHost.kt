@@ -121,8 +121,9 @@ fun NavGraphBuilder.componentsGraph(navController: NavHostController) {
 
 /**
  * Profile tab: the Profile hub (start), Settings, sign-in, and the protected Account page.
- * Account guard: whenever the session is gone while Account is showing (sign-out or expiry), it is replaced by sign-in,
- * so back from sign-in never returns to Account.
+ * Account guard: once the stored session has been read, a missing session while Account is showing (expiry, or none
+ * stored when Account is restored) replaces Account with sign-in, so back from sign-in never returns to Account.
+ * A user sign-out returns to the Profile hub instead.
  */
 fun NavGraphBuilder.profileGraph(navController: NavHostController) {
     val back: () -> Unit = { navController.popBackStack() }
@@ -175,13 +176,15 @@ fun NavGraphBuilder.profileGraph(navController: NavHostController) {
             val session by viewModel.session.collectAsStateWithLifecycle()
             val profile by viewModel.profile.collectAsStateWithLifecycle()
             val signingOut by viewModel.signingOut.collectAsStateWithLifecycle()
+            val loaded by viewModel.loaded.collectAsStateWithLifecycle()
             val current = session
             LaunchedEffect(viewModel) {
                 viewModel.signedOut.collect { navController.popBackStack(ProfileRoute, inclusive = false) }
             }
             // A session lost without the user asking (expiry) is replaced by sign-in; a deliberate sign-out returns to Profile.
-            LaunchedEffect(current == null, signingOut) {
-                if (current == null && !signingOut) {
+            // Before the stored session is read (Account restored after process death) there is nothing to judge yet.
+            LaunchedEffect(loaded, current == null, signingOut) {
+                if (loaded && current == null && !signingOut) {
                     navController.navigate(SignInRoute) { popUpTo<AccountRoute> { inclusive = true } }
                 }
             }

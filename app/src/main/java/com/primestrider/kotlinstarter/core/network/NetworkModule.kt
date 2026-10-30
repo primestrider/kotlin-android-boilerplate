@@ -9,6 +9,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.Dispatcher
+import okhttp3.HttpUrl
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -31,7 +33,13 @@ object NetworkModule {
             explicitNulls = false
         }
 
-    /** The app client: bearer on every non-`@Anonymous` request, refresh and retry on 401. */
+    /** `BuildConfig.API_URL`: the base of both Retrofits and the only host that gets the bearer. */
+    @Provides
+    @Singleton
+    @ApiBaseUrl
+    fun apiBaseUrl(): HttpUrl = BuildConfig.API_URL.toHttpUrl()
+
+    /** The app client: bearer on every non-`@Anonymous` request to the API host, refresh and retry on 401. */
     @Provides
     @Singleton
     fun okHttpClient(
@@ -54,7 +62,8 @@ object NetworkModule {
     fun retrofit(
         client: OkHttpClient,
         json: Json,
-    ): Retrofit = retrofitOn(client, json)
+        @ApiBaseUrl baseUrl: HttpUrl,
+    ): Retrofit = retrofitOn(client, json, baseUrl)
 
     @Provides
     @Singleton
@@ -62,7 +71,8 @@ object NetworkModule {
     fun refreshRetrofit(
         @RefreshClient client: OkHttpClient,
         json: Json,
-    ): Retrofit = retrofitOn(client, json)
+        @ApiBaseUrl baseUrl: HttpUrl,
+    ): Retrofit = retrofitOn(client, json, baseUrl)
 
     private fun baseClient(): OkHttpClient.Builder =
         OkHttpClient
@@ -84,10 +94,11 @@ object NetworkModule {
     private fun retrofitOn(
         client: OkHttpClient,
         json: Json,
+        baseUrl: HttpUrl,
     ): Retrofit =
         Retrofit
             .Builder()
-            .baseUrl(BuildConfig.API_URL)
+            .baseUrl(baseUrl)
             .client(client)
             .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .build()

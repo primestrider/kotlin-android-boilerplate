@@ -300,6 +300,7 @@
     <string name="auth_error_title">Could not sign in</string>
     <string name="auth_error_network">Cannot reach the server. Check your connection.</string>
     <string name="auth_error_generic">Something went wrong. Please try again.</string>
+    <string name="auth_profile_load_error">Could not load profile</string>
     <string name="auth_signed_in">Welcome back</string>
     <string name="auth_profile_signed_out_title">You are not signed in</string>
     <string name="auth_profile_signed_out_body">Sign in to see your account.</string>

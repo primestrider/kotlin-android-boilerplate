@@ -2,6 +2,8 @@ package com.primestrider.kotlinstarter.core.network
 
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import okhttp3.MediaType.Companion.toMediaType
@@ -58,7 +60,36 @@ class SafeApiCallTest {
         runTest {
             respond(404, """{"message":"Not found"}""")
             assertEquals(
-                ApiResult.Failure(ApiError("Not found", 404)),
+                ApiResult.Failure(ApiError("Not found", 404, data = json.parseToJsonElement("""{"message":"Not found"}"""))),
+                safeApiCall(json) { api.item() },
+            )
+        }
+
+    @Test
+    fun httpErrorKeepsTheParsedJsonBody() =
+        runTest {
+            respond(422, """{"message":"x","fields":{"a":"b"}}""")
+            val error = (safeApiCall(json) { api.item() } as ApiResult.Failure).error
+            assertEquals("x", error.message)
+            assertEquals(422, error.status)
+            assertEquals(
+                "b",
+                error.data
+                    ?.jsonObject
+                    ?.get("fields")
+                    ?.jsonObject
+                    ?.get("a")
+                    ?.jsonPrimitive
+                    ?.content,
+            )
+        }
+
+    @Test
+    fun httpErrorWithNonObjectJsonBodyKeepsDataWithoutMessage() =
+        runTest {
+            respond(400, """["bad"]""")
+            assertEquals(
+                ApiResult.Failure(ApiError(null, 400, data = json.parseToJsonElement("""["bad"]"""))),
                 safeApiCall(json) { api.item() },
             )
         }

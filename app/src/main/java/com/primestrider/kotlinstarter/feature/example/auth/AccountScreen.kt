@@ -111,7 +111,7 @@ private fun ProfileResult(profile: ProfileLoad) {
         }
         is ProfileLoad.Failed ->
             Banner(
-                title = stringResource(R.string.auth_error_title),
+                title = stringResource(R.string.auth_profile_load_error),
                 message =
                     if (profile.error.isNetworkError) {
                         stringResource(R.string.auth_error_network)

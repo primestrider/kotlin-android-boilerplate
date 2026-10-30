@@ -1,5 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.auth
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.auth.AuthAdapter
 import com.primestrider.kotlinstarter.core.auth.AuthResult
@@ -10,7 +12,10 @@ import com.primestrider.kotlinstarter.core.auth.SessionRepository
 import com.primestrider.kotlinstarter.core.auth.SignInCredentials
 import com.primestrider.kotlinstarter.core.designsystem.component.MessageVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
+import com.primestrider.kotlinstarter.core.designsystem.component.UiMessage
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
+import com.primestrider.kotlinstarter.core.network.ApiError
+import com.primestrider.kotlinstarter.testing.GatedPreferencesDataStore
 import com.primestrider.kotlinstarter.testing.InMemoryPreferencesDataStore
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -68,8 +73,9 @@ class SignInViewModelTest {
         adapter: FakeAdapter,
         messenger: Messenger = Messenger(),
         demo: DemoTokenSettings = DemoTokenSettings(),
+        store: DataStore<Preferences> = InMemoryPreferencesDataStore(),
     ): Pair<SignInViewModel, SessionRepository> {
-        val repository = SessionRepository(InMemoryPreferencesDataStore(), FakeSessionCipher(), json, backgroundScope)
+        val repository = SessionRepository(store, FakeSessionCipher(), json, backgroundScope)
         return SignInViewModel(adapter, repository, demo, messenger, json) to repository
     }
 
@@ -160,6 +166,29 @@ class SignInViewModelTest {
                 vm.state.value.error
                     ?.status,
             )
+        }
+
+    @Test
+    fun session_storage_failure_is_a_generic_error_and_keeps_fields() =
+        runTest(dispatcher) {
+            val store = GatedPreferencesDataStore().apply { writeError = IOException("disk full") }
+            val messenger = Messenger()
+            val (vm, repository) = viewModel(FakeAdapter(ok), messenger, store = store)
+            val emissions = mutableListOf<Unit>()
+            val messages = mutableListOf<UiMessage>()
+            backgroundScope.launch { vm.signedIn.collect { emissions += it } }
+            backgroundScope.launch { messenger.messages.collect { messages += it } }
+            vm.onUsernameChange("emilys")
+            vm.onPasswordChange("emilyspass")
+            vm.submit()
+            runCurrent()
+            assertFalse(vm.state.value.loading)
+            assertEquals(ApiError(null), vm.state.value.error)
+            assertEquals("emilys", vm.state.value.username)
+            assertEquals("emilyspass", vm.state.value.password)
+            assertNull(repository.session.value)
+            assertTrue(emissions.isEmpty())
+            assertTrue(messages.isEmpty())
         }
 
     @Test

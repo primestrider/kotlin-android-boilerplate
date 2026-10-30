@@ -52,6 +52,9 @@ class AccountViewModel
     ) : ViewModel() {
         val session: StateFlow<Session?> = repository.session
 
+        /** False until the stored session has been read; until then a null [session] means "not known yet". */
+        val loaded: StateFlow<Boolean> = repository.loaded
+
         private val _profile = MutableStateFlow<ProfileLoad>(ProfileLoad.Idle)
         val profile: StateFlow<ProfileLoad> = _profile.asStateFlow()
 

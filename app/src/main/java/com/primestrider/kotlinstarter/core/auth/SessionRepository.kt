@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.Json
-import java.io.IOException
+import javax.crypto.AEADBadTagException
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.io.encoding.Base64
@@ -24,7 +24,8 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 
 /**
  * Single source of truth for the signed-in session, persisted encrypted. Signed in iff a session
- * (and so tokens) exists. Unreadable stored data counts as signed out and is removed.
+ * (and so tokens) exists. Unreadable stored data counts as signed out; it is removed only when it can
+ * never be read again.
  * All mutations are serialized by a mutex so memory and disk cannot diverge.
  */
 @OptIn(ExperimentalEncodingApi::class)
@@ -75,25 +76,52 @@ class SessionRepository
             }
         }
 
-        suspend fun updateTokens(tokens: AuthTokens) {
+        /**
+         * Stores refreshed [tokens], but only while the session is still the one whose refresh token was
+         * [expectedRefreshToken]. Returns false (and changes nothing) after a sign-out or a sign-in of
+         * another session, so a stale refresh can never resurrect or overwrite a session.
+         */
+        suspend fun updateTokens(
+            expectedRefreshToken: String,
+            tokens: AuthTokens,
+        ): Boolean =
             lock.withLock {
-                val updated = _session.value?.copy(tokens = tokens) ?: return
+                val current = _session.value
+                if (current == null || current.tokens.refreshToken != expectedRefreshToken) return@withLock false
+                val updated = current.copy(tokens = tokens)
                 write(updated)
                 _session.value = updated
+                true
             }
-        }
 
         suspend fun signOut(reason: SignOutReason) {
-            lock.withLock {
-                // Storage first: if it fails, memory and disk both still say signed in.
-                dataStore.edit { it.remove(KEY) }
-                _session.value = null
-                _signOutReason.value = reason
-            }
+            lock.withLock { clear(reason) }
         }
+
+        /**
+         * Signs out with [reason] only while the session is still the one whose refresh token was
+         * [expectedRefreshToken]. Returns false (and changes nothing) when the user already signed out
+         * or another session signed in.
+         */
+        suspend fun signOutIfCurrent(
+            expectedRefreshToken: String,
+            reason: SignOutReason,
+        ): Boolean =
+            lock.withLock {
+                if (_session.value?.tokens?.refreshToken != expectedRefreshToken) return@withLock false
+                clear(reason)
+                true
+            }
 
         fun clearSignOutReason() {
             _signOutReason.value = null
+        }
+
+        /** Must be called holding [lock]. Storage first: if it fails, memory and disk both still say signed in. */
+        private suspend fun clear(reason: SignOutReason) {
+            dataStore.edit { it.remove(KEY) }
+            _session.value = null
+            _signOutReason.value = reason
         }
 
         private suspend fun write(session: Session) {
@@ -101,7 +129,10 @@ class SessionRepository
             dataStore.edit { it[KEY] = Base64.encode(cipher.encrypt(plain)) }
         }
 
-        /** A failed storage read means signed out for this run; a value that cannot be decrypted or parsed is dropped. */
+        /**
+         * Any failure means signed out for this run. The stored value is removed only when it can never be
+         * read again ([isUnreadableForGood]); a storage or transient keystore failure keeps it for the next run.
+         */
         @Suppress("TooGenericExceptionCaught", "SwallowedException")
         private suspend fun read(): Session? =
             try {
@@ -114,21 +145,31 @@ class SessionRepository
                 }
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: IOException) {
-                // Storage unreadable right now: signed out for this run, stored data kept.
-                null
             } catch (e: Exception) {
-                try {
-                    dataStore.edit { it.remove(KEY) }
-                } catch (removal: CancellationException) {
-                    throw removal
-                } catch (removal: Exception) {
-                    // Storage is unusable; staying signed out in memory is the best we can do.
-                }
+                if (isUnreadableForGood(e)) removeStored()
                 null
             }
+
+        @Suppress("TooGenericExceptionCaught", "SwallowedException")
+        private suspend fun removeStored() {
+            try {
+                dataStore.edit { it.remove(KEY) }
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                // Storage is unusable; staying signed out in memory is the best we can do.
+            }
+        }
 
         private companion object {
             val KEY = stringPreferencesKey("auth.session")
         }
     }
+
+/**
+ * True when stored session data can never be decrypted or parsed: a failed authentication tag, a key that
+ * is gone for good, or a value that is not valid Base64 / ciphertext / JSON. Anything else (I/O, a busy or
+ * crashed keystore) may succeed on the next run.
+ */
+internal fun isUnreadableForGood(e: Throwable): Boolean =
+    e is AEADBadTagException || isPermanentKeyFailure(e) || e is IllegalArgumentException

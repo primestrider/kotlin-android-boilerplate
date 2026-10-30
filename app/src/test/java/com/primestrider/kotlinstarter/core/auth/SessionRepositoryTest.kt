@@ -22,6 +22,9 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.IOException
 import java.security.GeneralSecurityException
+import java.security.ProviderException
+import java.security.UnrecoverableKeyException
+import javax.crypto.AEADBadTagException
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SessionRepositoryTest {
@@ -86,7 +89,7 @@ class SessionRepositoryTest {
             advanceUntilIdle()
             repository.signIn(sample)
             val newTokens = AuthTokens("a2", "r2")
-            repository.updateTokens(newTokens)
+            assertTrue(repository.updateTokens("refresh", newTokens))
             assertEquals(newTokens, repository.session.value?.tokens)
             val restored = repo(store)
             advanceUntilIdle()
@@ -99,9 +102,57 @@ class SessionRepositoryTest {
             val store = InMemoryPreferencesDataStore()
             val repository = repo(store)
             advanceUntilIdle()
-            repository.updateTokens(AuthTokens("a", "r"))
+            assertFalse(repository.updateTokens("refresh", AuthTokens("a", "r")))
             assertNull(repository.session.value)
             assertNull(store.raw()[key])
+        }
+
+    @Test
+    fun updateTokensLeavesASessionWithAnotherRefreshTokenAlone() =
+        runTest {
+            val store = InMemoryPreferencesDataStore()
+            val repository = repo(store)
+            advanceUntilIdle()
+            repository.signIn(sample)
+            assertFalse(repository.updateTokens("someone-else", AuthTokens("a2", "r2")))
+            assertEquals(sample, repository.session.value)
+            assertEquals(sample, repo(store).also { advanceUntilIdle() }.session.value)
+        }
+
+    @Test
+    fun signOutIfCurrentSignsOutTheMatchingSession() =
+        runTest {
+            val store = InMemoryPreferencesDataStore()
+            val repository = repo(store)
+            advanceUntilIdle()
+            repository.signIn(sample)
+            assertTrue(repository.signOutIfCurrent("refresh", SignOutReason.EXPIRED))
+            assertNull(repository.session.value)
+            assertNull(store.raw()[key])
+            assertEquals(SignOutReason.EXPIRED, repository.signOutReason.value)
+        }
+
+    @Test
+    fun signOutIfCurrentLeavesASessionWithAnotherRefreshTokenAlone() =
+        runTest {
+            val store = InMemoryPreferencesDataStore()
+            val repository = repo(store)
+            advanceUntilIdle()
+            repository.signIn(sample)
+            assertFalse(repository.signOutIfCurrent("someone-else", SignOutReason.EXPIRED))
+            assertEquals(sample, repository.session.value)
+            assertNotNull(store.raw()[key])
+            assertNull(repository.signOutReason.value)
+        }
+
+    @Test
+    fun signOutIfCurrentIsNoOpWhenSignedOut() =
+        runTest {
+            val repository = repo(InMemoryPreferencesDataStore())
+            advanceUntilIdle()
+            repository.signOut(SignOutReason.USER)
+            assertFalse(repository.signOutIfCurrent("refresh", SignOutReason.EXPIRED))
+            assertEquals(SignOutReason.USER, repository.signOutReason.value)
         }
 
     @Test
@@ -150,7 +201,7 @@ class SessionRepositoryTest {
             repository.signIn(sample)
             val gate = CompletableDeferred<Unit>()
             store.writeGate = gate
-            val update = launch { repository.updateTokens(AuthTokens("a2", "r2")) }
+            val update = launch { repository.updateTokens("refresh", AuthTokens("a2", "r2")) }
             runCurrent()
             val signOut = launch { repository.signOut(SignOutReason.EXPIRED) }
             runCurrent()
@@ -189,20 +240,56 @@ class SessionRepositoryTest {
         }
 
     @Test
-    fun cipherFailureIsTreatedAsSignedOutAndRemoved() =
+    fun tamperedCiphertextIsTreatedAsSignedOutAndRemoved() =
         runTest {
             val store = InMemoryPreferencesDataStore()
             repo(store).signIn(sample)
-            val failing =
-                object : SessionCipher {
-                    override fun encrypt(plain: ByteArray) = plain
-
-                    override fun decrypt(cipher: ByteArray): ByteArray = throw GeneralSecurityException("bad key")
-                }
-            val repository = repo(store, failing)
+            val repository = repo(store, failingDecrypt(AEADBadTagException("tag mismatch")))
             advanceUntilIdle()
             assertTrue(repository.loaded.value)
             assertNull(repository.session.value)
             assertNull(store.raw()[key])
+        }
+
+    @Test
+    fun permanentlyLostKeyIsTreatedAsSignedOutAndRemoved() =
+        runTest {
+            val store = InMemoryPreferencesDataStore()
+            repo(store).signIn(sample)
+            val repository = repo(store, failingDecrypt(UnrecoverableKeyException("gone")))
+            advanceUntilIdle()
+            assertNull(repository.session.value)
+            assertNull(store.raw()[key])
+        }
+
+    @Test
+    fun transientKeystoreFailureIsSignedOutButKeepsStoredData() =
+        runTest {
+            val store = InMemoryPreferencesDataStore()
+            repo(store).signIn(sample)
+            val repository = repo(store, failingDecrypt(GeneralSecurityException("keystore busy")))
+            advanceUntilIdle()
+            assertTrue(repository.loaded.value)
+            assertNull(repository.session.value)
+            assertNotNull(store.raw()[key])
+        }
+
+    @Test
+    fun keystoreProviderFailureIsSignedOutButKeepsStoredData() =
+        runTest {
+            val store = InMemoryPreferencesDataStore()
+            repo(store).signIn(sample)
+            val repository = repo(store, failingDecrypt(ProviderException("keystore daemon died")))
+            advanceUntilIdle()
+            assertTrue(repository.loaded.value)
+            assertNull(repository.session.value)
+            assertNotNull(store.raw()[key])
+        }
+
+    private fun failingDecrypt(error: Exception) =
+        object : SessionCipher {
+            override fun encrypt(plain: ByteArray) = plain
+
+            override fun decrypt(cipher: ByteArray): ByteArray = throw error
         }
 }

@@ -300,6 +300,7 @@
     <string name="auth_error_title">Gagal masuk</string>
     <string name="auth_error_network">Tidak bisa terhubung ke server. Periksa koneksimu.</string>
     <string name="auth_error_generic">Terjadi kesalahan. Silakan coba lagi.</string>
+    <string name="auth_profile_load_error">Gagal memuat profil</string>
     <string name="auth_signed_in">Selamat datang kembali</string>
     <string name="auth_profile_signed_out_title">Kamu belum masuk</string>
     <string name="auth_profile_signed_out_body">Masuk untuk melihat akunmu.</string>

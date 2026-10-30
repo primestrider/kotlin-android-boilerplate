@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.core.auth
 
 import com.primestrider.kotlinstarter.testing.GatedPreferencesDataStore
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
@@ -8,6 +9,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.Json
 import okhttp3.ResponseBody.Companion.toResponseBody
@@ -24,6 +26,7 @@ class SessionRefresherTest {
     private val json = Json { ignoreUnknownKeys = true }
     private val user = AuthUser(1, "emilys", "e@x.com", "Emily", "Johnson")
     private val tokens = AuthTokens("a1", "r1")
+    private val nextUser = Session(AuthUser(2, "bob", "b@x.com", "Bob", "Smith"), AuthTokens("b1", "rb1"))
 
     private fun TestScope.repo(store: GatedPreferencesDataStore = GatedPreferencesDataStore()) =
         SessionRepository(store, FakeSessionCipher(), json, backgroundScope)
@@ -130,4 +133,73 @@ class SessionRefresherTest {
             val adapter = FakeAuthAdapter(failure = IllegalStateException("bad body"))
             assertEquals(RefreshOutcome.SignedOut, refresher(repository, adapter).refresh("a1"))
         }
+
+    @Test
+    fun serverErrorFromRefreshIsNetworkFailureAndKeepsSession() =
+        runTest {
+            val repository = signedInRepo()
+            val adapter = FakeAuthAdapter(failure = httpError(503))
+            assertEquals(RefreshOutcome.NetworkFailure, refresher(repository, adapter).refresh("a1"))
+            assertEquals(tokens, repository.session.value?.tokens)
+            assertNull(repository.signOutReason.value)
+        }
+
+    @Test
+    fun rateLimitedRefreshIsNetworkFailureAndKeepsSession() =
+        runTest {
+            val repository = signedInRepo()
+            val adapter = FakeAuthAdapter(failure = httpError(429))
+            assertEquals(RefreshOutcome.NetworkFailure, refresher(repository, adapter).refresh("a1"))
+            assertEquals(tokens, repository.session.value?.tokens)
+            assertNull(repository.signOutReason.value)
+        }
+
+    @Test
+    fun userSignOutDuringInFlightRefreshIsNotResurrected() =
+        runTest {
+            val repository = signedInRepo()
+            val gate = CompletableDeferred<Unit>()
+            val refresher = refresher(repository, FakeAuthAdapter(onRefresh = { gate.await() }))
+            val outcome = async { refresher.refresh("a1") }
+            runCurrent()
+            repository.signOut(SignOutReason.USER)
+            gate.complete(Unit)
+            assertEquals(RefreshOutcome.SignedOut, outcome.await())
+            assertNull(repository.session.value)
+            assertEquals(SignOutReason.USER, repository.signOutReason.value)
+        }
+
+    @Test
+    fun staleRefreshDoesNotTouchTheNextUsersTokens() =
+        runTest {
+            val repository = signedInRepo()
+            val gate = CompletableDeferred<Unit>()
+            val refresher = refresher(repository, FakeAuthAdapter(onRefresh = { gate.await() }))
+            val outcome = async { refresher.refresh("a1") }
+            runCurrent()
+            repository.signOut(SignOutReason.USER)
+            repository.signIn(nextUser)
+            gate.complete(Unit)
+            assertEquals(RefreshOutcome.SignedOut, outcome.await())
+            assertEquals(nextUser, repository.session.value)
+        }
+
+    @Test
+    fun staleRejectedRefreshDoesNotSignOutTheNextUser() =
+        runTest {
+            val repository = signedInRepo()
+            val gate = CompletableDeferred<Unit>()
+            val adapter = FakeAuthAdapter(failure = httpError(401), onRefresh = { gate.await() })
+            val refresher = refresher(repository, adapter)
+            val outcome = async { refresher.refresh("a1") }
+            runCurrent()
+            repository.signOut(SignOutReason.USER)
+            repository.signIn(nextUser)
+            gate.complete(Unit)
+            assertEquals(RefreshOutcome.SignedOut, outcome.await())
+            assertEquals(nextUser, repository.session.value)
+            assertNull(repository.signOutReason.value)
+        }
+
+    private fun httpError(code: Int) = HttpException(Response.error<Any>(code, "".toResponseBody()))
 }
