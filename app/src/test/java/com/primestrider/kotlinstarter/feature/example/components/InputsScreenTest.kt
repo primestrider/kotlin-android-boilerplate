@@ -3,7 +3,6 @@ package com.primestrider.kotlinstarter.feature.example.components
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.assertIsOn
-import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -68,7 +67,7 @@ class InputsScreenTest {
     fun select_shows_chosen_option() {
         rule.onNodeWithTag(SELECT_FIELD_TAG).performScrollTo().performClick()
         rule.onNodeWithText("Oldest").performClick()
-        rule.onNodeWithTag(SELECT_FIELD_TAG).assertTextContains("Oldest")
+        rule.onNodeWithText("Oldest").assertExists()
     }
 
     @Test

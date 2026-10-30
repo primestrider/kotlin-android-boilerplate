@@ -18,7 +18,6 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FilledIconButton
@@ -51,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -119,9 +119,10 @@ private fun LoadingButtonSection() {
     var runs by remember { mutableIntStateOf(0) }
     DemoSection(R.string.components_section_loading) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.s3)) {
-            Button(
+            // AppButton ignores clicks while loading, so a double tap runs the task once.
+            AppButton(
+                text = stringResource(R.string.components_loading_run),
                 onClick = {
-                    if (loading) return@Button
                     loading = true
                     scope.launch {
                         delay(LOADING_DURATION_MS)
@@ -129,19 +130,9 @@ private fun LoadingButtonSection() {
                         loading = false
                     }
                 },
-                enabled = !loading,
+                loading = loading,
                 modifier = Modifier.testTag(LOADING_BUTTON_TAG),
-            ) {
-                if (loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(ButtonDefaults.IconSize),
-                        strokeWidth = Spacing.s0_5,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                    )
-                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-                }
-                Text(stringResource(R.string.components_loading_run))
-            }
+            )
             Text(stringResource(R.string.components_loading_count, runs), style = MaterialTheme.typography.bodyMedium)
         }
     }

@@ -10,19 +10,11 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.selection.triStateToggleable
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.OutlinedTextField
@@ -54,9 +46,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.AppTextField
+import com.primestrider.kotlinstarter.core.designsystem.component.PasswordTextField
+import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
+import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -150,7 +144,7 @@ private fun TextFieldsSection() {
             onValueChange = { if (it.length <= BIO_MAX) bio = it },
             label = { Text(stringResource(R.string.components_field_bio)) },
             placeholder = { Text(stringResource(R.string.components_field_bio_placeholder)) },
-            supportingText = { Text(stringResource(R.string.components_field_counter, bio.length, BIO_MAX)) },
+            supportingText = { Text(stringResource(R.string.component_counter, bio.length, BIO_MAX)) },
             minLines = 3,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -163,30 +157,15 @@ private fun KeyboardTypesSection() {
     var phone by rememberSaveable { mutableStateOf("") }
     var amount by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
-    var passwordVisible by rememberSaveable { mutableStateOf(false) }
     DemoSection(R.string.components_section_keyboard) {
         KeyboardField(email, { email = it }, R.string.components_field_email, KeyboardType.Email)
         KeyboardField(phone, { phone = it }, R.string.components_field_phone, KeyboardType.Phone)
         KeyboardField(amount, { amount = filterDecimal(it) }, R.string.components_field_amount, KeyboardType.Decimal)
-        OutlinedTextField(
+        PasswordTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text(stringResource(R.string.components_field_password)) },
-            singleLine = true,
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        if (passwordVisible) Icons.Outlined.Lock else Icons.Filled.Lock,
-                        contentDescription =
-                            stringResource(
-                                if (passwordVisible) R.string.components_cd_hide_password else R.string.components_cd_show_password,
-                            ),
-                    )
-                }
-            },
-            modifier = Modifier.fillMaxWidth().testTag(PASSWORD_FIELD_TAG),
+            label = stringResource(R.string.components_field_password),
+            modifier = Modifier.testTag(PASSWORD_FIELD_TAG),
         )
     }
 }
@@ -198,14 +177,7 @@ private fun KeyboardField(
     @StringRes label: Int,
     keyboardType: KeyboardType,
 ) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(stringResource(label)) },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        modifier = Modifier.fillMaxWidth(),
-    )
+    AppTextField(value = value, onValueChange = onValueChange, label = stringResource(label), keyboardType = keyboardType)
 }
 
 @Composable
@@ -297,34 +269,16 @@ private fun LabeledRow(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SelectSection() {
-    var expanded by rememberSaveable { mutableStateOf(false) }
     var selected by rememberSaveable { mutableIntStateOf(0) }
+    val options = sortOptions.mapIndexed { index, label -> SelectOption(index, stringResource(label)) }
     DemoSection(R.string.components_section_select) {
-        ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
-            OutlinedTextField(
-                value = stringResource(sortOptions[selected]),
-                onValueChange = {},
-                readOnly = true,
-                label = { Text(stringResource(R.string.components_select_label)) },
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                        .testTag(SELECT_FIELD_TAG),
-            )
-            ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                sortOptions.forEachIndexed { index, option ->
-                    DropdownMenuItem(
-                        text = { Text(stringResource(option)) },
-                        onClick = {
-                            selected = index
-                            expanded = false
-                        },
-                    )
-                }
-            }
-        }
+        SelectField(
+            label = stringResource(R.string.components_select_label),
+            options = options,
+            selected = selected,
+            onSelect = { selected = it },
+            modifier = Modifier.testTag(SELECT_FIELD_TAG),
+        )
     }
 }
 

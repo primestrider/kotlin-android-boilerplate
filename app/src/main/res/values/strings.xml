@@ -107,13 +107,10 @@
     <string name="components_field_disabled">Disabled</string>
     <string name="components_field_bio">Bio</string>
     <string name="components_field_bio_placeholder">Tell us about yourself…</string>
-    <string name="components_field_counter">%1$d/%2$d</string>
     <string name="components_field_email">Email</string>
     <string name="components_field_phone">Phone</string>
     <string name="components_field_amount">Amount</string>
     <string name="components_field_password">Password</string>
-    <string name="components_cd_show_password">Show password</string>
-    <string name="components_cd_hide_password">Hide password</string>
     <string name="components_checkbox_terms">I accept the terms</string>
     <string name="components_checkbox_notifications">All notifications</string>
     <string name="components_checkbox_email">Email updates</string>
@@ -251,4 +248,9 @@
     <string name="nav_home">Home</string>
     <string name="nav_components">Components</string>
     <string name="nav_profile">Profile</string>
+    <string name="component_counter">%1$d/%2$d</string>
+    <string name="component_show_password">Show password</string>
+    <string name="component_hide_password">Hide password</string>
+    <string name="component_search">Search</string>
+    <string name="component_clear_search">Clear search</string>
 </resources>

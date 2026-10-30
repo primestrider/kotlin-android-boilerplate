@@ -15,3 +15,8 @@ Rules:
 | --- | --- | --- |
 | `AppScaffold`, `AppTopBar` | `AppScaffold.kt` | Every screen: title, optional back arrow (`onBack = null` hides it), actions, snackbar/FAB slots |
 | `AppNavigationBar`, `NavBarItem` | `AppNavigationBar.kt` | Bottom navigation for top-level destinations, with optional count badge ("99+") |
+| `AppButton`, `ButtonVariant` | `AppButton.kt` | Any button: `PRIMARY`, `SECONDARY` (tonal), `OUTLINED`, `TEXT`, `DESTRUCTIVE`; `loading = true` shows a spinner, reports disabled and ignores clicks (no double submit); `fullWidth`, `leadingIcon` |
+| `AppTextField` | `TextFields.kt` | Text input with label, placeholder, `errorText` (wins over `supportingText`), `maxLength` + counter, keyboard type and IME action |
+| `PasswordTextField` | `TextFields.kt` | Password input with its own show/hide toggle |
+| `SearchField` | `TextFields.kt` | Search box with a clear button once there is a query |
+| `SelectField`, `SelectOption` | `SelectField.kt` | Pick one value from a dropdown; disabled options are shown but not selectable |

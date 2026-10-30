@@ -107,13 +107,10 @@
     <string name="components_field_disabled">Nonaktif</string>
     <string name="components_field_bio">Bio</string>
     <string name="components_field_bio_placeholder">Ceritakan tentang dirimu…</string>
-    <string name="components_field_counter">%1$d/%2$d</string>
     <string name="components_field_email">Email</string>
     <string name="components_field_phone">Telepon</string>
     <string name="components_field_amount">Jumlah</string>
     <string name="components_field_password">Kata sandi</string>
-    <string name="components_cd_show_password">Tampilkan kata sandi</string>
-    <string name="components_cd_hide_password">Sembunyikan kata sandi</string>
     <string name="components_checkbox_terms">Saya menyetujui syarat dan ketentuan</string>
     <string name="components_checkbox_notifications">Semua notifikasi</string>
     <string name="components_checkbox_email">Info lewat email</string>
@@ -251,4 +248,9 @@
     <string name="nav_home">Beranda</string>
     <string name="nav_components">Komponen</string>
     <string name="nav_profile">Profil</string>
+    <string name="component_counter">%1$d/%2$d</string>
+    <string name="component_show_password">Tampilkan kata sandi</string>
+    <string name="component_hide_password">Sembunyikan kata sandi</string>
+    <string name="component_search">Cari</string>
+    <string name="component_clear_search">Hapus pencarian</string>
 </resources>
