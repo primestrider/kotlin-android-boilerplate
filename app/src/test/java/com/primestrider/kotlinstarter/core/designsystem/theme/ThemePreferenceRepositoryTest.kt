@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import app.cash.turbine.test
 import com.primestrider.kotlinstarter.core.storage.StorageKeys
+import com.primestrider.kotlinstarter.core.storage.createPreferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -64,5 +65,14 @@ class ThemePreferenceRepositoryTest {
                         throw IOException("boom")
                 }
             assertEquals(ThemeMode.SYSTEM, ThemePreferenceRepository(failing).themeMode.first())
+        }
+
+    @Test
+    fun corruptedFileEmitsSystem() =
+        runTest {
+            val file = File(tempFolder.root, "corrupt.preferences_pb")
+            file.writeBytes(byteArrayOf(0x7f, 0x01, 0x02, 0x03, 0x55, 0x66, 0x77, 0x13))
+            val store = createPreferencesDataStore(backgroundScope) { file }
+            assertEquals(ThemeMode.SYSTEM, ThemePreferenceRepository(store).themeMode.first())
         }
 }
