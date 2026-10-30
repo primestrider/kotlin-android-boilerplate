@@ -49,3 +49,10 @@ Shapes: small = `Radii.sm`, medium = `Radii.md`, large = `Radii.lg`, extraLarge 
 | displayLarge / Medium / Small | | xl6 / xl5 / xl4 | Bold |
 
 All styles use Plus Jakarta Sans (400 to 800).
+
+## Theme preference
+
+- The mode (`SYSTEM`, `LIGHT`, `DARK`) is stored in the `settings` Preferences DataStore under the key `app.theme` (`StorageKeys.themeMode`), via `ThemePreferenceRepository`. Unknown or missing values resolve to `SYSTEM`.
+- `AppViewModel.themeMode` is `null` until the first stored value arrives. `MainActivity` keeps the splash screen visible while it is `null`, so the first frame is drawn in the correct theme (no flash of the wrong theme on cold start).
+- If reading DataStore throws an `IOException`, the repository falls back to `SYSTEM` instead of crashing.
+- System bar icon colors follow the resolved theme: `enableEdgeToEdge(SystemBarStyle.auto(...))` is re-applied whenever it changes.
