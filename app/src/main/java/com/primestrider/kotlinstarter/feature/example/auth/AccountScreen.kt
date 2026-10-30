@@ -31,6 +31,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.ConfirmDialog
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoRow
 import com.primestrider.kotlinstarter.core.designsystem.component.SectionHeader
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.network.userMessage
 
 /** Page only a signed-in session can reach. [profile] is the result of the authenticated `auth/me` call. */
 @Composable
@@ -112,12 +113,7 @@ private fun ProfileResult(profile: ProfileLoad) {
         is ProfileLoad.Failed ->
             Banner(
                 title = stringResource(R.string.auth_profile_load_error),
-                message =
-                    if (profile.error.isNetworkError) {
-                        stringResource(R.string.auth_error_network)
-                    } else {
-                        profile.error.message ?: stringResource(R.string.auth_error_generic)
-                    },
+                message = profile.error.userMessage(),
                 variant = BannerVariant.ERROR,
             )
         ProfileLoad.Idle, ProfileLoad.Loading -> Unit

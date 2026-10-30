@@ -45,12 +45,25 @@ suspend fun <T> safeApiCall(
     } catch (e: CancellationException) {
         throw e
     } catch (e: HttpException) {
-        val body = e.jsonBody(json)
-        ApiResult.Failure(ApiError(body.serverMessage(), e.code(), data = body))
+        ApiResult.Failure(e.toApiError(json))
     } catch (e: IOException) {
-        ApiResult.Failure(ApiError(null, isNetworkError = true))
+        ApiResult.Failure(e.toApiError(json))
     } catch (e: SerializationException) {
-        ApiResult.Failure(ApiError(null))
+        ApiResult.Failure(e.toApiError(json))
+    }
+
+/**
+ * Maps a failure that already happened (for example a Paging `LoadResult.Error`) to [ApiError]:
+ * HTTP errors keep status and body, I/O failures are network errors, anything else is generic.
+ */
+fun Throwable.toApiError(json: Json): ApiError =
+    when (this) {
+        is HttpException -> {
+            val body = jsonBody(json)
+            ApiError(body.serverMessage(), code(), data = body)
+        }
+        is IOException -> ApiError(null, isNetworkError = true)
+        else -> ApiError(null)
     }
 
 /** The error body parsed as JSON, or null when it is missing, unreadable or not valid JSON. */
@@ -75,3 +88,11 @@ private fun JsonElement.isStrictJson(): Boolean =
     }
 
 private fun JsonElement?.serverMessage(): String? = ((this as? JsonObject)?.get("message") as? JsonPrimitive)?.contentOrNull
+
+/** Carries an [ApiError] through APIs that only accept a [Throwable], such as Paging's `LoadResult.Error`. */
+class ApiException(
+    val error: ApiError,
+) : Exception(error.message)
+
+/** The [ApiError] behind a failure: the one an [ApiException] carries, else a generic error. */
+fun Throwable.asApiError(): ApiError = (this as? ApiException)?.error ?: ApiError(null)

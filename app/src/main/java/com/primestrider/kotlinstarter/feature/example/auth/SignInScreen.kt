@@ -26,6 +26,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.PasswordTextField
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.network.userMessage
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 
 internal const val SIGN_IN_BUTTON_TAG = "sign_in_submit"
@@ -50,12 +51,7 @@ fun SignInScreen(
         state.error?.let { error ->
             Banner(
                 title = stringResource(R.string.auth_error_title),
-                message =
-                    if (error.isNetworkError) {
-                        stringResource(R.string.auth_error_network)
-                    } else {
-                        error.message ?: stringResource(R.string.auth_error_generic)
-                    },
+                message = error.userMessage(),
                 variant = BannerVariant.ERROR,
             )
         }

@@ -106,6 +106,7 @@ dependencies {
     implementation(libs.okhttp.logging.interceptor)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.androidx.paging.compose)
 
     testImplementation(libs.okhttp.mockwebserver3)
     testImplementation(libs.junit)
@@ -116,6 +117,7 @@ dependencies {
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation(libs.androidx.paging.testing)
     testImplementation(libs.hilt.android.testing)
     kspTest(libs.hilt.compiler)
 }

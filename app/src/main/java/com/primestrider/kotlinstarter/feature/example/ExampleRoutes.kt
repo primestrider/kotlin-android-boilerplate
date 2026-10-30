@@ -57,3 +57,11 @@ data object ProfileRoute
 /** Protected: only reachable with a session; see the guard in `profileGraph`. */
 @Serializable
 data object AccountRoute
+
+@Serializable
+data object ProductsRoute
+
+@Serializable
+data class ProductDetailRoute(
+    val id: Long,
+)

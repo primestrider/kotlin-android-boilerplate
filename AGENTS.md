@@ -15,12 +15,13 @@ Single module `:app`, root package `com.primestrider.kotlinstarter`.
 KotlinStarterApp.kt          # @HiltAndroidApp
 app/                         # MainActivity, AppViewModel, navigation (MainShell tabs + per-tab graphs in AppNavHost.kt)
 core/storage/                # DataStore module and preference keys
-core/network/                # Retrofit/OkHttp clients (app + refresh), ApiError, safeApiCall, @Anonymous (docs/architecture/networking.md)
+core/network/                # Retrofit/OkHttp clients (app + refresh), ApiError, safeApiCall, toApiError, @Anonymous (docs/architecture/networking.md, data-loading.md)
 core/auth/                   # encrypted SessionRepository, AuthAdapter seam, bearer + single-flight 401 refresh, expiry message (docs/architecture/auth-session.md)
 core/designsystem/theme/     # palette, semantic colors, spacing, radii, typography, AppTheme
 core/designsystem/component/ # reusable components (see docs/architecture/components.md)
 core/i18n/                   # AppLanguage, LanguageController
 feature/example/             # example catalog, Home, Profile hub, sign-in, protected Account, Settings, component + styling pages, form example (deletable)
+feature/example/products/    # Products list: Retrofit API, Paging 3 source, debounced search (docs/architecture/data-loading.md)
 feature/example/auth/        # DummyJSON AuthAdapter and its Hilt binding (ExampleAuthModule): swap the backend here
 ```
 
@@ -38,7 +39,7 @@ Tests mirror the main source tree under `app/src/test/`.
 
 ## Example routes and adding a page
 
-Routes in `feature/example/ExampleRoutes.kt`: `ProfileRoute`, `AccountRoute` (protected), `SignInRoute`, `SettingsRoute`, `FormExampleRoute`; the component pages `ActionsRoute`, `InputsRoute`, `DisplayRoute`, `OverlaysRoute`; and the styling pages `ColorsRoute`, `TypographyRoute`, `SpacingRoute`, `SizingRoute`, `LayoutRoute`, `AppearanceRoute`, `ThemeRoute`. `HomeRoute` is in `app/navigation/AppNavHost.kt`.
+Routes in `feature/example/ExampleRoutes.kt`: `ProfileRoute`, `AccountRoute` (protected), `SignInRoute`, `SettingsRoute`, `FormExampleRoute`, `ProductsRoute`, `ProductDetailRoute(id)`; the component pages `ActionsRoute`, `InputsRoute`, `DisplayRoute`, `OverlaysRoute`; and the styling pages `ColorsRoute`, `TypographyRoute`, `SpacingRoute`, `SizingRoute`, `LayoutRoute`, `AppearanceRoute`, `ThemeRoute`. `HomeRoute` is in `app/navigation/AppNavHost.kt`.
 
 To add an example page:
 

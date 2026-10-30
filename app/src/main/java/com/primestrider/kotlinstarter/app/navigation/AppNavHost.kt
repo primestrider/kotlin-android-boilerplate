@@ -9,6 +9,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.paging.compose.collectAsLazyPagingItems
+import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.feature.example.AccountRoute
 import com.primestrider.kotlinstarter.feature.example.ActionsRoute
 import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
@@ -16,12 +18,15 @@ import com.primestrider.kotlinstarter.feature.example.ColorsRoute
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeScreen
 import com.primestrider.kotlinstarter.feature.example.DisplayRoute
+import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.FeedbackRoute
 import com.primestrider.kotlinstarter.feature.example.FormExampleRoute
 import com.primestrider.kotlinstarter.feature.example.HomeScreen
 import com.primestrider.kotlinstarter.feature.example.InputsRoute
 import com.primestrider.kotlinstarter.feature.example.LayoutRoute
 import com.primestrider.kotlinstarter.feature.example.OverlaysRoute
+import com.primestrider.kotlinstarter.feature.example.ProductDetailRoute
+import com.primestrider.kotlinstarter.feature.example.ProductsRoute
 import com.primestrider.kotlinstarter.feature.example.ProfileRoute
 import com.primestrider.kotlinstarter.feature.example.SettingsRoute
 import com.primestrider.kotlinstarter.feature.example.SignInRoute
@@ -44,6 +49,8 @@ import com.primestrider.kotlinstarter.feature.example.components.OverlaysScreen
 import com.primestrider.kotlinstarter.feature.example.exampleSections
 import com.primestrider.kotlinstarter.feature.example.form.FormExampleScreen
 import com.primestrider.kotlinstarter.feature.example.form.FormExampleViewModel
+import com.primestrider.kotlinstarter.feature.example.products.ProductsScreen
+import com.primestrider.kotlinstarter.feature.example.products.ProductsViewModel
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsViewModel
 import com.primestrider.kotlinstarter.feature.example.styling.AppearanceScreen
@@ -74,6 +81,21 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
     navigation<HomeGraph>(startDestination = HomeRoute) {
         composable<HomeRoute> {
             HomeScreen(sections = exampleSections, onOpen = { route -> navController.navigate(route) })
+        }
+        composable<ProductsRoute> {
+            val viewModel: ProductsViewModel = hiltViewModel()
+            val query by viewModel.query.collectAsStateWithLifecycle()
+            ProductsScreen(
+                query = query,
+                onQueryChange = viewModel::onQueryChange,
+                products = viewModel.products.collectAsLazyPagingItems(),
+                onOpen = { id -> navController.navigate(ProductDetailRoute(id)) },
+                onBack = back,
+            )
+        }
+        // Placeholder until the detail screen lands.
+        composable<ProductDetailRoute> {
+            ExamplePageScaffold(title = R.string.products_title, subtitle = R.string.products_subtitle, onBack = back) {}
         }
         composable<FormExampleRoute> {
             val viewModel: FormExampleViewModel = hiltViewModel()

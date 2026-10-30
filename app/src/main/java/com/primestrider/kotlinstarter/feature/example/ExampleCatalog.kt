@@ -31,7 +31,11 @@ val exampleSections: List<ExampleSection> =
         ExampleSection(
             title = R.string.example_home_features_title,
             description = R.string.example_home_features_description,
-            entries = listOf(ExampleEntry(R.string.example_form_title, R.string.example_form_subtitle, FormExampleRoute)),
+            entries =
+                listOf(
+                    ExampleEntry(R.string.products_title, R.string.products_subtitle, ProductsRoute),
+                    ExampleEntry(R.string.example_form_title, R.string.example_form_subtitle, FormExampleRoute),
+                ),
         ),
         ExampleSection(
             title = R.string.example_home_styling_title,

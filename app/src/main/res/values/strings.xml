@@ -298,8 +298,8 @@
     <string name="auth_validation_password_min">Password must be at least 6 characters</string>
     <string name="auth_short_lived">Expire tokens after 1 minute (to try the refresh flow)</string>
     <string name="auth_error_title">Could not sign in</string>
-    <string name="auth_error_network">Cannot reach the server. Check your connection.</string>
-    <string name="auth_error_generic">Something went wrong. Please try again.</string>
+    <string name="common_error_network">Cannot reach the server. Check your connection.</string>
+    <string name="common_error_generic">Something went wrong. Please try again.</string>
     <string name="auth_profile_load_error">Could not load profile</string>
     <string name="auth_signed_in">Welcome back</string>
     <string name="auth_profile_signed_out_title">You are not signed in</string>
@@ -315,4 +315,13 @@
     <string name="auth_sign_out_failed">Could not sign out. Please try again.</string>
     <string name="auth_info_id">ID</string>
     <string name="auth_info_email">Email</string>
+    <string name="common_action_retry">Try again</string>
+    <string name="products_title">Products</string>
+    <string name="products_subtitle">Paging 3, infinite scroll and search against a live API</string>
+    <string name="products_search_placeholder">Search products</string>
+    <string name="products_empty_title">No products found</string>
+    <string name="products_empty_description">Try a different search term.</string>
+    <string name="products_error_title">Could not load products</string>
+    <string name="products_stock">%1$d in stock</string>
+    <string name="products_out_of_stock">Out of stock</string>
 </resources>

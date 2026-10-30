@@ -298,8 +298,8 @@
     <string name="auth_validation_password_min">Kata sandi minimal 6 karakter</string>
     <string name="auth_short_lived">Token kedaluwarsa setelah 1 menit (untuk mencoba alur refresh)</string>
     <string name="auth_error_title">Gagal masuk</string>
-    <string name="auth_error_network">Tidak bisa terhubung ke server. Periksa koneksimu.</string>
-    <string name="auth_error_generic">Terjadi kesalahan. Silakan coba lagi.</string>
+    <string name="common_error_network">Tidak bisa terhubung ke server. Periksa koneksimu.</string>
+    <string name="common_error_generic">Terjadi kesalahan. Silakan coba lagi.</string>
     <string name="auth_profile_load_error">Gagal memuat profil</string>
     <string name="auth_signed_in">Selamat datang kembali</string>
     <string name="auth_profile_signed_out_title">Kamu belum masuk</string>
@@ -315,4 +315,13 @@
     <string name="auth_sign_out_failed">Gagal keluar. Silakan coba lagi.</string>
     <string name="auth_info_id">ID</string>
     <string name="auth_info_email">Email</string>
+    <string name="common_action_retry">Coba lagi</string>
+    <string name="products_title">Produk</string>
+    <string name="products_subtitle">Paging 3, gulir tanpa batas, dan pencarian ke API sungguhan</string>
+    <string name="products_search_placeholder">Cari produk</string>
+    <string name="products_empty_title">Produk tidak ditemukan</string>
+    <string name="products_empty_description">Coba kata kunci lain.</string>
+    <string name="products_error_title">Gagal memuat produk</string>
+    <string name="products_stock">Stok %1$d</string>
+    <string name="products_out_of_stock">Stok habis</string>
 </resources>
