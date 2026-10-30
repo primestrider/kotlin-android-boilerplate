@@ -54,6 +54,7 @@ import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.network.userMessage
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.core.util.formatCurrency
+import com.primestrider.kotlinstarter.core.util.formatIsoDate
 import com.primestrider.kotlinstarter.core.util.formatPercent
 import java.util.Locale
 
@@ -184,7 +185,7 @@ private fun Reviews(reviews: List<ReviewDto>) {
                 }
                 Text(review.comment, style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    review.date.substringBefore('T'),
+                    formatIsoDate(review.date, currentLocale()),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

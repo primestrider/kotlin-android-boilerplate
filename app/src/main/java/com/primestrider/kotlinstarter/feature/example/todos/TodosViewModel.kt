@@ -1,5 +1,6 @@
 package com.primestrider.kotlinstarter.feature.example.todos
 
+import android.database.sqlite.SQLiteException
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,7 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -100,26 +102,39 @@ class TodosViewModel
             // Clear before writing so a double tap cannot add the same task twice.
             savedStateHandle[INPUT_KEY] = ""
             savedStateHandle[SUBMITTED_KEY] = false
-            viewModelScope.launch {
+            write(onFailure = { savedStateHandle[INPUT_KEY] = title }) {
                 repository.add(title)
                 messenger.success(UiText.Resource(R.string.todos_added))
             }
         }
 
-        fun toggle(id: String) {
-            viewModelScope.launch { repository.toggle(id) }
-        }
+        fun toggle(id: String) = write { repository.toggle(id) }
 
-        fun remove(id: String) {
-            viewModelScope.launch {
+        fun remove(id: String) =
+            write {
                 repository.remove(id)
                 messenger.success(UiText.Resource(R.string.todos_removed))
             }
-        }
 
-        fun clearCompleted() {
-            viewModelScope.launch {
+        fun clearCompleted() =
+            write {
                 if (repository.clearCompleted() > 0) messenger.success(UiText.Resource(R.string.todos_cleared))
+            }
+
+        /** Runs a database write; a failure (disk full, corrupt file) is reported instead of crashing the app. */
+        private fun write(
+            onFailure: () -> Unit = {},
+            block: suspend () -> Unit,
+        ) {
+            viewModelScope.launch {
+                try {
+                    block()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: SQLiteException) {
+                    onFailure()
+                    messenger.error(UiText.Resource(R.string.todos_save_failed))
+                }
             }
         }
     }

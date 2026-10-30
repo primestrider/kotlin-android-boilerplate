@@ -315,7 +315,6 @@
     <string name="auth_sign_out_failed">Could not sign out. Please try again.</string>
     <string name="auth_info_id">ID</string>
     <string name="auth_info_email">Email</string>
-    <string name="common_action_retry">Try again</string>
     <string name="products_title">Products</string>
     <string name="products_subtitle">Paging 3, infinite scroll and search against a live API</string>
     <string name="products_search_placeholder">Search products</string>
@@ -344,7 +343,7 @@
     <string name="todos_subtitle">Room on device — this one works offline</string>
     <string name="todos_placeholder">What needs doing?</string>
     <string name="todos_validation_min">Write at least 3 characters</string>
-    <string name="todos_validation_max">Keep it under 100 characters</string>
+    <string name="todos_validation_max">Use 100 characters or fewer</string>
     <string name="todos_add">Add</string>
     <string name="todos_clear_completed">Clear completed</string>
     <string name="todos_filter_all">All</string>
@@ -368,4 +367,5 @@
     <string name="crash_continue">Continue</string>
     <string name="settings_developer">Developer</string>
     <string name="settings_crash">Crash the app</string>
+    <string name="todos_save_failed">Could not save. Please try again.</string>
 </resources>

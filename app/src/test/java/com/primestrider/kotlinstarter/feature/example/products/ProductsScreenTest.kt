@@ -50,7 +50,7 @@ class ProductsScreenTest {
     fun append_error_keeps_items_and_offers_retry() {
         show(listOf(product(1, stock = 0)), LoadStates(refresh = done, prepend = done, append = LoadState.Error(IOException())))
         waitFor("Phone 1")
-        waitFor("Try again")
+        waitFor("Retry")
     }
 
     @Test
@@ -79,5 +79,13 @@ class ProductsScreenTest {
         waitFor("Phone 7")
         rule.onNodeWithText("Phone 7").performClick()
         assertEquals(7L, opened)
+    }
+
+    @Test
+    fun refresh_error_with_items_keeps_them_and_offers_retry() {
+        show(listOf(product(1, stock = 0)), LoadStates(refresh = LoadState.Error(IOException()), prepend = done, append = done))
+        waitFor("Phone 1")
+        waitFor("Could not load products")
+        waitFor("Retry")
     }
 }

@@ -315,7 +315,6 @@
     <string name="auth_sign_out_failed">Gagal keluar. Silakan coba lagi.</string>
     <string name="auth_info_id">ID</string>
     <string name="auth_info_email">Email</string>
-    <string name="common_action_retry">Coba lagi</string>
     <string name="products_title">Produk</string>
     <string name="products_subtitle">Paging 3, gulir tanpa batas, dan pencarian ke API sungguhan</string>
     <string name="products_search_placeholder">Cari produk</string>
@@ -368,4 +367,5 @@
     <string name="crash_continue">Lanjutkan</string>
     <string name="settings_developer">Pengembang</string>
     <string name="settings_crash">Buat aplikasi crash</string>
+    <string name="todos_save_failed">Gagal menyimpan. Silakan coba lagi.</string>
 </resources>

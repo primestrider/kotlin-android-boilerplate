@@ -37,7 +37,7 @@ class CrashRecorder(
 
     private var installed = false
 
-    /** Wraps the current default handler. Call once, first thing in `Application.onCreate`. */
+    /** Wraps the current default handler; idempotent. Called from `KotlinStarterApp.attachBaseContext`. */
     fun install() {
         if (installed) return
         installed = true

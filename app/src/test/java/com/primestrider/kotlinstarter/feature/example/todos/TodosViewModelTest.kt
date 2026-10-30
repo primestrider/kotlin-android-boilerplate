@@ -6,6 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.MessageVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
 import kotlinx.coroutines.Dispatchers
@@ -161,5 +162,23 @@ class TodosViewModelTest {
                 assertEquals(UiText.Resource(R.string.todos_removed), awaitItem().text)
             }
             assertTrue(repository.todos.first().isEmpty())
+        }
+
+    @Test
+    fun failed_insert_keeps_the_draft_and_reports_it() =
+        runTest {
+            val failing =
+                object : TodoDao by database.todoDao() {
+                    override suspend fun insert(todo: TodoEntity) = throw android.database.sqlite.SQLiteFullException("disk full")
+                }
+            val viewModel = TodosViewModel(TodosRepository(failing) { ++now }, SavedStateHandle(), messenger)
+            messenger.messages.test {
+                viewModel.onInputChange("Buy milk")
+                viewModel.add()
+                val message = awaitItem()
+                assertEquals(MessageVariant.ERROR, message.variant)
+                assertEquals(UiText.Resource(R.string.todos_save_failed), message.text)
+            }
+            assertEquals("Buy milk", viewModel.state.value.input)
         }
 }

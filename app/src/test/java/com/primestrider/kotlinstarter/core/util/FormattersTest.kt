@@ -21,4 +21,10 @@ class FormattersTest {
 
     @Test
     fun whole_percent_has_no_decimals() = assertEquals("10%", formatPercent(0.1, Locale.US))
+
+    @Test
+    fun iso_date_is_shown_in_the_locale() = assertEquals("May 23, 2024", formatIsoDate("2024-05-23T08:56:21.618Z", Locale.US))
+
+    @Test
+    fun unparseable_date_is_shown_as_is() = assertEquals("soon", formatIsoDate("soon", Locale.US))
 }

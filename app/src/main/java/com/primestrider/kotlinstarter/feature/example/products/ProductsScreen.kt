@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -72,21 +73,52 @@ fun ProductsScreen(
             ) {
                 when {
                     products.itemCount > 0 -> ProductList(products, onOpen)
-                    refresh is LoadState.Loading -> SkeletonList()
+                    refresh is LoadState.Loading -> Pullable { SkeletonList() }
                     refresh is LoadState.Error ->
-                        ErrorState(
-                            message = refresh.error.asApiError().userMessage(),
-                            onRetry = products::retry,
-                            title = stringResource(R.string.products_error_title),
-                        )
+                        Pullable {
+                            ErrorState(
+                                message = refresh.error.asApiError().userMessage(),
+                                onRetry = products::retry,
+                                title = stringResource(R.string.products_error_title),
+                            )
+                        }
                     else ->
-                        EmptyState(
-                            title = stringResource(R.string.products_empty_title),
-                            description = stringResource(R.string.products_empty_description),
-                        )
+                        Pullable {
+                            EmptyState(
+                                title = stringResource(R.string.products_empty_title),
+                                description = stringResource(R.string.products_empty_description),
+                            )
+                        }
                 }
             }
         }
+    }
+}
+
+/** Fills the pull-to-refresh area with a scrollable container, so pulling works on the non-list states too. */
+@Composable
+private fun Pullable(content: @Composable () -> Unit) {
+    LazyColumn(Modifier.fillMaxSize()) {
+        item { Box(Modifier.fillParentMaxSize()) { content() } }
+    }
+}
+
+/** An inline failure with a Retry button; [title] is set for a failed refresh shown above stale items. */
+@Composable
+private fun RetryRow(
+    message: String,
+    onRetry: () -> Unit,
+    title: String? = null,
+) {
+    Row(
+        Modifier.fillMaxWidth().padding(horizontal = Spacing.s4, vertical = Spacing.s2),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            title?.let { Text(it, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.error) }
+            Text(message, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+        }
+        AppButton(stringResource(R.string.component_retry), onClick = onRetry, variant = ButtonVariant.TEXT)
     }
 }
 
@@ -95,7 +127,26 @@ private fun ProductList(
     products: LazyPagingItems<ProductDto>,
     onOpen: (Long) -> Unit,
 ) {
-    LazyColumn(Modifier.fillMaxSize()) {
+    // A failed refresh (e.g. a new search while offline) keeps the previous items: say so above them. It sits outside
+    // the list because an item inserted above the first visible row would be scrolled out of view.
+    Column(Modifier.fillMaxSize()) {
+        (products.loadState.refresh as? LoadState.Error)?.let { refresh ->
+            RetryRow(
+                message = refresh.error.asApiError().userMessage(),
+                onRetry = products::retry,
+                title = stringResource(R.string.products_error_title),
+            )
+        }
+        ProductItems(products, onOpen)
+    }
+}
+
+@Composable
+private fun ColumnScope.ProductItems(
+    products: LazyPagingItems<ProductDto>,
+    onOpen: (Long) -> Unit,
+) {
+    LazyColumn(Modifier.weight(1f)) {
         items(count = products.itemCount, key = products.itemKey { it.id }) { index ->
             products[index]?.let { ProductRow(it, onOpen) }
         }
@@ -107,20 +158,7 @@ private fun ProductList(
                     }
                 }
             is LoadState.Error ->
-                item {
-                    Row(
-                        Modifier.fillMaxWidth().padding(horizontal = Spacing.s4, vertical = Spacing.s2),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            append.error.asApiError().userMessage(),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.weight(1f),
-                        )
-                        AppButton(stringResource(R.string.common_action_retry), onClick = products::retry, variant = ButtonVariant.TEXT)
-                    }
-                }
+                item { RetryRow(message = append.error.asApiError().userMessage(), onRetry = products::retry) }
             is LoadState.NotLoading -> Unit
         }
     }

@@ -125,7 +125,6 @@ dependencies {
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
-    testImplementation(libs.androidx.paging.testing)
     testImplementation(libs.hilt.android.testing)
     kspTest(libs.hilt.compiler)
 }
