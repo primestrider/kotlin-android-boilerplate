@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.primestrider.kotlinstarter.feature.example.ActionsRoute
 import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
 import com.primestrider.kotlinstarter.feature.example.ColorsRoute
 import com.primestrider.kotlinstarter.feature.example.HomeScreen
@@ -19,6 +20,7 @@ import com.primestrider.kotlinstarter.feature.example.SizingRoute
 import com.primestrider.kotlinstarter.feature.example.SpacingRoute
 import com.primestrider.kotlinstarter.feature.example.ThemeRoute
 import com.primestrider.kotlinstarter.feature.example.TypographyRoute
+import com.primestrider.kotlinstarter.feature.example.components.ActionsScreen
 import com.primestrider.kotlinstarter.feature.example.exampleSections
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsViewModel
@@ -60,6 +62,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     onBack = back,
                 )
             }
+            composable<ActionsRoute> { ActionsScreen(onBack = back) }
             composable<ColorsRoute> { ColorsScreen(onBack = back) }
             composable<TypographyRoute> { TypographyScreen(onBack = back) }
             composable<SpacingRoute> { SpacingScreen(onBack = back) }

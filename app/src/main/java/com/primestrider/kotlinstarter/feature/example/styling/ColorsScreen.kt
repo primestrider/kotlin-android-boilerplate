@@ -18,6 +18,8 @@ import com.primestrider.kotlinstarter.core.designsystem.theme.AppColors
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 import com.primestrider.kotlinstarter.core.designsystem.theme.Palette
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.example.DemoSection
+import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 
 /** Semantic token names paired with the active theme's values. */
 internal fun semanticColorEntries(colors: AppColors): List<Pair<String, Color>> =
@@ -42,18 +44,18 @@ internal fun semanticColorEntries(colors: AppColors): List<Pair<String, Color>> 
 
 @Composable
 fun ColorsScreen(onBack: () -> Unit) {
-    StylingScaffold(
+    ExamplePageScaffold(
         title = R.string.example_styling_colors_title,
         subtitle = R.string.example_styling_colors_subtitle,
         onBack = onBack,
     ) {
-        StylingSection(R.string.styling_section_semantic_colors) {
+        DemoSection(R.string.styling_section_semantic_colors) {
             semanticColorEntries(AppThemeTokens.colors).forEach { (name, color) ->
                 ColorSwatchRow(name, color)
             }
         }
-        StylingSection(R.string.styling_section_text_colors) { TextColorSamples() }
-        StylingSection(R.string.styling_section_palette) {
+        DemoSection(R.string.styling_section_text_colors) { TextColorSamples() }
+        DemoSection(R.string.styling_section_palette) {
             Palette.scales.forEach { (scale, steps) ->
                 Column(verticalArrangement = Arrangement.spacedBy(Spacing.s1)) {
                     Text(scale, style = MaterialTheme.typography.labelLarge)

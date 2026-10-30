@@ -15,7 +15,7 @@ data class ExampleSection(
     val entries: List<ExampleEntry>,
 )
 
-/** Home index content. Append sections in order: Features, Components, SDK, Styling. */
+/** Home index content. Sections in order: Features, Components, SDK, Styling. */
 val exampleSections: List<ExampleSection> =
     listOf(
         ExampleSection(
@@ -27,6 +27,18 @@ val exampleSections: List<ExampleSection> =
                         title = R.string.settings_title,
                         subtitle = R.string.example_home_settings_subtitle,
                         route = SettingsRoute,
+                    ),
+                ),
+        ),
+        ExampleSection(
+            title = R.string.example_home_components_title,
+            description = R.string.example_home_components_description,
+            entries =
+                listOf(
+                    ExampleEntry(
+                        R.string.example_components_actions_title,
+                        R.string.example_components_actions_subtitle,
+                        ActionsRoute,
                     ),
                 ),
         ),

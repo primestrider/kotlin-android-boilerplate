@@ -25,6 +25,8 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.example.DemoSection
+import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 
 @Composable
 private fun Tile(
@@ -39,19 +41,19 @@ private fun Tile(
 @Composable
 fun AppearanceScreen(onBack: () -> Unit) {
     val colors = AppThemeTokens.colors
-    StylingScaffold(
+    ExamplePageScaffold(
         title = R.string.example_styling_appearance_title,
         subtitle = R.string.example_styling_appearance_subtitle,
         onBack = onBack,
     ) {
-        StylingSection(R.string.styling_section_border) {
+        DemoSection(R.string.styling_section_border) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s3), verticalArrangement = Arrangement.spacedBy(Spacing.s3)) {
                 listOf(1.dp to colors.border, 2.dp to colors.primary, 4.dp to colors.destructive).forEach { (w, c) ->
                     Tile("${w.value.toInt()}dp", Modifier.border(BorderStroke(w, c), RoundedCornerShape(Radii.md)))
                 }
             }
         }
-        StylingSection(R.string.styling_section_radius) {
+        DemoSection(R.string.styling_section_radius) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s3), verticalArrangement = Arrangement.spacedBy(Spacing.s3)) {
                 listOf<Pair<String, Dp>>(
                     "none" to Radii.none,
@@ -67,7 +69,7 @@ fun AppearanceScreen(onBack: () -> Unit) {
                 }
             }
         }
-        StylingSection(R.string.styling_section_corners) {
+        DemoSection(R.string.styling_section_corners) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s3), verticalArrangement = Arrangement.spacedBy(Spacing.s3)) {
                 Tile("top", Modifier.background(colors.secondary, RoundedCornerShape(topStart = Radii.xl, topEnd = Radii.xl)))
                 Tile("bottom", Modifier.background(colors.secondary, RoundedCornerShape(bottomStart = Radii.xl, bottomEnd = Radii.xl)))
@@ -75,7 +77,7 @@ fun AppearanceScreen(onBack: () -> Unit) {
                 Tile("end", Modifier.background(colors.secondary, RoundedCornerShape(topEnd = Radii.xl, bottomEnd = Radii.xl)))
             }
         }
-        StylingSection(R.string.styling_section_elevation) {
+        DemoSection(R.string.styling_section_elevation) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s4), verticalArrangement = Arrangement.spacedBy(Spacing.s4)) {
                 listOf(0.dp, 1.dp, 2.dp, 4.dp, 8.dp, 16.dp).forEach { e ->
                     Surface(shadowElevation = e, shape = RoundedCornerShape(Radii.md), color = colors.card) {
@@ -84,7 +86,7 @@ fun AppearanceScreen(onBack: () -> Unit) {
                 }
             }
         }
-        StylingSection(R.string.styling_section_alpha) {
+        DemoSection(R.string.styling_section_alpha) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(Spacing.s3), verticalArrangement = Arrangement.spacedBy(Spacing.s3)) {
                 listOf(0f, 0.25f, 0.5f, 0.75f, 1f).forEach { a ->
                     Tile(
@@ -94,7 +96,7 @@ fun AppearanceScreen(onBack: () -> Unit) {
                 }
             }
         }
-        StylingSection(R.string.styling_section_combined) {
+        DemoSection(R.string.styling_section_combined) {
             Surface(
                 Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(Radii.xl),

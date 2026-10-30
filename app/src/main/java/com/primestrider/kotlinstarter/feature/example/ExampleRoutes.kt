@@ -26,3 +26,18 @@ data object AppearanceRoute
 
 @Serializable
 data object ThemeRoute
+
+@Serializable
+data object ActionsRoute
+
+@Serializable
+data object InputsRoute
+
+@Serializable
+data object DisplayRoute
+
+@Serializable
+data object OverlaysRoute
+
+@Serializable
+data object FormExampleRoute

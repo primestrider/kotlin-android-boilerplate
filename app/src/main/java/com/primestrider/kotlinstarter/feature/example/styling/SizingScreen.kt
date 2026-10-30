@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.Dp
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.example.DemoSection
+import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 
 @Composable
 private fun DemoBox(
@@ -37,17 +39,17 @@ private fun DemoBox(
 
 @Composable
 fun SizingScreen(onBack: () -> Unit) {
-    StylingScaffold(
+    ExamplePageScaffold(
         title = R.string.example_styling_sizing_title,
         subtitle = R.string.example_styling_sizing_subtitle,
         onBack = onBack,
     ) {
-        StylingSection(R.string.styling_section_width_fraction) {
+        DemoSection(R.string.styling_section_width_fraction) {
             listOf(0.25f, 0.5f, 0.75f, 1f).forEach { fraction ->
                 DemoBox("${(fraction * 100).toInt()}%", Modifier.fillMaxWidth(fraction).height(Spacing.s10))
             }
         }
-        StylingSection(R.string.styling_section_fixed_sizes) {
+        DemoSection(R.string.styling_section_fixed_sizes) {
             Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s2), verticalAlignment = Alignment.Bottom) {
                 listOf<Pair<String, Dp>>(
                     "s8" to Spacing.s8,
@@ -60,12 +62,12 @@ fun SizingScreen(onBack: () -> Unit) {
                 DemoBox("height ${h.value.toInt()}dp", Modifier.fillMaxWidth().height(h))
             }
         }
-        StylingSection(R.string.styling_section_aspect_ratio) {
+        DemoSection(R.string.styling_section_aspect_ratio) {
             listOf("1:1" to 1f, "16:9" to 16f / 9f, "4:3" to 4f / 3f).forEach { (label, ratio) ->
                 DemoBox(label, Modifier.width(Spacing.s40).aspectRatio(ratio))
             }
         }
-        StylingSection(R.string.styling_section_min_max) {
+        DemoSection(R.string.styling_section_min_max) {
             DemoBox("widthIn(max = s48)", Modifier.fillMaxWidth().widthIn(max = Spacing.s48).height(Spacing.s10))
             DemoBox("widthIn(min = s48)", Modifier.widthIn(min = Spacing.s48).height(Spacing.s10))
             DemoBox("heightIn(min = s16)", Modifier.fillMaxWidth().heightIn(min = Spacing.s16))

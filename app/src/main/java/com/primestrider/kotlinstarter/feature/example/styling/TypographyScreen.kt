@@ -16,6 +16,8 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.FontSize
 import com.primestrider.kotlinstarter.core.designsystem.theme.LetterSpacing
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.example.DemoSection
+import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 
 private data class StyleRow(
     val name: String,
@@ -74,26 +76,26 @@ fun TypographyScreen(onBack: () -> Unit) {
             "wider" to LetterSpacing.wider,
             "widest" to LetterSpacing.widest,
         )
-    StylingScaffold(
+    ExamplePageScaffold(
         title = R.string.example_styling_typography_title,
         subtitle = R.string.example_styling_typography_subtitle,
         onBack = onBack,
     ) {
-        StylingSection(R.string.styling_section_text_styles) {
+        DemoSection(R.string.styling_section_text_styles) {
             styles.forEach { row ->
                 val variant = row.rnVariant?.let { " · $it" }.orEmpty()
                 SampleLine(row.name + variant, row.style)
             }
         }
-        StylingSection(R.string.styling_section_font_sizes) {
+        DemoSection(R.string.styling_section_font_sizes) {
             sizes.forEach { (name, size) -> SampleLine("$name · ${size.value.toInt()}sp", TextStyle(fontSize = size)) }
         }
-        StylingSection(R.string.styling_section_font_weights) {
+        DemoSection(R.string.styling_section_font_weights) {
             weights.forEach { (value, weight) -> SampleLine("$value", TextStyle(fontWeight = weight)) }
         }
-        StylingSection(R.string.styling_section_text_alignment) { TextAlignmentSamples() }
-        StylingSection(R.string.styling_section_text_decoration) { TextDecorationSamples() }
-        StylingSection(R.string.styling_section_letter_spacing) {
+        DemoSection(R.string.styling_section_text_alignment) { TextAlignmentSamples() }
+        DemoSection(R.string.styling_section_text_decoration) { TextDecorationSamples() }
+        DemoSection(R.string.styling_section_letter_spacing) {
             spacings.forEach { (name, spacing) ->
                 SampleLine("$name · ${spacing.value}sp", TextStyle(letterSpacing = spacing))
             }

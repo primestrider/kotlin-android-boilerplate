@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.Dp
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.example.DemoSection
+import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 
 @Composable
 private fun Cell(
@@ -54,12 +56,12 @@ private fun Track(
 
 @Composable
 fun LayoutScreen(onBack: () -> Unit) {
-    StylingScaffold(
+    ExamplePageScaffold(
         title = R.string.example_styling_layout_title,
         subtitle = R.string.example_styling_layout_subtitle,
         onBack = onBack,
     ) {
-        StylingSection(R.string.styling_section_row_column) {
+        DemoSection(R.string.styling_section_row_column) {
             Track("Row") {
                 Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
                     repeat(3) { Cell("${it + 1}") }
@@ -71,7 +73,7 @@ fun LayoutScreen(onBack: () -> Unit) {
                 }
             }
         }
-        StylingSection(R.string.styling_section_arrangement) {
+        DemoSection(R.string.styling_section_arrangement) {
             listOf(
                 "Start" to Arrangement.Start,
                 "Center" to Arrangement.Center,
@@ -87,7 +89,7 @@ fun LayoutScreen(onBack: () -> Unit) {
                 }
             }
         }
-        StylingSection(R.string.styling_section_alignment) {
+        DemoSection(R.string.styling_section_alignment) {
             listOf(
                 "Top" to Alignment.Top,
                 "CenterVertically" to Alignment.CenterVertically,
@@ -106,7 +108,7 @@ fun LayoutScreen(onBack: () -> Unit) {
                 }
             }
         }
-        StylingSection(R.string.styling_section_weight) {
+        DemoSection(R.string.styling_section_weight) {
             Track("weight 1 : 2 : 1") {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.s1)) {
                     listOf(1f, 2f, 1f).forEach { w ->
@@ -127,7 +129,7 @@ fun LayoutScreen(onBack: () -> Unit) {
                 }
             }
         }
-        StylingSection(R.string.styling_section_position) {
+        DemoSection(R.string.styling_section_position) {
             Box(
                 Modifier
                     .fillMaxWidth()
@@ -140,7 +142,7 @@ fun LayoutScreen(onBack: () -> Unit) {
                 Cell("offset", Modifier.align(Alignment.TopCenter).offset(x = Spacing.s16, y = Spacing.s2), Spacing.s14)
             }
         }
-        StylingSection(R.string.styling_section_grid) {
+        DemoSection(R.string.styling_section_grid) {
             // Fixed height: a lazy grid cannot measure itself inside a vertically scrolling parent.
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),

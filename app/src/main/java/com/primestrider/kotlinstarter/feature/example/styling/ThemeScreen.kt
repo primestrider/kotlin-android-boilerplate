@@ -23,6 +23,8 @@ import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
+import com.primestrider.kotlinstarter.feature.example.DemoSection
+import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.ThemeModeSelector
 
 @Composable
@@ -32,22 +34,22 @@ fun ThemeScreen(
     onBack: () -> Unit,
 ) {
     val colors = AppThemeTokens.colors
-    StylingScaffold(
+    ExamplePageScaffold(
         title = R.string.example_styling_theme_title,
         subtitle = R.string.example_styling_theme_subtitle,
         onBack = onBack,
     ) {
-        StylingSection(R.string.styling_section_mode) {
+        DemoSection(R.string.styling_section_mode) {
             ThemeModeSelector(selected = themeMode, onSelect = onThemeModeChange)
         }
-        StylingSection(R.string.styling_section_surfaces) {
+        DemoSection(R.string.styling_section_surfaces) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
                 SurfaceTile(R.string.styling_surface_background, colors.background, colors.foreground)
                 SurfaceTile(R.string.styling_surface_card, colors.card, colors.cardForeground)
                 SurfaceTile(R.string.styling_surface_secondary, colors.secondary, colors.secondaryForeground)
             }
         }
-        StylingSection(R.string.styling_section_tokens) {
+        DemoSection(R.string.styling_section_tokens) {
             semanticColorEntries(colors).forEach { (name, color) -> ColorSwatchRow(name, color) }
         }
     }

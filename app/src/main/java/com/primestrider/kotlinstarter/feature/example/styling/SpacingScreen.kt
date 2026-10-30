@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.example.DemoSection
+import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 
 private val spacingTokens: List<Pair<String, Dp>> =
     listOf(
@@ -64,12 +66,12 @@ private val spacingTokens: List<Pair<String, Dp>> =
 
 @Composable
 fun SpacingScreen(onBack: () -> Unit) {
-    StylingScaffold(
+    ExamplePageScaffold(
         title = R.string.example_styling_spacing_title,
         subtitle = R.string.example_styling_spacing_subtitle,
         onBack = onBack,
     ) {
-        StylingSection(R.string.styling_section_spacing_scale) {
+        DemoSection(R.string.styling_section_spacing_scale) {
             spacingTokens.forEach { (name, size) ->
                 Column {
                     Text("$name · ${size.value.toInt()}dp", style = MaterialTheme.typography.labelMedium)
@@ -85,7 +87,7 @@ fun SpacingScreen(onBack: () -> Unit) {
                 }
             }
         }
-        StylingSection(R.string.styling_section_padding_gap) {
+        DemoSection(R.string.styling_section_padding_gap) {
             listOf(Spacing.s1, Spacing.s2, Spacing.s4, Spacing.s6).forEach { pad ->
                 Box(
                     Modifier
@@ -118,7 +120,7 @@ fun SpacingScreen(onBack: () -> Unit) {
                 }
             }
         }
-        StylingSection(R.string.styling_section_margin) {
+        DemoSection(R.string.styling_section_margin) {
             // Compose has no margin modifier: outer spacing is padding applied before the border/background.
             listOf(Spacing.s1, Spacing.s4, Spacing.s8).forEach { margin ->
                 Box(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceVariant)) {
@@ -135,7 +137,7 @@ fun SpacingScreen(onBack: () -> Unit) {
                 }
             }
         }
-        StylingSection(R.string.styling_section_negative_margin) {
+        DemoSection(R.string.styling_section_negative_margin) {
             // padding() rejects negative values, so a negative margin is a negative offset.
             Column(
                 Modifier
