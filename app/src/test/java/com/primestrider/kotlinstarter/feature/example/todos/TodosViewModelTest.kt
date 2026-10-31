@@ -155,6 +155,7 @@ class TodosViewModelTest {
             val viewModel = viewModel()
             messenger.messages.test {
                 viewModel.clearCompleted()
+                advanceUntilIdle()
                 expectNoEvents()
             }
         }
