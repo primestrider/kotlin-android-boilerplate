@@ -24,7 +24,8 @@ data class PaymentCodeState(
 
 /**
  * The payment code and its 60 second countdown. It ticks every second; at 0 a new code replaces it and the
- * countdown restarts. [amount] comes from the navigation arguments (the deep link's `amount` query).
+ * countdown restarts. [amount] comes from the navigation arguments (the deep link's `amount` query); that is
+ * untrusted outside input, so a negative value is treated as absent.
  */
 @HiltViewModel
 class PaymentCodeViewModel(
@@ -34,7 +35,7 @@ class PaymentCodeViewModel(
     @Inject
     constructor(savedStateHandle: SavedStateHandle) : this(savedStateHandle, Random.Default)
 
-    val amount: Long? = savedStateHandle[AMOUNT_KEY]
+    val amount: Long? = savedStateHandle.get<Long>(AMOUNT_KEY)?.takeIf { it >= 0 }
 
     private val _state = MutableStateFlow(PaymentCodeState(paymentCode(random)))
     val state: StateFlow<PaymentCodeState> = _state.asStateFlow()

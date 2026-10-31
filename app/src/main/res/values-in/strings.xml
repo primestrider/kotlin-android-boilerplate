@@ -579,8 +579,9 @@
     <string name="sdk_payment_title">Kode Pembayaran</string>
     <string name="sdk_payment_subtitle">Layar terang, tetap menyala, dan anti-tangkapan layar untuk kode bayar</string>
     <string name="sdk_payment_cashier">Tunjukkan kode ini ke kasir</string>
+    <string name="sdk_payment_qr_description">Kode QR dari kode pembayaran</string>
     <string name="sdk_payment_amount">Jumlah %1$s</string>
-    <string name="sdk_payment_refresh">Diperbarui dalam %1$ddtk · Saldo %2$s</string>
+    <string name="sdk_payment_refresh">Diperbarui dalam %1$d dtk · Saldo %2$s</string>
     <string name="sdk_payment_screenshot_title">Tangkapan layar terdeteksi</string>
     <string name="sdk_payment_screenshot_message">Jangan pernah membagikan kode pembayaranmu kepada siapa pun.</string>
     <string name="sdk_payment_treatment_title">Perlakuan layar</string>

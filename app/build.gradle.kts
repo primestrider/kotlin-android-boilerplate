@@ -148,6 +148,7 @@ dependencies {
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
     ksp(libs.androidx.hilt.compiler)
+    implementation(libs.zxing.core)
 
     testImplementation(libs.okhttp.mockwebserver3)
     testImplementation(libs.androidx.room.testing)

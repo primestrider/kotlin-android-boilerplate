@@ -3,10 +3,12 @@ package com.primestrider.kotlinstarter.feature.example.sdk.payment
 import android.app.Activity
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -19,11 +21,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +43,7 @@ import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkSection
 
 private const val WALLET_BALANCE = 1_250_000.0
+private const val PAYMENT_QR_SIZE = 200
 
 /** A rotating payment code on a bright, awake, screenshot-proof screen; leaving restores the window as it was. */
 @Composable
@@ -74,6 +79,12 @@ fun PaymentCodeScreen(
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(Spacing.s4), verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
                 Text(stringResource(R.string.sdk_payment_cashier), style = MaterialTheme.typography.titleMedium)
+                val qr = remember(state.code) { paymentQrBitmap(paymentQrMatrix(state.code)) }
+                Image(
+                    bitmap = qr,
+                    contentDescription = stringResource(R.string.sdk_payment_qr_description),
+                    modifier = Modifier.size(PAYMENT_QR_SIZE.dp).align(Alignment.CenterHorizontally),
+                )
                 Text(
                     state.code,
                     style = MaterialTheme.typography.headlineLarge,

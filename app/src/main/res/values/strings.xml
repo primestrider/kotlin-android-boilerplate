@@ -579,6 +579,7 @@
     <string name="sdk_payment_title">Payment Code</string>
     <string name="sdk_payment_subtitle">Bright, awake, screenshot-proof screen to show a pay code</string>
     <string name="sdk_payment_cashier">Show this code to the cashier</string>
+    <string name="sdk_payment_qr_description">QR code of the payment code</string>
     <string name="sdk_payment_amount">Amount %1$s</string>
     <string name="sdk_payment_refresh">Refreshes in %1$ds · Balance %2$s</string>
     <string name="sdk_payment_screenshot_title">Screenshot detected</string>
