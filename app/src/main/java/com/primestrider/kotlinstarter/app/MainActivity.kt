@@ -1,5 +1,6 @@
 package com.primestrider.kotlinstarter.app
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.SystemBarStyle
@@ -9,9 +10,12 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.util.Consumer
+import androidx.navigation.compose.rememberNavController
 import com.primestrider.kotlinstarter.app.navigation.MainShell
 import com.primestrider.kotlinstarter.core.crash.CrashFallbackScreen
 import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
@@ -35,6 +39,13 @@ class MainActivity : AppCompatActivity() {
         splash.setKeepOnScreenCondition { !viewModel.ready.value }
         enableEdgeToEdge()
         setContent {
+            val navController = rememberNavController()
+            // singleTop: a deep link delivered to the running activity arrives here instead of recreating it.
+            DisposableEffect(navController) {
+                val listener = Consumer<Intent> { navController.handleDeepLink(it) }
+                addOnNewIntentListener(listener)
+                onDispose { removeOnNewIntentListener(listener) }
+            }
             val mode = viewModel.themeMode.collectAsState().value ?: ThemeMode.SYSTEM
             val darkTheme = resolveDarkTheme(mode, isSystemInDarkTheme())
             LaunchedEffect(darkTheme) {
@@ -46,7 +57,7 @@ class MainActivity : AppCompatActivity() {
             AppTheme(darkTheme = darkTheme) {
                 CompositionLocalProvider(LocalMessenger provides messenger) {
                     val crash = viewModel.lastCrash.collectAsState().value
-                    if (crash != null) CrashFallbackScreen(crash, onContinue = viewModel::dismissCrash) else MainShell()
+                    if (crash != null) CrashFallbackScreen(crash, onContinue = viewModel::dismissCrash) else MainShell(navController)
                 }
             }
         }

@@ -67,3 +67,22 @@ composable<AccountRoute> {
 - **User sign-out:** returns to the Profile hub, which then shows the signed-out prompt; back does not return to Account.
 
 After a successful sign-in, `SignInRoute` navigates to `AccountRoute` with `popUpTo<SignInRoute> { inclusive = true }`.
+
+## Deep links: scheme config and `navDeepLink`
+
+The example feature opens screens from outside the app with `<scheme>://example/...`.
+
+- **Scheme:** `appScheme` in `app/build.gradle.kts`: `app.scheme` in `local.properties`, else env `APP_SCHEME`, else `kotlinstarter`. It reaches the manifest as the `${appScheme}` placeholder and the code as `BuildConfig.APP_SCHEME`, so one value drives both.
+- **Manifest:** `MainActivity` has a `VIEW` intent filter (`DEFAULT` + `BROWSABLE`, scheme `${appScheme}`, host `example`) and `launchMode="singleTop"`, so a link opens the running activity instead of a second one.
+- **Graph:** a destination declares its links with the type-safe builder, which derives the path and query from the route class:
+
+  ```kotlin
+  composable<SdkDemoRoute>(
+      deepLinks = listOf(navDeepLink<SdkDemoRoute>(basePath = "${BuildConfig.APP_SCHEME}://example/sdk")),
+  ) { ... }
+  ```
+
+  `.../sdk/payment-code?amount=50000` fills `SdkDemoRoute(id = "payment-code", amount = 50000)`. Fields with defaults (`amount: Long? = null`) are optional query parameters. The back stack under the target is built from its graph (Home, then the screen), so back returns to Home.
+- **Already running:** `MainActivity` creates the `NavHostController` and forwards `onNewIntent` to it with `addOnNewIntentListener { navController.handleDeepLink(it) }`. The first launch is handled by the NavHost itself.
+- **Reading the argument:** a ViewModel gets route fields from its `SavedStateHandle` (`savedStateHandle["amount"]` or `savedStateHandle.toRoute<SdkDemoRoute>()`), which survives rotation and process death.
+- **Try it:** `adb shell am start -a android.intent.action.VIEW -d "kotlinstarter://example/sdk/payment-code?amount=50000"`.

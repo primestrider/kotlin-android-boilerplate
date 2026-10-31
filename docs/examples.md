@@ -33,7 +33,7 @@ Use it for any demo that needs a runtime permission, instead of requesting permi
 
 ### Deleting the section
 
-Delete `feature/example/sdk/` and `SdkDemoRoute` in `ExampleRoutes.kt`; remove the "Device APIs" `ExampleSection` from `ExampleCatalog.kt`, the `composable<SdkDemoRoute>` line in `AppNavHost.kt`, the `sdk_*` and `example_home_sdk_*` strings, and what the demos added to the manifest and `libs.versions.toml` (`ACCESS_NETWORK_STATE`, the `review-ktx` and `exifinterface` dependencies, `room-testing`). The Share & Print demo also added the `<provider>` for `androidx.core.content.FileProvider` (authority `${applicationId}.files`) to `AndroidManifest.xml` and `res/xml/file_paths.xml`: delete both, and any `cache-path` entries later demos added to that file. The Room transactions demo put its table in `ExampleDatabase`: drop `TransactionEntity` and `transactionDao()` from it, remove `MIGRATION_1_2` and the `.addMigrations(...)` call and the `transactionDao` provider in `TodosModule`, and set `version = 1` again (or keep the migration if any installed build is on v2). The debug-only `app/schemas` asset directory in `app/build.gradle.kts` exists for the migration test and can go with it. `core/permission/` and the shared controls in `core/designsystem/component/` can stay: they do not depend on the demos.
+Delete `feature/example/sdk/` and `SdkDemoRoute` in `ExampleRoutes.kt`; remove the "Device APIs" `ExampleSection` from `ExampleCatalog.kt`, the `composable<SdkDemoRoute>` line in `AppNavHost.kt`, the `sdk_*` and `example_home_sdk_*` strings, and what the demos added to the manifest and `libs.versions.toml` (`ACCESS_NETWORK_STATE`, the `review-ktx` and `exifinterface` dependencies, `room-testing`). The Share & Print demo also added the `<provider>` for `androidx.core.content.FileProvider` (authority `${applicationId}.files`) to `AndroidManifest.xml` and `res/xml/file_paths.xml`: delete both, and any `cache-path` entries later demos added to that file. The Room transactions demo put its table in `ExampleDatabase`: drop `TransactionEntity` and `transactionDao()` from it, remove `MIGRATION_1_2` and the `.addMigrations(...)` call and the `transactionDao` provider in `TodosModule`, and set `version = 1` again (or keep the migration if any installed build is on v2). The debug-only `app/schemas` asset directory in `app/build.gradle.kts` exists for the migration test and can go with it. The Web Browser and Payment Code demos added more outside `feature/example`: remove from `AndroidManifest.xml` the whole `<queries>` block, the `DETECT_SCREEN_CAPTURE` permission, the `android:launchMode="singleTop"` attribute and the `<intent-filter>` with `${appScheme}` on `MainActivity`; from `app/build.gradle.kts` the `appScheme` value, `manifestPlaceholders["appScheme"]`, the `APP_SCHEME` `buildConfigField` and the `androidx.browser` dependency (and `browser` / `androidx-browser` in `libs.versions.toml`); in `AppNavHost.kt` the `deepLinks = ...` argument of `composable<SdkDemoRoute>` (with the `navDeepLink` and `BuildConfig` imports). `MainActivity` keeps its `addOnNewIntentListener` hook, which is harmless without deep links, or you can drop it together with the hoisted `rememberNavController()` and let `MainShell` create the controller again. `core/permission/` and the shared controls in `core/designsystem/component/` can stay: they do not depend on the demos.
 
 ## Demos
 
@@ -108,3 +108,33 @@ Delete `feature/example/sdk/` and `SdkDemoRoute` in `ExampleRoutes.kt`; remove t
 - **Permissions:** none.
 - **API-level fallback:** none needed; the compat controller covers API 24 and up. Leaving the screen restores the previous icon style and visibility.
 - **Files:** `sdk/statusbar/StatusBarScreen.kt`, `sdk/statusbar/SystemBarStyle.kt` (the style-to-appearance rule).
+
+### Blur & Gradients (`effects`)
+
+- **Purpose:** a wallet card with a linear gradient at any angle (three palettes), a balance hidden behind a blur with an intensity slider, and a 3×3 mesh gradient whose middle point and smoothing you can change.
+- **Android API:** `Brush.linearGradient`, `Modifier.blur` (API 31+), an AGSL `RuntimeShader` drawn with `ShaderBrush` (API 33+).
+- **Permissions:** none.
+- **API-level fallback:** below API 31 there is no blur: a translucent scrim covers the balance and the caption "Blur needs Android 12; showing a scrim instead." shows. Below API 33 the mesh is a plain linear gradient with the caption "Mesh gradients need Android 13; showing a linear gradient instead."
+- **Files:** `sdk/effects/GradientMath.kt` (angle to offsets, intensity to blur radius), `sdk/effects/MeshGradient.kt` (the shader), `sdk/effects/EffectsScreen.kt`.
+
+### Web Browser & Linking (`web-browser`)
+
+- **Purpose:** open a page in a Custom Tab themed with the app colors, hand `https` / `tel:` / `mailto:` / `geo:` URIs to other apps, and show the deep link that opens Payment Code from outside the app.
+- **Android API:** `androidx.browser` (`CustomTabsIntent`, `CustomTabColorSchemeParams`), `Intent.ACTION_VIEW`, a manifest deep link.
+- **Permissions:** none. Android 11+ package visibility needs the `<queries>` entries in the manifest.
+- **API-level fallback:** not applicable. `ActivityNotFoundException` is caught everywhere: a missing handler shows a warning banner, and a Custom Tab with no Custom Tabs browser falls back to a plain `ACTION_VIEW`.
+- **Files:** `sdk/browser/ExternalApps.kt` (`ExternalApp`, `openExternal`, `openCustomTab`, `paymentDeepLink`), `sdk/browser/WebBrowserScreen.kt`.
+- **Try the link:** `adb shell am start -a android.intent.action.VIEW -d "kotlinstarter://example/sdk/payment-code?amount=50000"` (the scheme is `appScheme`, see below).
+
+### Payment Code (`payment-code`)
+
+- **Purpose:** a payment code (3 groups of 4 digits) that refreshes every 60 s, on a screen that is at full brightness, stays awake and blocks screenshots while it is open. The deep link `.../sdk/payment-code?amount=50000` also shows the amount.
+- **Android API:** `Window.attributes.screenBrightness`, `FLAG_KEEP_SCREEN_ON`, `FLAG_SECURE`, `Activity.registerScreenCaptureCallback` (API 34+).
+- **Permissions:** `DETECT_SCREEN_CAPTURE` (normal, granted at install).
+- **API-level fallback:** screenshot detection needs API 34; below it the caption "Screenshot detection needs Android 14." shows. The three window treatments work on every API level.
+- **Behavior:** `WindowTreatments` restores only what it changed: a flag the window already had stays set, and brightness returns to its earlier value, when a switch goes off or the screen closes. The amount reaches `PaymentCodeViewModel` through the navigation `SavedStateHandle` (`amount` argument of `SdkDemoRoute`).
+- **Files:** `sdk/payment/PaymentCode.kt`, `PaymentCodeViewModel.kt`, `WindowTreatments.kt`, `PaymentCodeScreen.kt`.
+
+### Deep link scheme
+
+The scheme is `appScheme`: `app.scheme` in `local.properties`, else the `APP_SCHEME` environment variable, else `kotlinstarter`. `app/build.gradle.kts` passes it to the manifest as the `${appScheme}` placeholder and to code as `BuildConfig.APP_SCHEME`. The deep link is `<scheme>://example/sdk/<demo id>` (Payment Code also takes `?amount=<IDR>`); see docs/architecture/navigation.md.

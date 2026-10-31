@@ -73,4 +73,6 @@ data object TodosRoute
 @Serializable
 data class SdkDemoRoute(
     val id: String,
+    /** Set only by the Payment Code deep link (`.../sdk/payment-code?amount=50000`). */
+    val amount: Long? = null,
 )

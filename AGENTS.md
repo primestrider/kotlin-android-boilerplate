@@ -44,7 +44,7 @@ Tests mirror the main source tree under `app/src/test/`.
 
 ## Example routes and adding a page
 
-Routes in `feature/example/ExampleRoutes.kt`: `ProfileRoute`, `AccountRoute` (protected), `SignInRoute`, `SettingsRoute`, `FormExampleRoute`, `ProductsRoute`, `ProductDetailRoute(id)`, `TodosRoute`, `SdkDemoRoute(id)` (all Device APIs demos; add one in `sdkDemos`, see docs/examples.md); the component pages `ActionsRoute`, `InputsRoute`, `DisplayRoute`, `OverlaysRoute`; and the styling pages `ColorsRoute`, `TypographyRoute`, `SpacingRoute`, `SizingRoute`, `LayoutRoute`, `AppearanceRoute`, `ThemeRoute`. `HomeRoute` is in `app/navigation/AppNavHost.kt`.
+Routes in `feature/example/ExampleRoutes.kt`: `ProfileRoute`, `AccountRoute` (protected), `SignInRoute`, `SettingsRoute`, `FormExampleRoute`, `ProductsRoute`, `ProductDetailRoute(id)`, `TodosRoute`, `SdkDemoRoute(id, amount?)` (all Device APIs demos; add one in `sdkDemos`, see docs/examples.md); the component pages `ActionsRoute`, `InputsRoute`, `DisplayRoute`, `OverlaysRoute`; and the styling pages `ColorsRoute`, `TypographyRoute`, `SpacingRoute`, `SizingRoute`, `LayoutRoute`, `AppearanceRoute`, `ThemeRoute`. `HomeRoute` is in `app/navigation/AppNavHost.kt`.
 
 To add an example page:
 

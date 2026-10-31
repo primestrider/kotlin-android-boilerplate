@@ -10,19 +10,30 @@ plugins {
     alias(libs.plugins.ktlint)
 }
 
+val localProperties: Properties =
+    Properties().apply {
+        rootProject
+            .file("local.properties")
+            .takeIf { it.exists() }
+            ?.reader()
+            ?.use { load(it) }
+    }
+
 // API base URL: local.properties `api.url`, else env API_URL, else DummyJSON (keep the trailing slash).
 val apiUrl: String =
-    Properties()
-        .apply {
-            rootProject
-                .file("local.properties")
-                .takeIf { it.exists() }
-                ?.reader()
-                ?.use { load(it) }
-        }.getProperty("api.url")
+    localProperties
+        .getProperty("api.url")
         ?.takeIf { it.isNotBlank() }
         ?: System.getenv("API_URL")?.takeIf { it.isNotBlank() }
         ?: "https://dummyjson.com/"
+
+// Deep link scheme (`<scheme>://example/...`): local.properties `app.scheme`, else env APP_SCHEME, else "kotlinstarter".
+val appScheme: String =
+    localProperties
+        .getProperty("app.scheme")
+        ?.takeIf { it.isNotBlank() }
+        ?: System.getenv("APP_SCHEME")?.takeIf { it.isNotBlank() }
+        ?: "kotlinstarter"
 
 android {
     namespace = "com.primestrider.kotlinstarter"
@@ -36,6 +47,8 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+        manifestPlaceholders["appScheme"] = appScheme
+        buildConfigField("String", "APP_SCHEME", "\"$appScheme\"")
         buildConfigField("String", "API_URL", "\"${apiUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
     }
 
@@ -122,6 +135,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.play.review.ktx)
     implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.browser)
 
     testImplementation(libs.okhttp.mockwebserver3)
     testImplementation(libs.androidx.room.testing)

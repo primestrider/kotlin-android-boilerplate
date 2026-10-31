@@ -9,8 +9,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.feature.example.AccountRoute
 import com.primestrider.kotlinstarter.feature.example.ActionsRoute
 import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
@@ -129,7 +131,9 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                 onBack = back,
             )
         }
-        composable<SdkDemoRoute> { entry -> SdkDemoScreen(id = entry.toRoute<SdkDemoRoute>().id, onBack = back) }
+        composable<SdkDemoRoute>(
+            deepLinks = listOf(navDeepLink<SdkDemoRoute>(basePath = "${BuildConfig.APP_SCHEME}://example/sdk")),
+        ) { entry -> SdkDemoScreen(id = entry.toRoute<SdkDemoRoute>().id, onBack = back) }
         composable<ColorsRoute> { ColorsScreen(onBack = back) }
         composable<TypographyRoute> { TypographyScreen(onBack = back) }
         composable<SpacingRoute> { SpacingScreen(onBack = back) }

@@ -12,8 +12,9 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-private const val KIND_KEY = "kind"
-private const val AMOUNT_KEY = "amount"
+// Not "amount": SdkDemoRoute has an `amount` argument, which the navigation puts in this same SavedStateHandle.
+private const val KIND_KEY = "selected_kind"
+private const val AMOUNT_KEY = "selected_amount"
 private const val DEFAULT_AMOUNT = 50_000L
 
 data class TransactionsUiState(
