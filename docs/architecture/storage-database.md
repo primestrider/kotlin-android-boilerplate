@@ -51,3 +51,23 @@ val database = Room.inMemoryDatabaseBuilder(context, ExampleDatabase::class.java
 - DAO tests assert the SQL (ordering, counts) against it (`TodoDaoTest`).
 - ViewModel tests use the real repository on the same in-memory database and a fake clock (`TodosViewModelTest`); wait for the state with `state.first { it.loaded && … }`, because Room answers on its own executor.
 - DataStore tests use `testing/InMemoryPreferencesDataStore` (file-backed DataStore is unreliable in JVM tests on Windows).
+
+## Adding a table: the v1→v2 migration and its test
+
+`ExampleDatabase` went from v1 (`todos`) to v2 by adding the `transactions` table for the Room transactions demo. The steps, in order:
+
+1. Add the `@Entity` and a DAO, list the entity in `@Database(entities = …, version = 2)` and expose `abstract fun transactionDao()`. Building once writes `app/schemas/<database class>/2.json`; commit it next to `1.json`.
+2. Write the migration with the SQL copied from the new schema's `createSql` (the table must match the entity exactly, or Room throws on open):
+
+   ```kotlin
+   val MIGRATION_1_2 = object : Migration(1, 2) {
+       override fun migrate(db: SupportSQLiteDatabase) {
+           db.execSQL("CREATE TABLE IF NOT EXISTS `transactions` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, …)")
+       }
+   }
+   ```
+
+3. Register it: `Room.databaseBuilder(...).addMigrations(MIGRATION_1_2)`. Existing rows in other tables are untouched.
+4. Test the upgrade with `MigrationTestHelper` (`room-testing`), which replays the exported `1.json` (`ExampleDatabaseMigrationTest`): create a v1 database, insert a todo, run `runMigrationsAndValidate(2, listOf(MIGRATION_1_2))`, and assert the todo is still there and the new table exists. `validate` also compares the result with `2.json`, so a SQL/entity mismatch fails the test.
+
+Under Robolectric the helper needs two things: the schema JSON files as assets (`app/build.gradle.kts` adds `$projectDir/schemas` to the `debug` source set, because unit tests only see the variant's merged assets), and the driver-based constructor (`MigrationTestHelper(instrumentation, file, AndroidSQLiteDriver(), ExampleDatabase::class, { ExampleDatabase_Impl() })`), since the older name-based constructor trips over Robolectric's database paths.

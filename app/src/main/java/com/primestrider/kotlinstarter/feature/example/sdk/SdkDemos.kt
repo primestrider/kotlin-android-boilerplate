@@ -6,9 +6,13 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.feature.example.ExampleEntry
 import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
 import com.primestrider.kotlinstarter.feature.example.sdk.appinfo.AppInfoScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.blob.BlobScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.clipboard.ClipboardScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.device.DeviceScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.files.FilesScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.livephoto.LivePhotoScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.share.ShareScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.sqlite.TransactionsScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.statusbar.StatusBarScreen
 
 /** One Android API demo in the "Device APIs" Home section. [id] is kebab-case and is the whole route. */
@@ -27,8 +31,12 @@ val sdkDemos: List<SdkDemo> =
     listOf(
         SdkDemo("clipboard", R.string.sdk_clipboard_title, R.string.sdk_clipboard_subtitle) { ClipboardScreen(it) },
         SdkDemo("device", R.string.sdk_device_title, R.string.sdk_device_subtitle) { DeviceScreen(it) },
+        SdkDemo("share", R.string.sdk_share_title, R.string.sdk_share_subtitle) { ShareScreen(it) },
+        SdkDemo("sqlite", R.string.sdk_sqlite_title, R.string.sdk_sqlite_subtitle) { TransactionsScreen(it) },
+        SdkDemo("files", R.string.sdk_files_title, R.string.sdk_files_subtitle) { FilesScreen(it) },
         SdkDemo("app-info", R.string.sdk_app_info_title, R.string.sdk_app_info_subtitle) { AppInfoScreen(it) },
         SdkDemo("live-photo", R.string.sdk_live_photo_title, R.string.sdk_live_photo_subtitle) { LivePhotoScreen(it) },
+        SdkDemo("blob", R.string.sdk_blob_title, R.string.sdk_blob_subtitle) { BlobScreen(it) },
         SdkDemo("status-bar", R.string.sdk_status_bar_title, R.string.sdk_status_bar_subtitle) { StatusBarScreen(it) },
     )
 

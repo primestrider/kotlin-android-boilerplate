@@ -35,8 +35,23 @@ class SdkDemosTest {
     }
 
     @Test
-    fun registry_holds_the_task_one_demos_in_reference_order() {
-        assertEquals(listOf("clipboard", "device", "app-info", "live-photo", "status-bar"), sdkDemos.map { it.id })
+    fun registry_holds_demos_in_reference_order() {
+        assertEquals(
+            listOf(
+                "clipboard",
+                "device",
+                "share",
+                "sqlite",
+                "files",
+                "app-info",
+                "live-photo",
+                "blob",
+                "status-bar",
+            ),
+            sdkDemos.map {
+                it.id
+            },
+        )
     }
 
     @Test

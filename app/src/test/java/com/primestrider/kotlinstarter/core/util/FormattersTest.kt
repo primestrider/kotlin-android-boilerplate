@@ -17,6 +17,12 @@ class FormattersTest {
     }
 
     @Test
+    fun fraction_digits_override_drops_the_decimals() {
+        val text = formatCurrency(50000.0, "IDR", Locale.US, fractionDigits = 0)
+        assertEquals("IDR50,000", text)
+    }
+
+    @Test
     fun fractional_percent_keeps_one_decimal() = assertEquals("12.6%", formatPercent(0.1258, Locale.US))
 
     @Test

@@ -33,7 +33,7 @@ Use it for any demo that needs a runtime permission, instead of requesting permi
 
 ### Deleting the section
 
-Delete `feature/example/sdk/` and `SdkDemoRoute` in `ExampleRoutes.kt`; remove the "Device APIs" `ExampleSection` from `ExampleCatalog.kt`, the `composable<SdkDemoRoute>` line in `AppNavHost.kt`, the `sdk_*` and `example_home_sdk_*` strings, and what the demos added to the manifest and `libs.versions.toml` (`ACCESS_NETWORK_STATE`, the `review-ktx` dependency). `core/permission/` and the shared controls in `core/designsystem/component/` can stay: they do not depend on the demos.
+Delete `feature/example/sdk/` and `SdkDemoRoute` in `ExampleRoutes.kt`; remove the "Device APIs" `ExampleSection` from `ExampleCatalog.kt`, the `composable<SdkDemoRoute>` line in `AppNavHost.kt`, the `sdk_*` and `example_home_sdk_*` strings, and what the demos added to the manifest and `libs.versions.toml` (`ACCESS_NETWORK_STATE`, the `review-ktx` and `exifinterface` dependencies, `room-testing`). The Share & Print demo also added the `<provider>` for `androidx.core.content.FileProvider` (authority `${applicationId}.files`) to `AndroidManifest.xml` and `res/xml/file_paths.xml`: delete both, and any `cache-path` entries later demos added to that file. The Room transactions demo put its table in `ExampleDatabase`: drop `TransactionEntity` and `transactionDao()` from it, remove `MIGRATION_1_2` and the `.addMigrations(...)` call and the `transactionDao` provider in `TodosModule`, and set `version = 1` again (or keep the migration if any installed build is on v2). The debug-only `app/schemas` asset directory in `app/build.gradle.kts` exists for the migration test and can go with it. `core/permission/` and the shared controls in `core/designsystem/component/` can stay: they do not depend on the demos.
 
 ## Demos
 
@@ -53,6 +53,30 @@ Delete `feature/example/sdk/` and `SdkDemoRoute` in `ExampleRoutes.kt`; remove t
 - **API-level fallback:** "Performance class" needs API 31 (`Build.VERSION.MEDIA_PERFORMANCE_CLASS`); older devices, and devices that declare none, show "—".
 - **Files:** `sdk/device/DeviceScreen.kt`, `sdk/device/NetworkStatus.kt`.
 
+### Share & Print (`share`)
+
+- **Purpose:** render an e-receipt (merchant, amount) into a one-page A4 PDF, then share it through the system sheet or print it.
+- **Android API:** `PdfDocument`, `FileProvider` (authority `${applicationId}.files`), `Intent.ACTION_SEND` with `Intent.createChooser`, `PrintManager.print` with a `PrintDocumentAdapter`.
+- **Permissions:** none.
+- **API-level fallback:** none needed; all of it exists on API 24. If no app can handle the share (`ActivityNotFoundException`) or printing fails, the screen shows "Something went wrong."
+- **Files:** `sdk/share/ShareScreen.kt`, `sdk/share/Receipt.kt` (amount parsing, reference), `sdk/share/ReceiptPdf.kt` (page content, PDF writer, print adapter), `res/xml/file_paths.xml`, the `<provider>` in `AndroidManifest.xml`. Robolectric has no native PDF backend, so only the page content is unit tested; the rendering is checked on a device.
+
+### Room transactions (`sqlite`)
+
+- **Purpose:** an offline transaction history. Pick a kind (top-up, payment, transfer) and an amount, add it, and watch the balance; it survives restarts.
+- **Android API:** Room (`@Entity`, `@Dao` with `Flow`, a `Migration`).
+- **Permissions:** none.
+- **API-level fallback:** not applicable.
+- **Files:** `sdk/sqlite/` (`TransactionEntity`, `TransactionDao`, `TransactionsViewModel`, `TransactionsScreen`). The table lives in `ExampleDatabase` (`todos/ExampleDatabase.kt`, version 2, with `MIGRATION_1_2`) and the DAO is provided by `TodosModule`. The upgrade is covered by `ExampleDatabaseMigrationTest`; see "Adding a table" in [storage-database.md](architecture/storage-database.md).
+
+### Image Compression & Files (`files`)
+
+- **Purpose:** pick a photo, resize it to a maximum width and re-encode it as JPEG (shows the saving); download a sample PDF into the cache directory and list or clear it.
+- **Android API:** Photo Picker (`ActivityResultContracts.PickVisualMedia`), `BitmapFactory` (`inSampleSize`), `ExifInterface` (rotation), `Bitmap.createScaledBitmap`, OkHttp.
+- **Permissions:** none. The Photo Picker needs no storage permission.
+- **API-level fallback:** the Photo Picker falls back to the system document picker on devices without it (down to API 24).
+- **Files:** `sdk/files/` (`ImageCompressor`, `Downloads`, `FilesViewModel`, `FilesScreen`); the `exifinterface` dependency in `libs.versions.toml`.
+
 ### App Info & Store Review (`app-info`)
 
 - **Purpose:** show the installed package's info and request the Play in-app review sheet, with the store page as a fallback.
@@ -68,6 +92,14 @@ Delete `feature/example/sdk/` and `SdkDemoRoute` in `ExampleRoutes.kt`; remove t
 - **Permissions:** none.
 - **API-level fallback:** not applicable.
 - **Files:** `sdk/livephoto/LivePhotoScreen.kt`.
+
+### Binary data (`blob`)
+
+- **Purpose:** the counterpart of a JavaScript `Blob`: create a byte payload from text, read it back as text, slice its first 8 bytes as hex, or combine it with itself.
+- **Android API:** none; plain Kotlin (`ByteArray`, UTF-8).
+- **Permissions:** none.
+- **API-level fallback:** not applicable.
+- **Files:** `sdk/blob/BinaryPayload.kt`, `sdk/blob/BlobScreen.kt`.
 
 ### System Bars (`status-bar`)
 
