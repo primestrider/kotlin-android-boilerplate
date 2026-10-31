@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -91,7 +91,11 @@ private fun LoadingExample() {
             loading = false
         }
     }
-    AnimExample(R.string.anim_lists_loading_title, R.string.anim_lists_loading_usage, "rememberInfiniteTransition + animateFloat") {
+    AnimExample(
+        R.string.anim_lists_shimmer_title,
+        R.string.anim_lists_shimmer_usage,
+        "rememberInfiniteTransition + Brush.horizontalGradient",
+    ) {
         FilledTonalButton(
             onClick = { loading = true },
             enabled = !loading,
@@ -112,8 +116,8 @@ private fun LoadingExample() {
                 ) {
                     repeat(LOADED_ROWS) {
                         Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s3), verticalAlignment = Alignment.CenterVertically) {
-                            Skeleton(Modifier.size(40.dp), RoundedCornerShape(20.dp))
-                            SkeletonText(lines = 2, modifier = Modifier.weight(1f))
+                            Skeleton(Modifier.size(40.dp), RoundedCornerShape(20.dp), shimmer = true)
+                            SkeletonText(lines = 2, modifier = Modifier.weight(1f), shimmer = true)
                         }
                     }
                 }
@@ -138,7 +142,7 @@ private fun LoadedRow(text: String) {
 private fun AnimatedListExample() {
     val list = rememberSaveable(saver = DemoListState.Saver) { DemoListState((1..3).map { DemoRow(it) }) }
     AnimExample(R.string.anim_lists_list_title, R.string.anim_lists_list_usage, "LazyColumn + Modifier.animateItem()") {
-        Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
+        Row(Modifier.testTag("listActions"), horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
             FilledTonalButton(onClick = { list.add() }, modifier = Modifier.heightIn(min = MinTouchTarget)) {
                 Text(stringResource(R.string.anim_lists_add))
             }
@@ -151,15 +155,11 @@ private fun AnimatedListExample() {
             }
         }
         OutlinedCard(Modifier.fillMaxWidth().height(ListFrameHeight)) {
-            if (list.rows.isEmpty()) {
-                Box(Modifier.fillMaxSize().semantics { liveRegion = LiveRegionMode.Polite }, contentAlignment = Alignment.Center) {
-                    Text(stringResource(R.string.anim_lists_empty), style = MaterialTheme.typography.titleMedium)
-                }
-            } else {
+            // The list stays composed even when empty, so the last row's removal animation can finish.
+            Box(Modifier.fillMaxSize()) {
                 LazyColumn(Modifier.fillMaxSize().testTag("demoList")) {
-                    items(list.rows, key = { it.id }) { row ->
+                    itemsIndexed(list.rows, key = { _, row -> row.id }) { index, row ->
                         val label = stringResource(R.string.anim_lists_item, row.id)
-                        val index = list.rows.indexOf(row)
                         Row(
                             Modifier
                                 .animateItem(placementSpec = spring(Spring.DampingRatioLowBouncy, Spring.StiffnessMediumLow))
@@ -179,6 +179,18 @@ private fun AnimatedListExample() {
                                 enabled = index < list.rows.lastIndex,
                             ) { list.moveDown(row.id) }
                             RowButton(Icons.Filled.Close, stringResource(R.string.anim_lists_remove, label)) { list.remove(row.id) }
+                        }
+                    }
+                }
+                if (list.rows.isEmpty()) {
+                    Column(
+                        Modifier.fillMaxSize().testTag("emptyState").semantics { liveRegion = LiveRegionMode.Polite },
+                        verticalArrangement = Arrangement.spacedBy(Spacing.s2, Alignment.CenterVertically),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(stringResource(R.string.anim_lists_empty), style = MaterialTheme.typography.titleMedium)
+                        FilledTonalButton(onClick = { list.add() }, modifier = Modifier.heightIn(min = MinTouchTarget)) {
+                            Text(stringResource(R.string.anim_lists_add))
                         }
                     }
                 }

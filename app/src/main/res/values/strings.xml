@@ -893,8 +893,8 @@
     <string name="anim_cards_item_forest">Forest Walk</string>
     <string name="anim_cards_item_desert">Desert Road</string>
     <string name="anim_cards_press_count">Pressed %1$d times</string>
-    <string name="anim_lists_loading_title">Skeleton loading</string>
-    <string name="anim_lists_loading_usage">Placeholder bars pulse while data loads, then the real rows replace them.</string>
+    <string name="anim_lists_shimmer_title">Skeleton shimmer</string>
+    <string name="anim_lists_shimmer_usage">A light band sweeps across placeholder blocks while data loads, then the real rows replace them.</string>
     <string name="anim_lists_reload">Reload</string>
     <string name="anim_lists_loaded_row">Loaded row %1$d</string>
     <string name="anim_lists_list_title">Animated list changes</string>

@@ -893,8 +893,8 @@
     <string name="anim_cards_item_forest">Jalan di Hutan</string>
     <string name="anim_cards_item_desert">Jalan Gurun</string>
     <string name="anim_cards_press_count">Ditekan %1$d kali</string>
-    <string name="anim_lists_loading_title">Loading skeleton</string>
-    <string name="anim_lists_loading_usage">Batang placeholder berdenyut saat data dimuat, lalu diganti baris yang sebenarnya.</string>
+    <string name="anim_lists_shimmer_title">Shimmer skeleton</string>
+    <string name="anim_lists_shimmer_usage">Pita cahaya bergerak melintasi blok placeholder saat data dimuat, lalu diganti baris yang sebenarnya.</string>
     <string name="anim_lists_reload">Muat ulang</string>
     <string name="anim_lists_loaded_row">Baris termuat %1$d</string>
     <string name="anim_lists_list_title">Perubahan list beranimasi</string>
