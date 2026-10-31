@@ -893,4 +893,9 @@
     <string name="anim_cards_item_forest">Forest Walk</string>
     <string name="anim_cards_item_desert">Desert Road</string>
     <string name="anim_cards_press_count">Pressed %1$d times</string>
+    <string name="home_search_placeholder">Search features</string>
+    <string name="home_filter_all">All</string>
+    <string name="home_no_match">No features match \"%1$s\"</string>
+    <string name="home_no_match_hint">Try another word or pick a different section.</string>
+    <string name="home_section_count">%1$d examples</string>
 </resources>

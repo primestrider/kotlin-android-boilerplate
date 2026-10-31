@@ -1,5 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.runtime.Composable
 import com.primestrider.kotlinstarter.R
 
@@ -17,6 +19,7 @@ fun ComponentsHomeScreen(
                     title = R.string.example_home_components_title,
                     description = R.string.example_home_components_description,
                     entries = entries,
+                    icon = Icons.Filled.Build,
                 ),
             ),
         onOpen = onOpen,

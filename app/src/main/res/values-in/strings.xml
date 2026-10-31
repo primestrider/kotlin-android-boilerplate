@@ -893,4 +893,9 @@
     <string name="anim_cards_item_forest">Jalan di Hutan</string>
     <string name="anim_cards_item_desert">Jalan Gurun</string>
     <string name="anim_cards_press_count">Ditekan %1$d kali</string>
+    <string name="home_search_placeholder">Cari fitur</string>
+    <string name="home_filter_all">Semua</string>
+    <string name="home_no_match">Tidak ada fitur yang cocok dengan \"%1$s\"</string>
+    <string name="home_no_match_hint">Coba kata lain atau pilih section lain.</string>
+    <string name="home_section_count">%1$d contoh</string>
 </resources>

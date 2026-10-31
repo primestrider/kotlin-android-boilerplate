@@ -1,6 +1,12 @@
 package com.primestrider.kotlinstarter.feature.example
 
 import androidx.annotation.StringRes
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.feature.example.animation.animationEntries
 import com.primestrider.kotlinstarter.feature.example.sdk.sdkEntries
@@ -15,6 +21,8 @@ data class ExampleSection(
     @StringRes val title: Int,
     @StringRes val description: Int,
     val entries: List<ExampleEntry>,
+    /** Shown in the section's header and on its filter chip. */
+    val icon: ImageVector,
 )
 
 /** Root of the Components tab. */
@@ -39,16 +47,19 @@ val exampleSections: List<ExampleSection> =
                     ExampleEntry(R.string.todos_title, R.string.todos_subtitle, TodosRoute),
                     ExampleEntry(R.string.example_form_title, R.string.example_form_subtitle, FormExampleRoute),
                 ),
+            icon = Icons.Filled.Star,
         ),
         ExampleSection(
             title = R.string.example_home_sdk_title,
             description = R.string.example_home_sdk_description,
             entries = sdkEntries(),
+            icon = Icons.Filled.Phone,
         ),
         ExampleSection(
             title = R.string.example_home_anim_title,
             description = R.string.example_home_anim_description,
             entries = animationEntries(),
+            icon = Icons.Filled.PlayArrow,
         ),
         ExampleSection(
             title = R.string.example_home_styling_title,
@@ -63,5 +74,6 @@ val exampleSections: List<ExampleSection> =
                     ExampleEntry(R.string.example_styling_appearance_title, R.string.example_styling_appearance_subtitle, AppearanceRoute),
                     ExampleEntry(R.string.example_styling_theme_title, R.string.example_styling_theme_subtitle, ThemeRoute),
                 ),
+            icon = Icons.Filled.Create,
         ),
     )
