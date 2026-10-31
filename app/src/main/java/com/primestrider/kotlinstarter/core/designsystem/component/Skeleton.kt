@@ -20,11 +20,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -36,7 +39,7 @@ import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 private const val PULSE_MS = 800
 private const val SHIMMER_MS = 1_200
 
-/** Width of the moving highlight as a fraction of the block. */
+/** Width of the moving highlight as a fraction of the window width. */
 private const val SHIMMER_BAND = 0.6f
 
 @Composable
@@ -61,7 +64,7 @@ private fun shimmerProgress(): State<Float> =
     )
 
 /**
- * Placeholder block; size it with [modifier]. Pulses by default; with [shimmer] a light band sweeps
+ * Placeholder block; size it with [modifier]. Pulses by default; with [shimmer] a light band (sized and timed against the window, so every bar sweeps in step) sweeps
  * across it from the start edge (the left in LTR, the right in RTL) instead.
  */
 @Composable
@@ -95,25 +98,24 @@ private fun ShimmerBar(
     val base = MaterialTheme.colorScheme.surfaceContainerHigh
     val highlight = MaterialTheme.colorScheme.surfaceContainerHighest
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+    // Band width and travel come from the window, not from this bar, so bars of any width sweep in step.
+    val span =
+        LocalWindowInfo.current.containerSize.width
+            .toFloat()
     Box(
         modifier
             .clip(shape)
             .background(base)
-            .drawBehind {
-                // The band travels from just before the start edge to just past the end edge; read in draw so
-                // each frame only redraws.
-                val band = size.width * SHIMMER_BAND
-                val travel = size.width + band
-                val x = -band + travel * progress.value
-                val centre = if (rtl) size.width - x else x
-                val half = band / 2
-                drawRect(
-                    Brush.horizontalGradient(
-                        listOf(Color.Transparent, highlight, Color.Transparent),
-                        startX = centre - half,
-                        endX = centre + half,
-                    ),
-                )
+            .drawWithCache {
+                val band = span * SHIMMER_BAND
+                val brush = Brush.horizontalGradient(listOf(Color.Transparent, highlight, Color.Transparent), startX = 0f, endX = band)
+                onDrawBehind {
+                    // The band travels from just before the start edge across the window width; progress is read
+                    // in draw so each frame only redraws and nothing is allocated.
+                    val x = -band + (span + band) * progress.value
+                    val left = if (rtl) size.width - x - band else x
+                    translate(left = left) { drawRect(brush, size = Size(band, size.height)) }
+                }
             },
     )
 }
