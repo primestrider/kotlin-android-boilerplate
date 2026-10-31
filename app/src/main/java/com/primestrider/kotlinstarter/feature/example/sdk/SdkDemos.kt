@@ -6,6 +6,8 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.feature.example.ExampleEntry
 import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
 import com.primestrider.kotlinstarter.feature.example.sdk.appinfo.AppInfoScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.background.BackgroundSyncScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.biometric.BiometricScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.blob.BlobScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.browser.WebBrowserScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.calendar.CalendarScreen
@@ -17,6 +19,7 @@ import com.primestrider.kotlinstarter.feature.example.sdk.effects.EffectsScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.files.FilesScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.livephoto.LivePhotoScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.location.LocationScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.media.MediaScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.notifications.NotificationsScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.payment.PaymentCodeScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.picker.ImagePickerScreen
@@ -41,6 +44,7 @@ val sdkDemos: List<SdkDemo> =
         SdkDemo("camera", R.string.sdk_camera_title, R.string.sdk_camera_subtitle) { CameraScreen(it) },
         SdkDemo("image-picker", R.string.sdk_picker_title, R.string.sdk_picker_subtitle) { ImagePickerScreen(it) },
         SdkDemo("location", R.string.sdk_location_title, R.string.sdk_location_subtitle) { LocationScreen(it) },
+        SdkDemo("biometric", R.string.sdk_biometric_title, R.string.sdk_biometric_subtitle) { BiometricScreen(it) },
         SdkDemo("notifications", R.string.sdk_notifications_title, R.string.sdk_notifications_subtitle) { NotificationsScreen(it) },
         SdkDemo("contacts", R.string.sdk_contacts_title, R.string.sdk_contacts_subtitle) { ContactsScreen(it) },
         SdkDemo("clipboard", R.string.sdk_clipboard_title, R.string.sdk_clipboard_subtitle) { ClipboardScreen(it) },
@@ -48,10 +52,12 @@ val sdkDemos: List<SdkDemo> =
         SdkDemo("share", R.string.sdk_share_title, R.string.sdk_share_subtitle) { ShareScreen(it) },
         SdkDemo("web-browser", R.string.sdk_browser_title, R.string.sdk_browser_subtitle) { WebBrowserScreen(it) },
         SdkDemo("payment-code", R.string.sdk_payment_title, R.string.sdk_payment_subtitle) { PaymentCodeScreen(it) },
+        SdkDemo("media", R.string.sdk_media_title, R.string.sdk_media_subtitle) { MediaScreen(it) },
         SdkDemo("sqlite", R.string.sdk_sqlite_title, R.string.sdk_sqlite_subtitle) { TransactionsScreen(it) },
         SdkDemo("files", R.string.sdk_files_title, R.string.sdk_files_subtitle) { FilesScreen(it) },
         SdkDemo("calendar", R.string.sdk_calendar_title, R.string.sdk_calendar_subtitle) { CalendarScreen(it) },
         SdkDemo("app-info", R.string.sdk_app_info_title, R.string.sdk_app_info_subtitle) { AppInfoScreen(it) },
+        SdkDemo("background-task", R.string.sdk_background_title, R.string.sdk_background_subtitle) { BackgroundSyncScreen(it) },
         SdkDemo("effects", R.string.sdk_effects_title, R.string.sdk_effects_subtitle) { EffectsScreen(it) },
         SdkDemo("live-photo", R.string.sdk_live_photo_title, R.string.sdk_live_photo_subtitle) { LivePhotoScreen(it) },
         SdkDemo("blob", R.string.sdk_blob_title, R.string.sdk_blob_subtitle) { BlobScreen(it) },

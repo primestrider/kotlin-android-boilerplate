@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -16,6 +17,9 @@
     <!-- Camera & QR and Image Picker demos (feature/example/sdk/camera, picker). -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <!-- Audio & Video (voice notes) and Biometric & Secure Store demos (feature/example/sdk/media, biometric). -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
     <!-- Package visibility for the Web Browser demo (feature/example/sdk/browser). -->
     <queries>
@@ -54,7 +58,9 @@
         <activity
             android:name=".app.MainActivity"
             android:exported="true"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:launchMode="singleTop"
+            android:supportsPictureInPicture="true"
             android:theme="@style/Theme.KotlinStarter.Starting">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,6 +85,18 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
+        </provider>
+
+        <!-- WorkManager starts on demand with KotlinStarterApp's Configuration (HiltWorkerFactory), not at app start. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
         </provider>
 
         <!-- Fires the scheduled notifications of the Notifications demo. -->

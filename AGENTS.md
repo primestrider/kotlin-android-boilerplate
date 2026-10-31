@@ -12,7 +12,7 @@ All dependencies and plugins are declared in `gradle/libs.versions.toml`.
 Single module `:app`, root package `com.primestrider.kotlinstarter`.
 
 ```
-KotlinStarterApp.kt          # @HiltAndroidApp
+KotlinStarterApp.kt          # @HiltAndroidApp; WorkManager Configuration.Provider (HiltWorkerFactory, on-demand init)
 app/                         # MainActivity, AppViewModel, navigation (MainShell tabs + per-tab graphs in AppNavHost.kt)
 core/storage/                # DataStore module and preference keys (Room vs DataStore: docs/architecture/storage-database.md)
 core/network/                # Retrofit/OkHttp clients (app + refresh), ApiError, safeApiCall, toApiError, @Anonymous (docs/architecture/networking.md, data-loading.md)
@@ -23,6 +23,7 @@ core/i18n/                   # AppLanguage, LanguageController
 core/util/                   # formatCurrency, formatPercent, currentLocale
 core/crash/                  # CrashRecorder (last uncaught exception) + CrashFallbackScreen (docs/architecture/overview.md, Error handling)
 core/permission/             # PermissionGate + permissionStatus: one shared runtime-permission card (docs/examples.md)
+core/pip/                    # PictureInPictureHost + PictureInPictureFrame: what MainActivity shows in picture-in-picture (docs/architecture/overview.md)
 feature/example/             # example catalog, Home, Profile hub, sign-in, protected Account, Settings, component + styling pages, form example (deletable)
 feature/example/todos/       # Todos in Room: ExampleDatabase (example.db), DAO, repository; schemas in app/schemas
 feature/example/products/    # Products list + detail: Retrofit API, Paging 3 source, debounced search, tabs, add-to-cart sheet (docs/architecture/data-loading.md)

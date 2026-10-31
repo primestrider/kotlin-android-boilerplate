@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.work.testing.WorkManagerTestInitHelper
 import com.primestrider.kotlinstarter.app.navigation.MainShell
 import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
@@ -42,6 +43,8 @@ class AppNavHostTest {
     @Test
     fun everyCatalogEntryIsRegisteredAndShowsItsPage() {
         hiltRule.inject()
+        // HiltTestApplication is not a Configuration.Provider: the Background Task page needs a test WorkManager.
+        WorkManagerTestInitHelper.initializeTestWorkManager(ApplicationProvider.getApplicationContext())
         lateinit var navController: NavHostController
         // Replaces MainActivity's own content so the test controls the NavHostController.
         composeRule.activity.setContent {
