@@ -34,6 +34,7 @@ class ImagePickerContentTest {
     private fun show(
         state: PickerState = PickerState(),
         options: PickerOptions = PickerOptions(),
+        cameraBlocked: Boolean = false,
     ) = rule.setContent {
         var current by remember { mutableStateOf(options) }
         AppTheme(false) {
@@ -50,6 +51,8 @@ class ImagePickerContentTest {
                     onLibrary = { calls += "library" },
                     onCamera = { calls += "camera" },
                     onChooseFiles = { calls += "files" },
+                    cameraBlocked = cameraBlocked,
+                    onOpenSettings = { calls += "settings" },
                 )
             }
         }
@@ -86,6 +89,21 @@ class ImagePickerContentTest {
     fun an_error_is_shown_as_a_banner() {
         show(PickerState(error = PickerError.CAMERA_DENIED))
         rule.onNodeWithText("Camera permission was denied.").assertExists()
+    }
+
+    @Test
+    fun a_blocked_camera_permission_offers_the_settings_page() {
+        show(PickerState(error = PickerError.CAMERA_DENIED), cameraBlocked = true)
+        rule.onNodeWithText("Camera permission was denied.").assertExists()
+        rule.onNodeWithText("Enable it in Settings to continue.", substring = true).assertExists()
+        rule.onNodeWithText("Open Settings").performScrollTo().performClick()
+        assertEquals(listOf("settings"), calls)
+    }
+
+    @Test
+    fun a_plain_denial_has_no_settings_button() {
+        show(PickerState(error = PickerError.CAMERA_DENIED))
+        rule.onNodeWithText("Open Settings").assertDoesNotExist()
     }
 
     @Test

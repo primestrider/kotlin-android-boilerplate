@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.picker
 
 import android.content.ContentResolver
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -14,6 +15,8 @@ data class PickedMedia(
     val width: Int,
     val height: Int,
     val bytes: Long,
+    /** A small frame of a video (null for images, which Coil loads from [uri], or when no frame could be read). */
+    val thumbnail: Bitmap? = null,
 ) {
     /** `4000 × 3000`. */
     val dimensions: String get() = "$width × $height"
@@ -50,7 +53,8 @@ internal fun ContentResolver.readVideo(uri: Uri): PickedMedia? {
         openAssetFileDescriptor(uri, "r")?.use { retriever.setDataSource(it.fileDescriptor, it.startOffset, it.length) } ?: return null
         val width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toIntOrNull() ?: 0
         val height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toIntOrNull() ?: 0
-        PickedMedia(uri, getType(uri) ?: "video/*", width, height, sizeOf(uri))
+        val thumbnail = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)?.let { scaleThumbnail(it, THUMBNAIL_PX) }
+        PickedMedia(uri, getType(uri) ?: "video/*", width, height, sizeOf(uri), thumbnail)
     } catch (e: RuntimeException) {
         null
     } finally {
@@ -76,4 +80,23 @@ internal fun ContentResolver.readDocument(uri: Uri): PickedDocument {
         }
     }
     return PickedDocument(name ?: uri.lastPathSegment.orEmpty(), sizeOf(uri))
+}
+
+/** Edge in pixels of a video thumbnail: 104 dp at 2x density. */
+internal const val THUMBNAIL_PX = 208
+
+/** [frame] scaled down so its shorter side is [target] pixels (never up); the view crops it to a square. */
+internal fun scaleThumbnail(
+    frame: Bitmap,
+    target: Int,
+): Bitmap {
+    val shorter = minOf(frame.width, frame.height)
+    if (shorter <= target) return frame
+    val scale = target.toFloat() / shorter
+    return Bitmap.createScaledBitmap(
+        frame,
+        (frame.width * scale).toInt().coerceAtLeast(1),
+        (frame.height * scale).toInt().coerceAtLeast(1),
+        true,
+    )
 }

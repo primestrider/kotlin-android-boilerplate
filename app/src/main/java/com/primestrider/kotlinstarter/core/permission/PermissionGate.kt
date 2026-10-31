@@ -1,5 +1,6 @@
 package com.primestrider.kotlinstarter.core.permission
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -31,7 +32,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.util.findActivity
 
-private const val PREFS_NAME = "permissions"
+internal const val PREFS_NAME = "permissions"
 private const val REQUESTED_KEY = "requested"
 
 /**
@@ -87,7 +88,7 @@ fun PermissionGate(
     }
 }
 
-private fun evaluate(
+internal fun evaluate(
     context: Context,
     prefs: SharedPreferences,
     permissions: List<String>,
@@ -105,7 +106,7 @@ private fun evaluate(
     )
 }
 
-private fun markRequested(
+internal fun markRequested(
     prefs: SharedPreferences,
     permissions: List<String>,
 ) {
@@ -114,11 +115,16 @@ private fun markRequested(
     prefs.edit().putStringSet(REQUESTED_KEY, requested + permissions).apply()
 }
 
-private fun openAppSettings(context: Context) {
+/** Opens this app's page in the system settings; does nothing when no settings app can handle it. */
+fun openAppSettings(context: Context) {
     val intent =
         Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.fromParts("package", context.packageName, null))
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    context.startActivity(intent)
+    try {
+        context.startActivity(intent)
+    } catch (_: ActivityNotFoundException) {
+        // No settings app on this device; nothing else to offer.
+    }
 }
 
 /** Whether [PermissionGate] has asked for [permission] before: tells "denied" from "not requested" for a permission that is not granted. */

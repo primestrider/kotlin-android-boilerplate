@@ -2,11 +2,11 @@ package com.primestrider.kotlinstarter.feature.example.sdk.picker
 
 import android.Manifest
 import android.content.ActivityNotFoundException
-import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -26,11 +26,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,6 +46,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoic
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.permission.PermissionStatus
+import com.primestrider.kotlinstarter.core.permission.openAppSettings
+import com.primestrider.kotlinstarter.core.permission.rememberPermissionRequest
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkSection
@@ -92,9 +95,9 @@ fun ImagePickerScreen(
         }
     }
 
-    // The camera permission is asked for only when the Camera button is pressed.
-    val permission =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+    // The camera permission is asked for only when the Camera button is pressed; a blocked one offers the settings page.
+    val cameraPermission =
+        rememberPermissionRequest(Manifest.permission.CAMERA) { granted ->
             if (granted) launchCamera() else viewModel.fail(PickerError.CAMERA_DENIED)
         }
 
@@ -127,13 +130,9 @@ fun ImagePickerScreen(
                     viewModel.fail(PickerError.NO_APP)
                 }
             },
-            onCamera = {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                    launchCamera()
-                } else {
-                    permission.launch(Manifest.permission.CAMERA)
-                }
-            },
+            onCamera = cameraPermission::launch,
+            cameraBlocked = cameraPermission.status == PermissionStatus.BLOCKED,
+            onOpenSettings = { openAppSettings(context) },
             onChooseFiles = {
                 try {
                     documents.launch(arrayOf(documentType.mime))
@@ -159,6 +158,8 @@ internal fun ImagePickerContent(
     onLibrary: () -> Unit,
     onCamera: () -> Unit,
     onChooseFiles: () -> Unit,
+    cameraBlocked: Boolean = false,
+    onOpenSettings: () -> Unit = {},
 ) {
     val locale = currentLocale()
     val sourceLabels = MediaSource.entries.associateWith { stringResource(sourceLabel(it)) }
@@ -190,7 +191,21 @@ internal fun ImagePickerContent(
             AppButton(stringResource(R.string.sdk_picker_library), onClick = onLibrary, variant = ButtonVariant.OUTLINED)
             AppButton(stringResource(R.string.sdk_picker_camera), onClick = onCamera, variant = ButtonVariant.OUTLINED)
         }
-        state.error?.let { Banner(title = stringResource(errorText(it)), variant = BannerVariant.ERROR) }
+        state.error?.let { error ->
+            val blocked = error == PickerError.CAMERA_DENIED && cameraBlocked
+            Banner(
+                title = stringResource(errorText(error)),
+                message = if (blocked) stringResource(R.string.permission_blocked_suffix) else null,
+                variant = BannerVariant.ERROR,
+            )
+            if (blocked) {
+                AppButton(
+                    stringResource(R.string.permission_open_settings),
+                    onClick = onOpenSettings,
+                    variant = ButtonVariant.OUTLINED,
+                )
+            }
+        }
         if (state.media.isNotEmpty()) {
             Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
                 state.media.forEach { Thumbnail(it) }
@@ -225,7 +240,16 @@ internal fun ImagePickerContent(
 @Composable
 private fun Thumbnail(media: PickedMedia) {
     val shape = RoundedCornerShape(Radii.md)
-    if (media.isVideo) {
+    val frame = media.thumbnail
+    if (frame != null) {
+        Image(
+            bitmap = frame.asImageBitmap(),
+            contentDescription = stringResource(R.string.sdk_picker_thumbnail),
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.size(104.dp).clip(shape),
+        )
+    } else if (media.isVideo) {
+        // Fallback when no frame could be read.
         Box(
             Modifier.size(104.dp).clip(shape).background(MaterialTheme.colorScheme.surfaceVariant),
             contentAlignment = Alignment.Center,
