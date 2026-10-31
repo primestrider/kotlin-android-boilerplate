@@ -3,6 +3,7 @@ package com.primestrider.kotlinstarter.feature.example.sdk.biometric
 import android.content.Context
 import android.os.Build
 import android.security.keystore.KeyPermanentlyInvalidatedException
+import android.view.WindowManager
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +26,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.primestrider.kotlinstarter.R
@@ -62,6 +66,10 @@ fun BiometricScreen(
         hasPin = vault.hasPin()
         onPauseOrDispose {}
     }
+    // A revealed PIN must not outlive the visit: no screenshots or Recents thumbnail while it shows, and it is
+    // cleared when the app goes to the background.
+    SecureWindowEffect(secure = state.status?.revealsPin == true)
+    LifecycleEventEffect(Lifecycle.Event.ON_STOP) { viewModel.onStopped() }
     val allowFallback = FALLBACK_SUPPORTED && state.allowFallback
     val cancel = stringResource(R.string.sdk_biometric_cancel)
     val verifyTitle = stringResource(R.string.sdk_biometric_prompt_verify)
@@ -252,5 +260,16 @@ internal fun BiometricContent(
             variant = it.variant,
             onDismiss = onDismissStatus,
         )
+    }
+}
+
+/** Adds `FLAG_SECURE` to the window while [secure] is true; only clears the flag if it set it itself. */
+@Composable
+private fun SecureWindowEffect(secure: Boolean) {
+    val window = LocalContext.current.findActivity()?.window
+    DisposableEffect(window, secure) {
+        val owned = secure && window != null && window.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE == 0
+        if (owned) window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        onDispose { if (owned) window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE) }
     }
 }

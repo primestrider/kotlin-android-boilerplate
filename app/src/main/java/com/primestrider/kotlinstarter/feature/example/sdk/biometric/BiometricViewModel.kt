@@ -65,6 +65,8 @@ data class BiometricStatus(
     val titleArg: String? = null,
     @StringRes val detail: Int? = null,
     val detailText: String? = null,
+    /** True for the "Stored PIN" status, which shows the PIN itself. */
+    val revealsPin: Boolean = false,
 )
 
 data class BiometricUiState(
@@ -117,7 +119,8 @@ class BiometricViewModel
                 ),
             )
 
-        fun onRevealed(pin: String) = show(BiometricStatus(R.string.sdk_biometric_status_stored, BannerVariant.INFO, titleArg = pin))
+        fun onRevealed(pin: String) =
+            show(BiometricStatus(R.string.sdk_biometric_status_stored, BannerVariant.INFO, titleArg = pin, revealsPin = true))
 
         fun onDeleted() = show(BiometricStatus(R.string.sdk_biometric_status_removed, BannerVariant.INFO))
 
@@ -144,6 +147,14 @@ class BiometricViewModel
                     detail = R.string.sdk_biometric_status_storage_failed_detail,
                 ),
             )
+
+        /**
+         * The screen went to the background: a revealed PIN is cleared so it is not left on screen (or in a Recents
+         * snapshot) when the user comes back. Other statuses stay.
+         */
+        fun onStopped() {
+            if (status.value?.revealsPin == true) status.value = null
+        }
 
         fun dismissStatus() {
             status.value = null

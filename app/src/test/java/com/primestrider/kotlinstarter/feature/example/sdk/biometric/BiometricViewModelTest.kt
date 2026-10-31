@@ -178,4 +178,28 @@ class BiometricViewModelTest {
         assertFalse(none.canVerify)
         assertTrue(strong.canVerify)
     }
+
+    @Test
+    fun going_to_the_background_clears_a_revealed_pin() {
+        val vm = viewModel()
+        vm.onRevealed("123456")
+        assertTrue(
+            vm.state.value.status
+                ?.revealsPin == true,
+        )
+        vm.onStopped()
+        assertNull(vm.state.value.status)
+    }
+
+    @Test
+    fun going_to_the_background_keeps_other_statuses() {
+        val vm = viewModel()
+        vm.onVerified()
+        vm.onStopped()
+        assertEquals(
+            BannerVariant.SUCCESS,
+            vm.state.value.status
+                ?.variant,
+        )
+    }
 }
