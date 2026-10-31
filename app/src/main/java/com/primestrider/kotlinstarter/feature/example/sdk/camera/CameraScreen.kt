@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.camera
 
 import android.Manifest
+import android.content.Context
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -93,7 +94,7 @@ private fun CameraContent(gate: QrResultGate) {
     var front by rememberSaveable { mutableStateOf(false) }
     var lastPhoto by rememberSaveable { mutableStateOf<String?>(null) }
     var captureFailed by remember { mutableStateOf(false) }
-    val previewView = remember(context) { PreviewView(context) }
+    val previewView = remember(context) { cameraPreviewView(context) }
 
     DisposableEffect(controller) { onDispose(controller::release) }
     DeviceRotationEffect(controller::setTargetRotation)
@@ -174,6 +175,13 @@ private fun CameraContent(gate: QrResultGate) {
 
     QrResultHost(gate)
 }
+
+/**
+ * The preview draws into a TextureView. The default SurfaceView is a separate window layer that ignores the
+ * alpha of Navigation's page fade, so it stayed solid over the next page and then vanished abruptly.
+ */
+internal fun cameraPreviewView(context: Context): PreviewView =
+    PreviewView(context).apply { implementationMode = PreviewView.ImplementationMode.COMPATIBLE }
 
 private fun previewDescription(mode: CameraMode): Int =
     if (mode == CameraMode.SCAN) R.string.sdk_camera_preview_scan else R.string.sdk_camera_preview_photo
