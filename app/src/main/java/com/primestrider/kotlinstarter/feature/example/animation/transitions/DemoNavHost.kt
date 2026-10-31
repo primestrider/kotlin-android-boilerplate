@@ -77,8 +77,6 @@ private val demoItems =
 
 private val cardShape = RoundedCornerShape(16.dp)
 
-private val MinTouchTarget = 48.dp
-
 /** Theme container colour and its readable content colour for one demo item. */
 @Composable
 private fun itemColors(id: Int): Pair<Color, Color> {
@@ -239,7 +237,7 @@ private fun SharedTransitionScope.DemoDetail(
             )
             FilledTonalButton(
                 onClick = onBack,
-                modifier = Modifier.padding(horizontal = Spacing.s4).heightIn(min = MinTouchTarget),
+                modifier = Modifier.padding(horizontal = Spacing.s4),
             ) { Text(stringResource(R.string.anim_transitions_back)) }
         }
     }

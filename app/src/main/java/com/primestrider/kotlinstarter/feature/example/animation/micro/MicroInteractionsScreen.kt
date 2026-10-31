@@ -63,6 +63,7 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.animation.AnimExample
+import com.primestrider.kotlinstarter.feature.example.animation.MinTouchTarget
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -177,7 +178,7 @@ private fun TabIndicatorExample() {
                     Box(
                         modifier =
                             Modifier
-                                .heightIn(min = 48.dp)
+                                .heightIn(min = MinTouchTarget)
                                 .onGloballyPositioned {
                                     // positionInParent is absolute (left edge), so the indicator below uses an LTR frame.
                                     xs[index] = it.positionInParent().x.roundToInt()

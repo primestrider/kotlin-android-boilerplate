@@ -58,11 +58,11 @@ import com.primestrider.kotlinstarter.core.designsystem.component.SkeletonText
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.animation.AnimExample
+import com.primestrider.kotlinstarter.feature.example.animation.MinTouchTarget
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
-private val MinTouchTarget = 48.dp
 private const val RELOAD_DELAY_MS = 1_500L
 private const val LOADED_ROWS = 3
 private const val SCROLL_ROWS = 14
@@ -99,7 +99,6 @@ private fun LoadingExample() {
         FilledTonalButton(
             onClick = { loading = true },
             enabled = !loading,
-            modifier = Modifier.heightIn(min = MinTouchTarget),
         ) {
             Text(stringResource(R.string.anim_lists_reload))
         }
@@ -143,13 +142,12 @@ private fun AnimatedListExample() {
     val list = rememberSaveable(saver = DemoListState.Saver) { DemoListState((1..3).map { DemoRow(it) }) }
     AnimExample(R.string.anim_lists_list_title, R.string.anim_lists_list_usage, "LazyColumn + Modifier.animateItem()") {
         Row(Modifier.testTag("listActions"), horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-            FilledTonalButton(onClick = { list.add() }, modifier = Modifier.heightIn(min = MinTouchTarget)) {
+            FilledTonalButton(onClick = { list.add() }) {
                 Text(stringResource(R.string.anim_lists_add))
             }
             FilledTonalButton(
                 onClick = { list.shuffle(Random.Default) },
                 enabled = list.rows.size > 1,
-                modifier = Modifier.heightIn(min = MinTouchTarget),
             ) {
                 Text(stringResource(R.string.anim_lists_shuffle))
             }
@@ -189,7 +187,7 @@ private fun AnimatedListExample() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(stringResource(R.string.anim_lists_empty), style = MaterialTheme.typography.titleMedium)
-                        FilledTonalButton(onClick = { list.add() }, modifier = Modifier.heightIn(min = MinTouchTarget)) {
+                        FilledTonalButton(onClick = { list.add() }) {
                             Text(stringResource(R.string.anim_lists_add))
                         }
                     }
@@ -206,7 +204,7 @@ private fun RowButton(
     enabled: Boolean = true,
     onClick: () -> Unit,
 ) {
-    IconButton(onClick = onClick, enabled = enabled, modifier = Modifier.size(MinTouchTarget)) {
+    IconButton(onClick = onClick, enabled = enabled) {
         Icon(icon, contentDescription = description)
     }
 }

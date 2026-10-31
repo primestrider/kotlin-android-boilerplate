@@ -85,7 +85,7 @@ class ListsScreenTest {
     }
 
     @Test
-    fun removing_the_last_row_keeps_the_list_composed_until_it_has_faded() {
+    fun removing_the_last_row_keeps_the_list_composed() {
         show()
         listOf(1, 2).forEach {
             pressRowButton("Remove Item $it")

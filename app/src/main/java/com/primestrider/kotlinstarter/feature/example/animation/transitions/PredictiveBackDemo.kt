@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.animation.AnimExample
+import com.primestrider.kotlinstarter.feature.example.animation.MinTouchTarget
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
@@ -44,8 +45,6 @@ private const val PANEL_MIN_SCALE = 0.9f
 
 /** How far the panel drifts towards the swipe at the end of the back gesture. */
 private val PanelShift = 24.dp
-
-private val MinTouchTarget = 48.dp
 
 /**
  * A panel that follows the predictive back gesture through [PredictiveBackHandler]: it shrinks and drifts with the
@@ -127,7 +126,7 @@ private fun PreviewPanel(
     ) {
         Column(Modifier.padding(Spacing.s4), verticalArrangement = Arrangement.spacedBy(Spacing.s3)) {
             Text(stringResource(R.string.anim_transitions_preview_body), style = MaterialTheme.typography.bodyMedium)
-            FilledTonalButton(onClick = onClose, modifier = Modifier.heightIn(min = MinTouchTarget)) {
+            FilledTonalButton(onClick = onClose) {
                 Text(stringResource(R.string.anim_transitions_close_preview))
             }
         }

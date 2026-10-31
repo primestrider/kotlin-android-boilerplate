@@ -917,7 +917,6 @@
     <string name="anim_cards_item_ocean">Hari di Laut</string>
     <string name="anim_cards_item_forest">Jalan di Hutan</string>
     <string name="anim_cards_item_desert">Jalan Gurun</string>
-    <string name="anim_cards_press_count">Ditekan %1$d kali</string>
     <string name="anim_lists_shimmer_title">Shimmer skeleton</string>
     <string name="anim_lists_shimmer_usage">Pita cahaya bergerak melintasi blok placeholder saat data dimuat, lalu diganti baris yang sebenarnya.</string>
     <string name="anim_lists_reload">Muat ulang</string>
@@ -938,6 +937,18 @@
     <string name="home_search_placeholder">Cari fitur</string>
     <string name="home_filter_all">Semua</string>
     <string name="home_no_match">Tidak ada fitur yang cocok dengan \"%1$s\"</string>
-    <string name="home_no_match_hint">Coba kata lain atau pilih section lain.</string>
-    <string name="home_section_count">%1$d contoh</string>
+    <string name="home_no_match_hint">Coba kata lain atau pilih bagian lain.</string>
+    <plurals name="anim_cards_press_count">
+        <item quantity="other">Ditekan %1$d kali</item>
+    </plurals>
+    <plurals name="home_section_count">
+        <item quantity="other">%1$d contoh</item>
+    </plurals>
+    <plurals name="home_section_count_of">
+        <item quantity="other">%1$d dari %2$d contoh</item>
+    </plurals>
+    <string name="home_section_badge_of">%1$d/%2$d</string>
+    <plurals name="home_results">
+        <item quantity="other">%1$d hasil</item>
+    </plurals>
 </resources>

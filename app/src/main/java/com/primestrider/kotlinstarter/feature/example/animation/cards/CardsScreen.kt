@@ -55,6 +55,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -82,8 +83,6 @@ private val cardShape = RoundedCornerShape(16.dp)
 
 /** How much of the neighbouring pages peeks in beside the centred carousel card. */
 private val CarouselPeek = 56.dp
-
-private val MinTouchTarget = 48.dp
 
 /** Card motion: press feedback, a scaling carousel, expand, swipe to archive with undo, and a flip. */
 @Composable
@@ -147,7 +146,7 @@ private fun PressExample() {
             Column(Modifier.padding(Spacing.s4)) {
                 Text(stringResource(R.string.anim_cards_press_label))
                 Text(
-                    stringResource(R.string.anim_cards_press_count, count),
+                    pluralStringResource(R.plurals.anim_cards_press_count, count, count),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -268,7 +267,12 @@ private fun SwipeExample(snackbar: SnackbarHostState) {
     ) {
         // Always available: it brings back every archived card, including those Undo can no longer reach.
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            FilledTonalButton(onClick = { archive.reset() }, modifier = Modifier.heightIn(min = MinTouchTarget)) {
+            FilledTonalButton(
+                onClick = {
+                    archive.reset()
+                    snackbar.currentSnackbarData?.dismiss()
+                },
+            ) {
                 Text(stringResource(R.string.anim_cards_reset))
             }
         }
@@ -375,7 +379,7 @@ private fun FlipExample() {
                 modifier = Modifier.graphicsLayer { if (showBack) rotationY = 180f },
             )
         }
-        FilledTonalButton(onClick = { flipped = !flipped }, modifier = Modifier.heightIn(min = MinTouchTarget)) {
+        FilledTonalButton(onClick = { flipped = !flipped }) {
             Text(stringResource(R.string.anim_cards_flip_button))
         }
     }

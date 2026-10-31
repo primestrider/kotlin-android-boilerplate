@@ -57,6 +57,17 @@ class CardsScreenTest {
     }
 
     @Test
+    fun reset_dismisses_a_showing_undo_snackbar() {
+        show()
+        archive("Mountain Trip", letSnackbarTimeOut = false)
+        rule.onNodeWithText("Undo").assertExists()
+        rule.onNodeWithText("Reset").performScrollTo().performClick()
+        rule.waitForIdle()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithText("Undo").assertDoesNotExist()
+    }
+
+    @Test
     fun swiping_a_card_archives_it() {
         show()
         listCard("Ocean Days").performScrollTo().performTouchInput { swipeLeft() }
@@ -152,7 +163,7 @@ class CardsScreenTest {
         show()
         rule.onNodeWithText("Pressed 0 times").assertExists()
         rule.onNodeWithText("Press and hold me").performClick()
-        rule.onNodeWithText("Pressed 1 times").assertExists()
+        rule.onNodeWithText("Pressed 1 time").assertExists()
     }
 
     @Test

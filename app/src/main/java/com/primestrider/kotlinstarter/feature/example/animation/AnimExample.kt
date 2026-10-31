@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 
@@ -46,3 +47,6 @@ fun AnimExample(
         }
     }
 }
+
+/** The smallest interactive target in the animation examples; custom selectable and toggleable boxes size themselves to it. */
+internal val MinTouchTarget = 48.dp

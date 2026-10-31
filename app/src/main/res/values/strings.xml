@@ -917,7 +917,6 @@
     <string name="anim_cards_item_ocean">Ocean Days</string>
     <string name="anim_cards_item_forest">Forest Walk</string>
     <string name="anim_cards_item_desert">Desert Road</string>
-    <string name="anim_cards_press_count">Pressed %1$d times</string>
     <string name="anim_lists_shimmer_title">Skeleton shimmer</string>
     <string name="anim_lists_shimmer_usage">A light band sweeps across placeholder blocks while data loads, then the real rows replace them.</string>
     <string name="anim_lists_reload">Reload</string>
@@ -939,5 +938,21 @@
     <string name="home_filter_all">All</string>
     <string name="home_no_match">No features match \"%1$s\"</string>
     <string name="home_no_match_hint">Try another word or pick a different section.</string>
-    <string name="home_section_count">%1$d examples</string>
+    <plurals name="anim_cards_press_count">
+        <item quantity="one">Pressed %1$d time</item>
+        <item quantity="other">Pressed %1$d times</item>
+    </plurals>
+    <plurals name="home_section_count">
+        <item quantity="one">%1$d example</item>
+        <item quantity="other">%1$d examples</item>
+    </plurals>
+    <plurals name="home_section_count_of">
+        <item quantity="one">%1$d of %2$d example</item>
+        <item quantity="other">%1$d of %2$d examples</item>
+    </plurals>
+    <string name="home_section_badge_of">%1$d/%2$d</string>
+    <plurals name="home_results">
+        <item quantity="one">%1$d result</item>
+        <item quantity="other">%1$d results</item>
+    </plurals>
 </resources>
