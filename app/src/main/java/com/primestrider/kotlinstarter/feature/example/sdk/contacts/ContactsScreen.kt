@@ -103,6 +103,15 @@ private fun PickerSection() {
 @Composable
 private fun SearchSection(viewModel: ContactsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    ContactsSearchContent(state, viewModel::onQueryChange)
+}
+
+/** The search section for a given [state]: count caption, field, then nothing yet, "No contacts found." or the rows. */
+@Composable
+internal fun ContactsSearchContent(
+    state: ContactsUiState,
+    onQueryChange: (String) -> Unit,
+) {
     DemoSection(R.string.sdk_contacts_search_title) {
         Text(
             state.count?.let { stringResource(R.string.sdk_contacts_search_description_count, it) }
@@ -112,7 +121,7 @@ private fun SearchSection(viewModel: ContactsViewModel = hiltViewModel()) {
         )
         AppTextField(
             value = state.query,
-            onValueChange = viewModel::onQueryChange,
+            onValueChange = onQueryChange,
             label = stringResource(R.string.sdk_contacts_search_field),
         )
         when {

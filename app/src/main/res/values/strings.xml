@@ -625,6 +625,8 @@
     <string name="sdk_notifications_permission_description">Ask once; the OS remembers the answer</string>
     <string name="sdk_notifications_status">Status</string>
     <string name="sdk_notifications_granted">granted</string>
+    <string name="sdk_notifications_denied">denied</string>
+    <string name="sdk_notifications_not_requested">not requested</string>
     <string name="sdk_notifications_granted_legacy">granted (not needed before Android 13)</string>
     <string name="sdk_notifications_local_title">Local notification</string>
     <string name="sdk_notifications_local_description">Send now or after a delay — lock the device to see it</string>

@@ -1,8 +1,11 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.notifications
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -19,8 +22,16 @@ class NotificationsViewModelTest {
         NotificationEvents.reset()
     }
 
+    private val created = mutableListOf<ViewModel>()
+
+    private fun <T : ViewModel> track(vm: T): T = vm.also { created += it }
+
     @After
-    fun tearDown() = Dispatchers.resetMain()
+    fun tearDown() {
+        // Eager collectors in viewModelScope must not outlive the test and touch Dispatchers.Main later.
+        created.forEach { it.viewModelScope.cancel() }
+        Dispatchers.resetMain()
+    }
 
     @Test
     fun six_events_keep_the_newest_five_newest_first() {
@@ -41,7 +52,7 @@ class NotificationsViewModelTest {
     @Test
     fun the_view_model_keeps_events_and_selections_in_the_saved_state() {
         val handle = SavedStateHandle()
-        val vm = NotificationsViewModel(handle) { 0L }
+        val vm = track(NotificationsViewModel(handle) { 0L })
         (1..6).forEach { vm.log("e$it") }
         assertEquals(5, vm.state.value.events.size)
         assertEquals(
@@ -52,7 +63,7 @@ class NotificationsViewModelTest {
         )
         vm.setDelay(30)
         vm.setTitle("Hi")
-        val restored = NotificationsViewModel(handle) { 0L }
+        val restored = track(NotificationsViewModel(handle) { 0L })
         assertEquals(vm.state.value.events, restored.state.value.events)
         assertEquals(30, restored.state.value.delaySeconds)
         assertEquals("Hi", restored.state.value.title)
@@ -60,17 +71,17 @@ class NotificationsViewModelTest {
 
     @Test
     fun a_new_screen_starts_with_the_log_of_the_previous_one() {
-        val first = NotificationsViewModel(SavedStateHandle()) { 0L }
+        val first = track(NotificationsViewModel(SavedStateHandle()) { 0L })
         first.log("Scheduled")
         first.onTapped(id = 3, label = "Tapped: Paid")
-        val second = NotificationsViewModel(SavedStateHandle()) { 0L }
+        val second = track(NotificationsViewModel(SavedStateHandle()) { 0L })
         assertEquals(first.state.value.events, second.state.value.events)
         assertEquals(2, second.state.value.events.size)
     }
 
     @Test
     fun a_tap_is_logged_once_per_notification() {
-        val vm = NotificationsViewModel(SavedStateHandle()) { 0L }
+        val vm = track(NotificationsViewModel(SavedStateHandle()) { 0L })
         vm.onTapped(id = 7, label = "Tapped: Paid")
         vm.onTapped(id = 7, label = "Tapped: Paid")
         assertEquals(1, vm.state.value.events.size)

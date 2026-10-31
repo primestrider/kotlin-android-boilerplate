@@ -35,7 +35,8 @@ private const val PREFS_NAME = "permissions"
 private const val REQUESTED_KEY = "requested"
 
 /**
- * Shows [content] once every permission in [permissions] is granted; until then an outlined card explains
+ * Shows [content] once every permission in [permissions] is granted (any one of them when [requireAll] is false, e.g. fine or
+ * coarse location; the system prompt still asks for all of them); until then an outlined card explains
  * [reason] and offers "Grant access", or "Open Settings" when the system will no longer show the prompt.
  *
  * Which permissions were requested is kept in `SharedPreferences("permissions")`, so a blocked permission is
@@ -47,17 +48,18 @@ fun PermissionGate(
     permissions: List<String>,
     reason: String,
     modifier: Modifier = Modifier,
+    requireAll: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
     val prefs = remember(context) { context.applicationContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE) }
-    var status by remember { mutableStateOf(evaluate(context, prefs, permissions)) }
+    var status by remember { mutableStateOf(evaluate(context, prefs, permissions, requireAll)) }
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            status = evaluate(context, prefs, permissions)
+            status = evaluate(context, prefs, permissions, requireAll)
         }
     LifecycleResumeEffect(permissions) {
-        status = evaluate(context, prefs, permissions)
+        status = evaluate(context, prefs, permissions, requireAll)
         onPauseOrDispose {}
     }
 
@@ -89,8 +91,11 @@ private fun evaluate(
     context: Context,
     prefs: SharedPreferences,
     permissions: List<String>,
+    requireAll: Boolean,
 ): PermissionStatus {
-    val missing = permissions.filter { ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED }
+    val notGranted = permissions.filter { ContextCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED }
+    // Any-of: one granted permission is enough, so nothing is missing; the request still asks for all of them.
+    val missing = if (!requireAll && notGranted.size < permissions.size) emptyList() else notGranted
     val requested = prefs.getStringSet(REQUESTED_KEY, emptySet()).orEmpty()
     val activity = context.findActivity()
     return permissionStatus(
@@ -115,3 +120,14 @@ private fun openAppSettings(context: Context) {
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     context.startActivity(intent)
 }
+
+/** Whether [PermissionGate] has asked for [permission] before: tells "denied" from "not requested" for a permission that is not granted. */
+fun permissionRequested(
+    context: Context,
+    permission: String,
+): Boolean =
+    permission in
+        context.applicationContext
+            .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getStringSet(REQUESTED_KEY, emptySet())
+            .orEmpty()

@@ -20,13 +20,39 @@ data class CalendarEvent(
     val start: Long,
 )
 
+/** What the Calendar demo needs from the device calendar; [addBooking] is written against this, not a ContentResolver. */
+interface CalendarSource {
+    suspend fun writableCalendar(): CalendarInfo?
+
+    suspend fun addEvent(
+        calendarId: Long,
+        title: String,
+        location: String,
+        notes: String,
+        start: Long,
+        end: Long,
+        timeZoneId: String,
+    ): Long?
+
+    suspend fun addReminder(
+        eventId: Long,
+        minutes: Int,
+    )
+
+    suspend fun upcoming(
+        calendarId: Long,
+        from: Long,
+        to: Long,
+    ): List<CalendarEvent>
+}
+
 /** Reads and writes the device calendar through `CalendarContract`. Every call runs on [io]. */
 class CalendarRepository(
     private val contentResolver: ContentResolver,
     private val io: CoroutineDispatcher = Dispatchers.IO,
-) {
+) : CalendarSource {
     /** The first visible calendar the user can add events to, or null when there is none. */
-    suspend fun writableCalendar(): CalendarInfo? =
+    override suspend fun writableCalendar(): CalendarInfo? =
         withContext(io) {
             contentResolver
                 .query(
@@ -39,7 +65,7 @@ class CalendarRepository(
         }
 
     /** Inserts the event and returns its id, or null when the provider refused it. */
-    suspend fun addEvent(
+    override suspend fun addEvent(
         calendarId: Long,
         title: String,
         location: String,
@@ -63,7 +89,7 @@ class CalendarRepository(
         }
 
     /** An alert [minutes] before the event starts. */
-    suspend fun addReminder(
+    override suspend fun addReminder(
         eventId: Long,
         minutes: Int,
     ) {
@@ -79,7 +105,7 @@ class CalendarRepository(
     }
 
     /** Occurrences (recurring events included) of [calendarId] that start between [from] and [to], earliest first. */
-    suspend fun upcoming(
+    override suspend fun upcoming(
         calendarId: Long,
         from: Long,
         to: Long,

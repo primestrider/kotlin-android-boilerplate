@@ -1,8 +1,11 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.contacts
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.resetMain
@@ -34,8 +37,16 @@ class ContactsViewModelTest {
     @Before
     fun setUp() = Dispatchers.setMain(StandardTestDispatcher(scheduler))
 
+    private val created = mutableListOf<ViewModel>()
+
+    private fun <T : ViewModel> track(vm: T): T = vm.also { created += it }
+
     @After
-    fun tearDown() = Dispatchers.resetMain()
+    fun tearDown() {
+        // Eager collectors in viewModelScope must not outlive the test and touch Dispatchers.Main later.
+        created.forEach { it.viewModelScope.cancel() }
+        Dispatchers.resetMain()
+    }
 
     private fun advance(millis: Long) {
         scheduler.advanceTimeBy(millis)
@@ -45,7 +56,7 @@ class ContactsViewModelTest {
     @Test
     fun blank_query_lists_without_a_filter_at_once() {
         val source = FakeSource()
-        val vm = ContactsViewModel(source, SavedStateHandle())
+        val vm = track(ContactsViewModel(source, SavedStateHandle()))
         scheduler.runCurrent()
         assertEquals(listOf(""), source.searches)
         assertEquals(42, vm.state.value.count)
@@ -56,7 +67,7 @@ class ContactsViewModelTest {
     @Test
     fun typing_within_250_ms_searches_once() {
         val source = FakeSource()
-        val vm = ContactsViewModel(source, SavedStateHandle())
+        val vm = track(ContactsViewModel(source, SavedStateHandle()))
         scheduler.runCurrent()
         vm.onQueryChange("a")
         advance(100)
@@ -78,7 +89,7 @@ class ContactsViewModelTest {
     @Test
     fun query_is_restored_from_the_saved_state_and_searched_at_once() {
         val source = FakeSource()
-        val vm = ContactsViewModel(source, SavedStateHandle(mapOf("contacts_query" to "bo")))
+        val vm = track(ContactsViewModel(source, SavedStateHandle(mapOf("contacts_query" to "bo"))))
         scheduler.runCurrent()
         assertEquals(listOf("bo"), source.searches)
         assertEquals("bo", vm.state.value.query)

@@ -625,6 +625,8 @@
     <string name="sdk_notifications_permission_description">Tanya sekali; sistem mengingat jawabannya</string>
     <string name="sdk_notifications_status">Status</string>
     <string name="sdk_notifications_granted">diizinkan</string>
+    <string name="sdk_notifications_denied">ditolak</string>
+    <string name="sdk_notifications_not_requested">belum diminta</string>
     <string name="sdk_notifications_granted_legacy">diizinkan (tidak diperlukan sebelum Android 13)</string>
     <string name="sdk_notifications_local_title">Notifikasi lokal</string>
     <string name="sdk_notifications_local_description">Kirim sekarang atau setelah jeda — kunci perangkat untuk melihatnya</string>

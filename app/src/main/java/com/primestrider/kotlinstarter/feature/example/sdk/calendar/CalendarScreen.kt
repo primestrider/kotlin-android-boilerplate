@@ -27,13 +27,11 @@ import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkSection
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.TimeZone
 
-private const val REMINDER_MINUTES = 60
 private const val UPCOMING_DAYS = 8
 private const val DAY_MILLIS = 86_400_000L
 private const val EVENT_TIME_PATTERN = "EEE dd MMM, HH:mm"
@@ -111,38 +109,19 @@ private fun CalendarContent() {
             onClick = {
                 scope.launch {
                     result =
-                        try {
-                            val calendar = repository.writableCalendar()
-                            if (calendar == null) {
-                                AddResult.NO_CALENDAR
-                            } else {
-                                val zone = TimeZone.getDefault()
-                                val start = bookingStart(System.currentTimeMillis(), day.days, zone)
-                                val eventId =
-                                    repository.addEvent(
-                                        calendar.id,
-                                        title,
-                                        booking.location,
-                                        notes,
-                                        start,
-                                        bookingEnd(start, booking),
-                                        zone.id,
-                                    )
-                                if (eventId == null) {
-                                    AddResult.FAILED
-                                } else {
-                                    if (remind) repository.addReminder(eventId, REMINDER_MINUTES)
-                                    calendarName = calendar.name
-                                    refresh++
-                                    AddResult.ADDED
-                                }
+                        when (
+                            val outcome =
+                                repository.addBooking(booking, title, notes, day, remind, System.currentTimeMillis(), TimeZone.getDefault())
+                        ) {
+                            is AddOutcome.Added -> {
+                                calendarName = outcome.calendarName
+                                refresh++
+                                AddResult.ADDED
                             }
-                        } catch (e: CancellationException) {
-                            throw e
-                        } catch (e: SecurityException) {
-                            AddResult.FAILED
-                        } catch (e: IllegalArgumentException) {
-                            AddResult.FAILED
+
+                            AddOutcome.NoCalendar -> AddResult.NO_CALENDAR
+
+                            AddOutcome.Failed -> AddResult.FAILED
                         }
                 }
             },

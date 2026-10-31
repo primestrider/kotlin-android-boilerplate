@@ -78,13 +78,16 @@ class ContactsRepository(
     /** The name and first number of the contact the system picker returned. */
     suspend fun picked(contact: Uri): ContactRow? =
         withContext(io) {
-            safely(null) {
-                val name =
+            // Each query on its own: a refused phone lookup must not throw away the name that was already read.
+            val name =
+                safely(null) {
                     contentResolver
                         .query(contact, arrayOf(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY), null, null, null)
                         ?.use { if (it.moveToFirst()) it.getString(0) else null }
-                // The picker grants access to this contact's data directory even without READ_CONTACTS.
-                val phone =
+                }
+            // The picker grants access to this contact's data directory even without READ_CONTACTS.
+            val phone =
+                safely(null) {
                     contentResolver
                         .query(
                             Uri.withAppendedPath(contact, ContactsContract.Contacts.Data.CONTENT_DIRECTORY),
@@ -93,8 +96,8 @@ class ContactsRepository(
                             arrayOf(ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE),
                             null,
                         )?.use { if (it.moveToFirst()) it.getString(0) else null }
-                ContactRow(name, phone)
-            }
+                }
+            if (name == null && phone == null) null else ContactRow(name, phone)
         }
 
     private fun firstPhone(contactId: Long): String? =

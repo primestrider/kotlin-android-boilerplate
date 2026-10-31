@@ -27,7 +27,7 @@ All demos share one navigation destination, `SdkDemoRoute(id)`. `SdkDemoScreen` 
 PermissionGate(permissions = listOf(Manifest.permission.CAMERA), reason = "The camera scans the code.") { Scanner() }
 ```
 
-It shows the content once **all** listed permissions are granted. Until then it shows an outlined card with the reason and a "Grant access" button. When the system will no longer show the prompt (the permission was requested before and no rationale is offered, see `permissionStatus`), the card says "Enable it in Settings to continue." and the button opens the app's settings page. Which permissions were requested is stored in `SharedPreferences("permissions")` so "blocked" survives a restart, and the state is re-read on every `ON_RESUME`, so granting access in Settings and coming back shows the content.
+It shows the content once **all** listed permissions are granted (`requireAll = false`: once any one is; the prompt still asks for all, as location needs). Until then it shows an outlined card with the reason and a "Grant access" button. When the system will no longer show the prompt (the permission was requested before and no rationale is offered, see `permissionStatus`), the card says "Enable it in Settings to continue." and the button opens the app's settings page. Which permissions were requested is stored in `SharedPreferences("permissions")` so "blocked" survives a restart, and the state is re-read on every `ON_RESUME`, so granting access in Settings and coming back shows the content.
 
 Use it for any demo that needs a runtime permission, instead of requesting permissions by hand.
 
@@ -139,7 +139,7 @@ Delete `feature/example/sdk/` and `SdkDemoRoute` in `ExampleRoutes.kt`; remove t
 
 - **Purpose:** the current position once or live (every 5 s, 5 m minimum distance) at low, balanced or high accuracy, with latitude, longitude, accuracy and time; a one-off fix is reverse-geocoded into street, district, city, region, postal code and country.
 - **Android API:** `FusedLocationProviderClient` (`getCurrentLocation`, `requestLocationUpdates` inside a `DisposableEffect` keyed on the watch switch and the accuracy), `Geocoder`.
-- **Permissions:** `ACCESS_FINE_LOCATION` and `ACCESS_COARSE_LOCATION`, both requested together through `PermissionGate`.
+- **Permissions:** `ACCESS_FINE_LOCATION` and `ACCESS_COARSE_LOCATION`, requested together through `PermissionGate(requireAll = false)`: either one opens the demo. With approximate access only, High accuracy runs at balanced power (`effectivePriority`). A fix that does not arrive within 15 s shows "Could not get a location."
 - **API-level fallback:** `Geocoder.GeocodeListener` needs API 33; below it `getFromLocation` runs on `Dispatchers.IO`. When `Geocoder.isPresent()` is false the address rows show "—" and the caption "No geocoder on this device." shows.
 - **Files:** `sdk/location/LocationFormat.kt` (`formatCoordinate`, `formatAccuracy`), `sdk/location/LocationScreen.kt`.
 
@@ -149,6 +149,7 @@ Delete `feature/example/sdk/` and `SdkDemoRoute` in `ExampleRoutes.kt`; remove t
 - **Android API:** `NotificationManagerCompat`, a `NotificationChannel` with id `default`, `AlarmManager.set(ELAPSED_REALTIME_WAKEUP, ...)` (inexact, so no exact-alarm permission), a `BroadcastReceiver`, `ProcessLifecycleOwner` (to know whether the app is open).
 - **Permissions:** `POST_NOTIFICATIONS` (runtime permission from Android 13).
 - **API-level fallback:** below Android 13 there is nothing to ask for; the gate passes and the status row reads "granted (not needed before Android 13)". The channel is only created from Android 8.
+- **Layout:** the Status row (granted / denied / not requested), the form and the Events log show before the grant; a `PermissionGate` under the Status row asks for access and "Schedule" stays disabled until it is granted.
 - **Behavior:** the ids of the scheduled notifications are kept in `SharedPreferences("sdk_notifications")`, so the "n pending" count survives rotation and process death; an id whose alarm is gone (device restart) is dropped. The "Show while app is open" switch lives in the same preferences, because `NotificationReceiver` reads it. The title, the delay and the log are in the ViewModel `SavedStateHandle` under `notifications_*` keys; a tap makes navigation rebuild the screen, so the log is also carried to the next ViewModel through `NotificationEvents.history`.
 - **Files:** `sdk/notifications/NotificationScheduler.kt`, `NotificationReceiver.kt`, `NotificationEvents.kt`, `NotificationsViewModel.kt`, `NotificationsScreen.kt`, and `res/drawable/sdk_ic_notification.xml` (the small icon).
 

@@ -1,5 +1,6 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.location
 
+import com.google.android.gms.location.Priority
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import java.util.Locale
@@ -20,6 +21,13 @@ class LocationFormatTest {
         } finally {
             Locale.setDefault(saved)
         }
+    }
+
+    @Test
+    fun high_accuracy_degrades_to_balanced_without_the_fine_permission() {
+        assertEquals(Priority.PRIORITY_BALANCED_POWER_ACCURACY, effectivePriority(Priority.PRIORITY_HIGH_ACCURACY, fineGranted = false))
+        assertEquals(Priority.PRIORITY_HIGH_ACCURACY, effectivePriority(Priority.PRIORITY_HIGH_ACCURACY, fineGranted = true))
+        assertEquals(Priority.PRIORITY_LOW_POWER, effectivePriority(Priority.PRIORITY_LOW_POWER, fineGranted = false))
     }
 
     @Test

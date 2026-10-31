@@ -2,6 +2,7 @@ package com.primestrider.kotlinstarter.feature.example.sdk.calendar
 
 import androidx.annotation.StringRes
 import com.primestrider.kotlinstarter.R
+import kotlinx.coroutines.CancellationException
 import java.util.Calendar
 import java.util.TimeZone
 
@@ -51,3 +52,48 @@ fun bookingEnd(
     start: Long,
     booking: Booking,
 ): Long = start + booking.hours * MILLIS_PER_HOUR
+
+const val REMINDER_MINUTES = 60
+
+/** What adding a booking came to. */
+sealed interface AddOutcome {
+    data class Added(
+        val calendarName: String,
+    ) : AddOutcome
+
+    data object NoCalendar : AddOutcome
+
+    data object Failed : AddOutcome
+}
+
+/** Adds [booking] on [day] (09:00 in [zone]) to the first writable calendar, with a reminder an hour before when [remind]. */
+suspend fun CalendarSource.addBooking(
+    booking: Booking,
+    title: String,
+    notes: String,
+    day: BookingDay,
+    remind: Boolean,
+    now: Long,
+    zone: TimeZone,
+): AddOutcome =
+    try {
+        val calendar = writableCalendar()
+        if (calendar == null) {
+            AddOutcome.NoCalendar
+        } else {
+            val start = bookingStart(now, day.days, zone)
+            val eventId = addEvent(calendar.id, title, booking.location, notes, start, bookingEnd(start, booking), zone.id)
+            if (eventId == null) {
+                AddOutcome.Failed
+            } else {
+                if (remind) addReminder(eventId, REMINDER_MINUTES)
+                AddOutcome.Added(calendar.name)
+            }
+        }
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: SecurityException) {
+        AddOutcome.Failed
+    } catch (e: IllegalArgumentException) {
+        AddOutcome.Failed
+    }

@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import java.text.DateFormat
 import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 // Prefixed: SdkDemoRoute's `id` and `amount` arguments land in this same SavedStateHandle.
@@ -74,9 +75,12 @@ class NotificationsViewModel(
         savedStateHandle[DELAY_KEY] = seconds
     }
 
-    /** Adds "{time} · {line}" to the log, newest first, five at most. */
-    fun log(line: String) {
-        val time = DateFormat.getTimeInstance(DateFormat.MEDIUM).format(Date(clock()))
+    /** Adds "{time} · {line}" (time in [locale]) to the log, newest first, five at most. */
+    fun log(
+        line: String,
+        locale: Locale = Locale.getDefault(),
+    ) {
+        val time = DateFormat.getTimeInstance(DateFormat.MEDIUM, locale).format(Date(clock()))
         val events = ArrayList(savedStateHandle.get<ArrayList<String>>(EVENTS_KEY).orEmpty())
         events.pushEvent("$time · $line")
         savedStateHandle[EVENTS_KEY] = events
@@ -90,9 +94,10 @@ class NotificationsViewModel(
     fun onTapped(
         id: Int,
         label: String,
+        locale: Locale = Locale.getDefault(),
     ) {
         if (savedStateHandle.get<Int>(LAST_TAPPED_KEY) == id) return
         savedStateHandle[LAST_TAPPED_KEY] = id
-        log(label)
+        log(label, locale)
     }
 }

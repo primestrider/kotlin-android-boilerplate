@@ -81,6 +81,48 @@ class PermissionGateTest {
         rule.onNodeWithText("Grant access").assertDoesNotExist()
     }
 
+    private fun showAnyOf() =
+        rule.setContent {
+            AppTheme(darkTheme = false) {
+                PermissionGate(
+                    permissions = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                    reason = "Location is needed.",
+                    requireAll = false,
+                ) { Text("Inside") }
+            }
+        }
+
+    @Test
+    fun any_of_shows_content_with_only_coarse_granted() {
+        shadowOf(app).denyPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+        shadowOf(app).grantPermissions(Manifest.permission.ACCESS_COARSE_LOCATION)
+        showAnyOf()
+        rule.onNodeWithText("Inside").assertIsDisplayed()
+    }
+
+    @Test
+    fun any_of_asks_when_none_is_granted() {
+        shadowOf(app).denyPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+        showAnyOf()
+        rule.onNodeWithText("Grant access").assertIsDisplayed()
+        rule.onNodeWithText("Inside").assertDoesNotExist()
+    }
+
+    @Test
+    fun all_of_is_the_default_and_needs_every_permission() {
+        shadowOf(app).denyPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
+        shadowOf(app).grantPermissions(Manifest.permission.ACCESS_COARSE_LOCATION)
+        rule.setContent {
+            AppTheme(darkTheme = false) {
+                PermissionGate(
+                    permissions = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                    reason = "Location is needed.",
+                ) { Text("Inside") }
+            }
+        }
+        rule.onNodeWithText("Inside").assertDoesNotExist()
+    }
+
     @Test
     fun granting_in_settings_then_resuming_shows_content() {
         shadowOf(app).denyPermissions(permission)

@@ -3,6 +3,7 @@ package com.primestrider.kotlinstarter.feature.example.sdk.location
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.location.Location
@@ -22,6 +23,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.CurrentLocationRequest
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
@@ -45,6 +48,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import java.io.IOException
 import java.text.DateFormat
 import java.util.Date
@@ -54,6 +58,8 @@ import kotlin.coroutines.resumeWithException
 
 private const val UPDATE_INTERVAL_MILLIS = 5_000L
 private const val MIN_DISTANCE_METERS = 5f
+private const val FIX_DURATION_MILLIS = 10_000L
+private const val FIX_TIMEOUT_MILLIS = 15_000L
 
 private enum class Accuracy(
     val label: Int,
@@ -108,6 +114,8 @@ fun LocationScreen(onBack: () -> Unit) {
         PermissionGate(
             permissions = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
             reason = stringResource(R.string.sdk_location_reason),
+            // Approximate access (coarse only) is enough; High accuracy then runs at balanced power.
+            requireAll = false,
         ) {
             LocationContent()
         }
@@ -138,7 +146,7 @@ private fun LocationContent() {
         val request =
             LocationRequest
                 .Builder(
-                    accuracy.priority,
+                    effectivePriority(accuracy.priority, fineGranted(context)),
                     UPDATE_INTERVAL_MILLIS,
                 ).setMinUpdateDistanceMeters(MIN_DISTANCE_METERS)
                 .build()
@@ -171,7 +179,8 @@ private fun LocationContent() {
                 error = null
                 scope.launch {
                     try {
-                        val location = client.currentLocation(accuracy.priority) ?: throw IOException(failure)
+                        val location =
+                            client.currentLocation(effectivePriority(accuracy.priority, fineGranted(context))) ?: throw IOException(failure)
                         fix = location.toFix()
                         place = if (geocoderPresent) geocode(context, locale, location) else null
                     } catch (e: CancellationException) {
@@ -220,9 +229,21 @@ private fun LocationContent() {
 private fun Location.toFix() = Fix(latitude, longitude, accuracy, time.takeIf { it > 0 } ?: System.currentTimeMillis())
 
 @SuppressLint("MissingPermission")
+private fun fineGranted(context: Context) =
+    ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+
+/** One fix, or null when none arrives: the request expires after [FIX_DURATION_MILLIS], and the timeout cancels the token too. */
+@SuppressLint("MissingPermission")
 private suspend fun com.google.android.gms.location.FusedLocationProviderClient.currentLocation(priority: Int): Location? {
     val source = CancellationTokenSource()
-    return getCurrentLocation(priority, source.token).await(source)
+    val request =
+        CurrentLocationRequest
+            .Builder()
+            .setPriority(priority)
+            .setDurationMillis(FIX_DURATION_MILLIS)
+            .build()
+    return withTimeoutOrNull(FIX_TIMEOUT_MILLIS) { getCurrentLocation(request, source.token).await(source) }
+        .also { source.cancel() }
 }
 
 private suspend fun <T> Task<T>.await(source: CancellationTokenSource): T? =
