@@ -89,7 +89,7 @@ fun AppInfoScreen(onBack: () -> Unit) {
             )
             AppButton(
                 stringResource(R.string.sdk_app_info_store),
-                onClick = { openStorePage(context) },
+                onClick = { if (!openStorePage(context)) outcome = ReviewOutcome.UNAVAILABLE },
                 variant = ButtonVariant.OUTLINED,
             )
             when (outcome) {
@@ -120,17 +120,24 @@ private fun Context.packageInfo(): PackageInfo =
         packageManager.getPackageInfo(packageName, 0)
     }
 
-private fun openStorePage(context: Context) {
+/** Opens the Play listing (store app, else the browser); false when nothing on the device can open either. */
+private fun openStorePage(context: Context): Boolean {
     val id = context.packageName
     val market = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$id")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     try {
         context.startActivity(market)
+        return true
     } catch (_: ActivityNotFoundException) {
         val web =
             Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse("https://play.google.com/store/apps/details?id=$id"),
             ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        context.startActivity(web)
+        return try {
+            context.startActivity(web)
+            true
+        } catch (_: ActivityNotFoundException) {
+            false
+        }
     }
 }
