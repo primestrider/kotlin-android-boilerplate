@@ -228,6 +228,7 @@ The scheme is `appScheme`: `app.scheme` in `local.properties`, else the `APP_SCH
 
 The section sits on the Home tab after Device APIs. It shows motion patterns well-known apps use, each as a live example with a title, one sentence on when to use it and the Compose API behind it (`AnimExample` in `feature/example/animation/`). Pages are listed in `animationPages` (`AnimationPages.kt`), in the order they appear on Home; each page has its own route (`AnimMicroRoute`, `AnimCardsRoute`, `AnimListsRoute`, `AnimTransitionsRoute`). Nothing here changes the app's own navigation transitions.
 
+- **Cards** (`animation/cards/`): press feedback (`collectIsPressedAsState` + `spring()`: the card scales to 0.96 while pressed), a carousel (`HorizontalPager` with `carouselScale`/`carouselAlpha` applied in `graphicsLayer` from `getOffsetDistanceInPages`), expand and collapse (`Modifier.animateContentSize()` and a rotating chevron), swipe to archive (`SwipeToDismissBox` with an Archive button per card as the non-gesture alternative, an Undo snackbar and a "Reset" empty state; `ArchiveState` keeps a stack so undo re-inserts each card at its original index, clamped to the list) and a flip card (`graphicsLayer { rotationY; cameraDistance }`, back face past 90 degrees).
 - **Micro-interactions** (`animation/micro/`): a like button that pops with a spring, a counter that slides up or down, a tab indicator that slides and resizes, and a content swap with `AnimatedContent` + `togetherWith`.
 
 ### Adding an animation page

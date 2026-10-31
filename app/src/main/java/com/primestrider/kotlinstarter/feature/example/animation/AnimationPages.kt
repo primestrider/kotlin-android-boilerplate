@@ -2,6 +2,7 @@ package com.primestrider.kotlinstarter.feature.example.animation
 
 import androidx.annotation.StringRes
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
 import com.primestrider.kotlinstarter.feature.example.ExampleEntry
 
@@ -19,6 +20,7 @@ data class AnimationPage(
  */
 val animationPages: List<AnimationPage> =
     listOf(
+        AnimationPage(AnimCardsRoute, R.string.anim_cards_title, R.string.anim_cards_subtitle),
         AnimationPage(AnimMicroRoute, R.string.anim_micro_title, R.string.anim_micro_subtitle),
     )
 
