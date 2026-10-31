@@ -73,7 +73,7 @@ After a successful sign-in, `SignInRoute` navigates to `AccountRoute` with `popU
 The example feature opens screens from outside the app with `<scheme>://example/...`.
 
 - **Scheme:** `appScheme` in `app/build.gradle.kts`: `app.scheme` in `local.properties`, else env `APP_SCHEME`, else `kotlinstarter`. It reaches the manifest as the `${appScheme}` placeholder and the code as `BuildConfig.APP_SCHEME`, so one value drives both.
-- **Manifest:** `MainActivity` has a `VIEW` intent filter (`DEFAULT` + `BROWSABLE`, scheme `${appScheme}`, host `example`) and `launchMode="singleTop"`, so a link opens the running activity instead of a second one.
+- **Manifest:** `MainActivity` has a `VIEW` intent filter (`DEFAULT` + `BROWSABLE`, scheme `${appScheme}`, host `example`) and `launchMode="singleTop"`, so a link delivered to the running activity arrives in `onNewIntent` instead of creating a second instance. That does not keep the back stack for links from outside the app: browsers, other apps, `adb shell am start` and notification taps send the intent with `FLAG_ACTIVITY_NEW_TASK`, and `NavController.handleDeepLink` answers such an intent by restarting the task (`FLAG_ACTIVITY_CLEAR_TASK`) with a back stack built from the graph. Whatever the user had open is gone, and back from the target returns to Home. Only an intent without `NEW_TASK` (one started from inside the app) is navigated to on top of the current back stack.
 - **Graph:** a destination declares its links with the type-safe builder, which derives the path and query from the route class:
 
   ```kotlin
