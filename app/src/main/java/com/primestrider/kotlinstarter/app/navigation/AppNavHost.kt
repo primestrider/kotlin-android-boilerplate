@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.primestrider.kotlinstarter.feature.example.AccountRoute
 import com.primestrider.kotlinstarter.feature.example.ActionsRoute
@@ -26,6 +27,7 @@ import com.primestrider.kotlinstarter.feature.example.OverlaysRoute
 import com.primestrider.kotlinstarter.feature.example.ProductDetailRoute
 import com.primestrider.kotlinstarter.feature.example.ProductsRoute
 import com.primestrider.kotlinstarter.feature.example.ProfileRoute
+import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
 import com.primestrider.kotlinstarter.feature.example.SettingsRoute
 import com.primestrider.kotlinstarter.feature.example.SignInRoute
 import com.primestrider.kotlinstarter.feature.example.SizingRoute
@@ -52,6 +54,7 @@ import com.primestrider.kotlinstarter.feature.example.products.ProductDetailScre
 import com.primestrider.kotlinstarter.feature.example.products.ProductDetailViewModel
 import com.primestrider.kotlinstarter.feature.example.products.ProductsScreen
 import com.primestrider.kotlinstarter.feature.example.products.ProductsViewModel
+import com.primestrider.kotlinstarter.feature.example.sdk.SdkDemoScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsViewModel
 import com.primestrider.kotlinstarter.feature.example.styling.AppearanceScreen
@@ -126,6 +129,7 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                 onBack = back,
             )
         }
+        composable<SdkDemoRoute> { entry -> SdkDemoScreen(id = entry.toRoute<SdkDemoRoute>().id, onBack = back) }
         composable<ColorsRoute> { ColorsScreen(onBack = back) }
         composable<TypographyRoute> { TypographyScreen(onBack = back) }
         composable<SpacingRoute> { SpacingScreen(onBack = back) }

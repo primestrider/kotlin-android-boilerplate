@@ -2,6 +2,7 @@ package com.primestrider.kotlinstarter.feature.example
 
 import androidx.annotation.StringRes
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.feature.example.sdk.sdkEntries
 
 data class ExampleEntry(
     @StringRes val title: Int,
@@ -25,7 +26,7 @@ val componentEntries: List<ExampleEntry> =
         ExampleEntry(R.string.example_components_feedback_title, R.string.example_components_feedback_subtitle, FeedbackRoute),
     )
 
-/** Home tab content: Features, then Styling (SDK demos join between them later). Components and Settings have their own tabs. */
+/** Home tab content: Features, Device APIs, then Styling. Components and Settings have their own tabs. */
 val exampleSections: List<ExampleSection> =
     listOf(
         ExampleSection(
@@ -37,6 +38,11 @@ val exampleSections: List<ExampleSection> =
                     ExampleEntry(R.string.todos_title, R.string.todos_subtitle, TodosRoute),
                     ExampleEntry(R.string.example_form_title, R.string.example_form_subtitle, FormExampleRoute),
                 ),
+        ),
+        ExampleSection(
+            title = R.string.example_home_sdk_title,
+            description = R.string.example_home_sdk_description,
+            entries = sdkEntries(),
         ),
         ExampleSection(
             title = R.string.example_home_styling_title,
