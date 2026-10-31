@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -12,24 +11,29 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
@@ -45,15 +49,24 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.animation.AnimExample
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /** Small feedback animations: like pop, sliding counter, tab indicator and a content swap. */
 @Composable
@@ -72,22 +85,25 @@ private fun LikeExample() {
     val scale = remember { Animatable(1f) }
     val scope = rememberCoroutineScope()
     val tint by animateColorAsState(
-        if (liked) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        if (liked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
         label = "likeTint",
     )
+    val like = stringResource(R.string.anim_micro_like)
     AnimExample(R.string.anim_micro_like_title, R.string.anim_micro_like_usage, "Animatable + spring()") {
-        IconButton(
-            onClick = {
-                liked = !liked
+        IconToggleButton(
+            checked = liked,
+            onCheckedChange = {
+                liked = it
                 scope.launch {
                     scale.animateTo(1.3f, spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMedium))
                     scale.animateTo(1f, spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessMedium))
                 }
             },
+            modifier = Modifier.semantics { contentDescription = like },
         ) {
             Icon(
-                Icons.Filled.Favorite,
-                contentDescription = stringResource(if (liked) R.string.anim_micro_liked else R.string.anim_micro_like),
+                if (liked) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                contentDescription = null,
                 tint = tint,
                 modifier =
                     Modifier.graphicsLayer {
@@ -107,10 +123,11 @@ private fun CounterExample() {
     AnimExample(R.string.anim_micro_counter_title, R.string.anim_micro_counter_usage, "AnimatedContent") {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.s4)) {
             FilledTonalButton(onClick = { count-- }, modifier = Modifier.semantics { contentDescription = decrease }) {
-                Text("−")
+                Text("−", Modifier.clearAndSetSemantics {})
             }
             AnimatedContent(
                 targetState = count,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 transitionSpec = {
                     val up = targetState > initialState
                     (slideInVertically { if (up) it else -it } + fadeIn()) togetherWith
@@ -121,7 +138,7 @@ private fun CounterExample() {
                 Text(value.toString(), style = MaterialTheme.typography.headlineMedium)
             }
             FilledTonalButton(onClick = { count++ }, modifier = Modifier.semantics { contentDescription = increase }) {
-                Text("+")
+                Text("+", Modifier.clearAndSetSemantics {})
             }
         }
     }
@@ -133,41 +150,69 @@ private fun TabIndicatorExample() {
     var selected by rememberSaveable { mutableIntStateOf(0) }
     val xs = remember { mutableStateListOf(0, 0, 0) }
     val widths = remember { mutableStateListOf(0, 0, 0) }
+    val x = remember { Animatable(0f) }
+    val w = remember { Animatable(0f) }
+    var placed by remember { mutableStateOf(false) }
+    val ready = widths.all { it > 0 }
+    val targetX = xs[selected]
+    val targetW = widths[selected]
+    // Snap to the first measured position (first display, rotation, restore); animate only later changes.
+    LaunchedEffect(ready, selected, targetX, targetW) {
+        if (!ready) return@LaunchedEffect
+        if (!placed) {
+            x.snapTo(targetX.toFloat())
+            w.snapTo(targetW.toFloat())
+            placed = true
+        } else {
+            coroutineScope {
+                launch { x.animateTo(targetX.toFloat()) }
+                launch { w.animateTo(targetW.toFloat()) }
+            }
+        }
+    }
     val density = LocalDensity.current
-    val offset by animateDpAsState(with(density) { xs[selected].toDp() }, label = "tabOffset")
-    val width by animateDpAsState(with(density) { widths[selected].toDp() }, label = "tabWidth")
-    AnimExample(R.string.anim_micro_tabs_title, R.string.anim_micro_tabs_usage, "animateDpAsState") {
+    AnimExample(R.string.anim_micro_tabs_title, R.string.anim_micro_tabs_usage, "Animatable + Modifier.offset { }") {
         Box(Modifier.fillMaxWidth()) {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 labels.forEachIndexed { index, label ->
-                    Text(
-                        stringResource(label),
-                        style = MaterialTheme.typography.titleSmall,
-                        color =
-                            if (index == selected) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onSurfaceVariant
-                            },
+                    Box(
                         modifier =
                             Modifier
+                                .heightIn(min = 48.dp)
                                 .onGloballyPositioned {
-                                    xs[index] = it.positionInParent().x.toInt()
+                                    // positionInParent is absolute (left edge), so the indicator below uses an LTR frame.
+                                    xs[index] = it.positionInParent().x.roundToInt()
                                     widths[index] = it.size.width
-                                }.clickable { selected = index }
-                                .padding(vertical = Spacing.s2, horizontal = Spacing.s3),
+                                }.selectable(selected = index == selected, role = Role.Tab, onClick = { selected = index })
+                                .padding(horizontal = Spacing.s3),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            stringResource(label),
+                            style = MaterialTheme.typography.titleSmall,
+                            color =
+                                if (index == selected) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                },
+                        )
+                    }
+                }
+            }
+            if (placed) {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+                    Box(
+                        Modifier
+                            .align(Alignment.BottomStart)
+                            .offset { IntOffset(x.value.roundToInt(), 0) }
+                            .width(with(density) { w.value.toDp() })
+                            .height(3.dp)
+                            .clip(RoundedCornerShape(percent = 50))
+                            .background(MaterialTheme.colorScheme.primary),
                     )
                 }
             }
-            Box(
-                Modifier
-                    .align(Alignment.BottomStart)
-                    .offset(x = offset)
-                    .width(width)
-                    .height(3.dp)
-                    .clip(RoundedCornerShape(percent = 50))
-                    .background(MaterialTheme.colorScheme.primary),
-            )
         }
     }
 }
@@ -181,6 +226,7 @@ private fun ContentChangeExample() {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Spacing.s4)) {
             AnimatedContent(
                 targetState = index,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 transitionSpec = {
                     (slideInVertically { it / 2 } + fadeIn()) togetherWith (slideOutVertically { -it / 2 } + fadeOut())
                 },
@@ -200,7 +246,7 @@ private fun ContentChangeExample() {
             FilledTonalButton(
                 onClick = { index = (index + 1) % states.size },
                 modifier = Modifier.semantics { contentDescription = next },
-            ) { Text(stringResource(R.string.anim_micro_next)) }
+            ) { Text(stringResource(R.string.anim_micro_next), Modifier.clearAndSetSemantics {}) }
         }
     }
 }

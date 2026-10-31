@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,8 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.example.DemoSection
 
-/** Card for one live animation: its title, when to use it, the Compose [api] behind it, then [content]. */
+/** One live animation as a [DemoSection]: when to use it (muted), the Compose [api] behind it, then [content]. */
 @Composable
 fun AnimExample(
     @StringRes title: Int,
@@ -24,9 +24,8 @@ fun AnimExample(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Card(modifier.fillMaxWidth()) {
-        Column(Modifier.padding(Spacing.s4), verticalArrangement = Arrangement.spacedBy(Spacing.s2)) {
-            Text(stringResource(title), style = MaterialTheme.typography.titleMedium)
+    Column(modifier.fillMaxWidth()) {
+        DemoSection(title) {
             Text(
                 stringResource(usage),
                 style = MaterialTheme.typography.bodySmall,
@@ -39,7 +38,7 @@ fun AnimExample(
                 color = MaterialTheme.colorScheme.primary,
             )
             Column(
-                Modifier.fillMaxWidth().padding(top = Spacing.s2),
+                Modifier.fillMaxWidth().padding(top = Spacing.s1),
                 verticalArrangement = Arrangement.spacedBy(Spacing.s3),
             ) {
                 content()

@@ -844,7 +844,6 @@
     <string name="anim_micro_like_title">Tombol suka</string>
     <string name="anim_micro_like_usage">Konfirmasi ketukan dengan efek pegas singkat dan perubahan warna.</string>
     <string name="anim_micro_like">Suka</string>
-    <string name="anim_micro_liked">Disukai</string>
     <string name="anim_micro_counter_title">Penghitung</string>
     <string name="anim_micro_counter_usage">Angka bergeser naik saat bertambah dan turun saat berkurang.</string>
     <string name="anim_micro_increase">Tambah</string>

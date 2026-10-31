@@ -1,5 +1,9 @@
 package com.primestrider.kotlinstarter.feature.example.animation.micro
 
+import androidx.compose.ui.test.assertIsNotSelected
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -23,20 +27,37 @@ class MicroInteractionsScreenTest {
         rule.onNodeWithContentDescription(description).performScrollTo().performClick()
     }
 
+    private fun tab(text: String) = rule.onNodeWithText(text).performScrollTo()
+
     @Test
-    fun like_toggles_its_description() {
+    fun like_toggles_its_state() {
         rule.setContent { AppTheme(false) { MicroInteractionsScreen(onBack = {}) } }
+        rule.onNodeWithContentDescription("Like").performScrollTo().assertIsOff()
         click("Like")
-        rule.onNodeWithContentDescription("Liked").performScrollTo().assertExists()
-        click("Liked")
-        rule.onNodeWithContentDescription("Like").performScrollTo().assertExists()
+        rule.onNodeWithContentDescription("Like").assertIsOn()
+        click("Like")
+        rule.onNodeWithContentDescription("Like").assertIsOff()
+    }
+
+    @Test
+    fun like_spam_with_an_odd_number_of_taps_ends_liked_and_settles() {
+        rule.setContent { AppTheme(false) { MicroInteractionsScreen(onBack = {}) } }
+        rule.onNodeWithContentDescription("Like").performScrollTo()
+        rule.mainClock.autoAdvance = false
+        repeat(7) { click("Like") }
+        rule.mainClock.autoAdvance = true
+        rule.waitForIdle() // returns only once the spring animations have settled
+        rule.onNodeWithContentDescription("Like").assertIsOn()
     }
 
     @Test
     fun counter_is_exact_after_rapid_taps() {
         rule.setContent { AppTheme(false) { MicroInteractionsScreen(onBack = {}) } }
+        rule.onNodeWithContentDescription("Increase").performScrollTo()
+        rule.mainClock.autoAdvance = false
         repeat(5) { click("Increase") }
         repeat(2) { click("Decrease") }
+        rule.mainClock.autoAdvance = true
         rule.onNodeWithText("3").performScrollTo().assertExists()
     }
 
@@ -53,15 +74,29 @@ class MicroInteractionsScreenTest {
     }
 
     @Test
+    fun selected_tab_is_exposed_to_accessibility() {
+        rule.setContent { AppTheme(false) { MicroInteractionsScreen(onBack = {}) } }
+        tab("Photos").assertIsSelected()
+        tab("Videos").assertIsNotSelected()
+        tab("Albums").assertIsNotSelected()
+        tab("Videos").performClick()
+        tab("Photos").assertIsNotSelected()
+        tab("Videos").assertIsSelected()
+    }
+
+    @Test
     fun state_survives_recreation() {
         val tester = StateRestorationTester(rule)
         tester.setContent { AppTheme(false) { MicroInteractionsScreen(onBack = {}) } }
         click("Like")
         repeat(4) { click("Increase") }
         click("Next status")
+        tab("Albums").performClick()
         tester.emulateSavedInstanceStateRestore()
-        rule.onNodeWithContentDescription("Liked").performScrollTo().assertExists()
+        rule.onNodeWithContentDescription("Like").performScrollTo().assertIsOn()
         rule.onNodeWithText("4").performScrollTo().assertExists()
         rule.onNodeWithText("Paid").performScrollTo().assertExists()
+        tab("Albums").assertIsSelected()
+        tab("Photos").assertIsNotSelected()
     }
 }

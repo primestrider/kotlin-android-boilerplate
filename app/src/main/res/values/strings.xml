@@ -844,7 +844,6 @@
     <string name="anim_micro_like_title">Like button</string>
     <string name="anim_micro_like_usage">Confirm a tap with a quick spring pop and a colour change.</string>
     <string name="anim_micro_like">Like</string>
-    <string name="anim_micro_liked">Liked</string>
     <string name="anim_micro_counter_title">Counter</string>
     <string name="anim_micro_counter_usage">The number slides up when it grows and down when it shrinks.</string>
     <string name="anim_micro_increase">Increase</string>
