@@ -3,6 +3,9 @@ package com.primestrider.kotlinstarter.feature.example.sdk.clipboard
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.hasClickAction
@@ -12,6 +15,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.text.AnnotatedString
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
@@ -68,6 +72,6 @@ class ClipboardScreenTest {
         show()
         rule.onNode(button("Paste")).performScrollTo().performClick()
         rule.onNodeWithText("Last pasted").assertDoesNotExist()
-        rule.onNode(hasSetTextAction()).assertTextContains("")
+        rule.onNode(hasSetTextAction()).assert(SemanticsMatcher.expectValue(SemanticsProperties.EditableText, AnnotatedString("")))
     }
 }
