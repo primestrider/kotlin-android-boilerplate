@@ -887,4 +887,10 @@
     <string name="anim_cards_flip_button">Balik</string>
     <string name="anim_cards_showing_front">Menampilkan sisi depan</string>
     <string name="anim_cards_showing_back">Menampilkan sisi belakang</string>
+    <string name="anim_cards_item_mountain">Perjalanan Gunung</string>
+    <string name="anim_cards_item_city">Lampu Kota</string>
+    <string name="anim_cards_item_ocean">Hari di Laut</string>
+    <string name="anim_cards_item_forest">Jalan di Hutan</string>
+    <string name="anim_cards_item_desert">Jalan Gurun</string>
+    <string name="anim_cards_press_count">Ditekan %1$d kali</string>
 </resources>

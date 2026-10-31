@@ -1,13 +1,14 @@
 package com.primestrider.kotlinstarter.feature.example.animation.cards
 
+import androidx.annotation.StringRes
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 
-/** A demo card. [colorIndex] picks a gradient in the screen; the title is invented sample content. */
+/** A demo card. [title] is a string resource (invented sample content); [colorIndex] picks a gradient. */
 data class DemoCard(
     val id: Int,
-    val title: String,
+    @StringRes val title: Int,
     val colorIndex: Int,
 )
 
@@ -52,18 +53,18 @@ class ArchiveState(
     }
 
     companion object {
-        private fun DemoCard.toList(): List<Any> = listOf(id, title, colorIndex)
+        private fun DemoCard.toSaved(): List<Any> = listOf(id, title, colorIndex)
 
-        private fun List<*>.toCard() = DemoCard(this[0] as Int, this[1] as String, this[2] as Int)
+        private fun List<*>.toCard() = DemoCard(this[0] as Int, this[1] as Int, this[2] as Int)
 
         /** Saves the shown cards, the initial cards and the archive stack as plain lists. */
         val Saver: Saver<ArchiveState, Any> =
             listSaver(
                 save = { state ->
                     listOf(
-                        state.all.map { it.toList() },
-                        state.shown.map { it.toList() },
-                        state.archived.map { it.first.toList() + it.second },
+                        state.all.map { it.toSaved() },
+                        state.shown.map { it.toSaved() },
+                        state.archived.map { it.first.toSaved() + it.second },
                     )
                 },
                 restore = { saved ->

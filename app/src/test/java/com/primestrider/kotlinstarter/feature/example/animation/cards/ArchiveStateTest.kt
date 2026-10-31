@@ -8,7 +8,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ArchiveStateTest {
-    private fun cards(n: Int = 5) = List(n) { DemoCard(it, "Card $it", it) }
+    private fun cards(n: Int = 5) = List(n) { DemoCard(it, 0, it) }
 
     private fun ids(state: ArchiveState) = state.cards.map { it.id }
 
@@ -38,7 +38,7 @@ class ArchiveStateTest {
     @Test
     fun undo_clamps_an_out_of_range_index_to_the_end() {
         val state = ArchiveState(cards(2))
-        state.restoreArchived(DemoCard(9, "Late", 0), index = 7)
+        state.restoreArchived(DemoCard(9, 0, 0), index = 7)
         state.undo()
         assertEquals(listOf(0, 1, 9), ids(state))
     }

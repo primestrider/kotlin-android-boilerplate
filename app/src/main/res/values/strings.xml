@@ -887,4 +887,10 @@
     <string name="anim_cards_flip_button">Flip</string>
     <string name="anim_cards_showing_front">Showing the front</string>
     <string name="anim_cards_showing_back">Showing the back</string>
+    <string name="anim_cards_item_mountain">Mountain Trip</string>
+    <string name="anim_cards_item_city">City Lights</string>
+    <string name="anim_cards_item_ocean">Ocean Days</string>
+    <string name="anim_cards_item_forest">Forest Walk</string>
+    <string name="anim_cards_item_desert">Desert Road</string>
+    <string name="anim_cards_press_count">Pressed %1$d times</string>
 </resources>
