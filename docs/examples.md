@@ -224,6 +224,26 @@ Tests go with the demos: delete `app/src/test/.../feature/example/sdk/`. Three a
 
 The scheme is `appScheme`: `app.scheme` in `local.properties`, else the `APP_SCHEME` environment variable, else `kotlinstarter`. `app/build.gradle.kts` passes it to the manifest as the `${appScheme}` placeholder and to code as `BuildConfig.APP_SCHEME`. The deep link is `<scheme>://example/sdk/<demo id>` (Payment Code also takes `?amount=<IDR>`). Deep-link arguments come from outside the app (any app, web page or `adb` can fire the link), so validate them before use, as `PaymentCodeViewModel` does with a negative `amount`; see docs/architecture/navigation.md.
 
+## The Animations section
+
+The section sits on the Home tab after Device APIs. It shows motion patterns well-known apps use, each as a live example with a title, one sentence on when to use it and the Compose API behind it (`AnimExample` in `feature/example/animation/`). Pages are listed in `animationPages` (`AnimationPages.kt`), in the order they appear on Home; each page has its own route (`AnimMicroRoute`, `AnimCardsRoute`, `AnimListsRoute`, `AnimTransitionsRoute`). Nothing here changes the app's own navigation transitions.
+
+- **Micro-interactions** (`animation/micro/`): a like button that pops with a spring, a counter that slides up or down, a tab indicator that slides and resizes, and a content swap with `AnimatedContent` + `togetherWith`.
+
+### Adding an animation page
+
+1. Add a `@Serializable data object` route to `ExampleRoutes.kt`.
+2. Write `XxxScreen(onBack)` on top of `ExamplePageScaffold`, composed of `AnimExample(title, usage, api) { ... }` cards. Keep user-chosen state in `rememberSaveable`.
+3. Add an `AnimationPage(route, title, subtitle)` entry to `animationPages` in its place in the order.
+4. Add `composable<XxxRoute> { XxxScreen(onBack = back) }` to `homeGraph` in `AppNavHost.kt`.
+5. Add `anim_<page>_` strings to `values/strings.xml` and `values-in/strings.xml`.
+
+Examples respect "Remove animations": Compose scales every animation by the system animator duration scale, so each example still reaches its end state, and no state is shown by motion alone.
+
+### Deleting the Animations section
+
+Delete `feature/example/animation/` and the four `Anim*Route` objects in `ExampleRoutes.kt`; remove the "Animations" `ExampleSection` and the `animationEntries` import from `ExampleCatalog.kt`, the `composable<Anim*Route>` lines and their imports in `AppNavHost.kt`, and the `anim_*` and `example_home_anim_*` strings. Delete `app/src/test/.../feature/example/animation/` and update the Home section order in `SdkDemosTest`.
+
 ## Physical-device checklist
 
 Robolectric covers the logic; these need real hardware (or a well-equipped emulator) before a release:

@@ -15,6 +15,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.feature.example.AccountRoute
 import com.primestrider.kotlinstarter.feature.example.ActionsRoute
+import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
 import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
 import com.primestrider.kotlinstarter.feature.example.ColorsRoute
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
@@ -37,6 +38,7 @@ import com.primestrider.kotlinstarter.feature.example.SpacingRoute
 import com.primestrider.kotlinstarter.feature.example.ThemeRoute
 import com.primestrider.kotlinstarter.feature.example.TodosRoute
 import com.primestrider.kotlinstarter.feature.example.TypographyRoute
+import com.primestrider.kotlinstarter.feature.example.animation.micro.MicroInteractionsScreen
 import com.primestrider.kotlinstarter.feature.example.auth.AccountScreen
 import com.primestrider.kotlinstarter.feature.example.auth.AccountViewModel
 import com.primestrider.kotlinstarter.feature.example.auth.ProfileScreen
@@ -134,6 +136,7 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
         composable<SdkDemoRoute>(
             deepLinks = listOf(navDeepLink<SdkDemoRoute>(basePath = "${BuildConfig.APP_SCHEME}://example/sdk")),
         ) { entry -> SdkDemoScreen(id = entry.toRoute<SdkDemoRoute>().id, onBack = back) }
+        composable<AnimMicroRoute> { MicroInteractionsScreen(onBack = back) }
         composable<ColorsRoute> { ColorsScreen(onBack = back) }
         composable<TypographyRoute> { TypographyScreen(onBack = back) }
         composable<SpacingRoute> { SpacingScreen(onBack = back) }

@@ -76,3 +76,16 @@ data class SdkDemoRoute(
     /** Set only by the Payment Code deep link (`.../sdk/payment-code?amount=50000`). */
     val amount: Long? = null,
 )
+
+/** The four pages of the "Animations" Home section; see `animationPages`. */
+@Serializable
+data object AnimMicroRoute
+
+@Serializable
+data object AnimCardsRoute
+
+@Serializable
+data object AnimListsRoute
+
+@Serializable
+data object AnimTransitionsRoute

@@ -67,10 +67,10 @@ class SdkDemosTest {
     }
 
     @Test
-    fun home_section_sits_between_features_and_styling() {
+    fun home_sections_are_in_order() {
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
         val titles = exampleSections.map { context.getString(it.title) }
-        assertEquals(listOf("Features", "Device APIs", "Styling"), titles)
+        assertEquals(listOf("Features", "Device APIs", "Animations", "Styling"), titles)
         val sdk = exampleSections[1]
         assertEquals(sdkDemos.map { SdkDemoRoute(it.id) }, sdk.entries.map { it.route })
     }
