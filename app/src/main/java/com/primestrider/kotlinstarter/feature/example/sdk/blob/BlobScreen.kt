@@ -23,7 +23,8 @@ private const val JSON_TYPE = "application/json"
 private const val TEXT_TYPE = "text/plain"
 private const val SLICE_END = 8
 
-private enum class Detail { NONE, TEXT, BYTES }
+/** What the result card shows; the combined payload is rebuilt from the base on demand, never stored or saved. */
+private enum class Detail { NONE, TEXT, BYTES, COMBINED }
 
 private val payloadSaver =
     Saver<BinaryPayload?, List<Any>>(
@@ -35,9 +36,8 @@ private val payloadSaver =
 @Composable
 fun BlobScreen(onBack: () -> Unit) {
     var content by rememberSaveable { mutableStateOf(INITIAL_CONTENT) }
-    var payload by rememberSaveable(stateSaver = payloadSaver) { mutableStateOf<BinaryPayload?>(null) }
+    var base by rememberSaveable(stateSaver = payloadSaver) { mutableStateOf<BinaryPayload?>(null) }
     var detail by rememberSaveable { mutableStateOf(Detail.NONE) }
-    var hex by rememberSaveable { mutableStateOf("") }
 
     ExamplePageScaffold(title = R.string.sdk_blob_title, subtitle = R.string.sdk_blob_subtitle, onBack = onBack) {
         SdkSection(R.string.sdk_blob_section_title, R.string.sdk_blob_section_description) {
@@ -46,7 +46,7 @@ fun BlobScreen(onBack: () -> Unit) {
                 AppButton(
                     stringResource(R.string.sdk_blob_create),
                     onClick = {
-                        payload = BinaryPayload.of(content, JSON_TYPE)
+                        base = BinaryPayload.of(content, JSON_TYPE)
                         detail = Detail.NONE
                     },
                 )
@@ -54,35 +54,35 @@ fun BlobScreen(onBack: () -> Unit) {
                     stringResource(R.string.sdk_blob_text),
                     onClick = { detail = Detail.TEXT },
                     variant = ButtonVariant.OUTLINED,
-                    enabled = payload != null,
+                    enabled = base != null,
                 )
                 AppButton(
                     stringResource(R.string.sdk_blob_slice),
                     onClick = {
-                        hex = payload?.slice(0, SLICE_END)?.hex().orEmpty()
                         detail = Detail.BYTES
                     },
                     variant = ButtonVariant.OUTLINED,
-                    enabled = payload != null,
+                    enabled = base != null,
                 )
                 AppButton(
                     stringResource(R.string.sdk_blob_combine),
                     onClick = {
-                        payload?.let { payload = BinaryPayload.combine(listOf(it, "\n", it), TEXT_TYPE) }
-                        detail = Detail.TEXT
+                        detail = Detail.COMBINED
                     },
                     variant = ButtonVariant.OUTLINED,
-                    enabled = payload != null,
+                    enabled = base != null,
                 )
             }
-            payload?.let { current ->
+            base?.let { created ->
+                // Slice and Combine always work on the created payload, so repeating them never grows it.
+                val shown = if (detail == Detail.COMBINED) combined(created) else created
                 val rows =
                     buildList {
-                        add(stringResource(R.string.sdk_blob_size) to stringResource(R.string.sdk_blob_size_value, current.size))
-                        add(stringResource(R.string.sdk_blob_type) to current.type)
+                        add(stringResource(R.string.sdk_blob_size) to stringResource(R.string.sdk_blob_size_value, shown.size))
+                        add(stringResource(R.string.sdk_blob_type) to shown.type)
                         when (detail) {
-                            Detail.TEXT -> add(stringResource(R.string.sdk_blob_result_text) to current.text())
-                            Detail.BYTES -> add(stringResource(R.string.sdk_blob_result_bytes) to hex)
+                            Detail.TEXT, Detail.COMBINED -> add(stringResource(R.string.sdk_blob_result_text) to shown.text())
+                            Detail.BYTES -> add(stringResource(R.string.sdk_blob_result_bytes) to created.slice(0, SLICE_END).hex())
                             Detail.NONE -> Unit
                         }
                     }
@@ -91,3 +91,6 @@ fun BlobScreen(onBack: () -> Unit) {
         }
     }
 }
+
+/** `[payload, "\n", payload]` as plain text: twice the payload plus the newline. */
+internal fun combined(payload: BinaryPayload): BinaryPayload = BinaryPayload.combine(listOf(payload, "\n", payload), TEXT_TYPE)

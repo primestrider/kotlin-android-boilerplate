@@ -51,4 +51,25 @@ class BlobScreenTest {
         rule.onNodeWithText("97 bytes").assertExists()
         rule.onNodeWithText("text/plain").assertExists()
     }
+
+    @Test
+    fun combining_twice_matches_combining_once() {
+        show()
+        click("Create")
+        click("Combine")
+        click("Combine")
+        rule.onNodeWithText("97 bytes").assertExists()
+        rule.onNodeWithText("195 bytes").assertDoesNotExist()
+    }
+
+    @Test
+    fun combine_then_slice_then_combine_still_uses_the_created_payload() {
+        show()
+        click("Create")
+        click("Combine")
+        click("Slice")
+        rule.onNodeWithText("48 bytes").assertExists()
+        click("Combine")
+        rule.onNodeWithText("97 bytes").assertExists()
+    }
 }
