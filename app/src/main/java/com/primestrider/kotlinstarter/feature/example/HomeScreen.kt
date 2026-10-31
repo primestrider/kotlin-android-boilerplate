@@ -37,7 +37,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
@@ -63,8 +62,8 @@ private const val ALL_SECTIONS = 0
 
 /**
  * A titled list of example pages grouped in section cards. With more than one section it adds a search box
- * (titles and subtitles, in the app language) and a chip per section; both survive recreation. The title, search
- * box and chips stay above the list so scrolling it never takes focus from the field.
+ * (titles and subtitles, in the app language) and a chip per section; both survive recreation. The title scrolls with
+ * the list; the search box and chips stay pinned above it, so scrolling never takes focus from the field.
  */
 @Composable
 fun HomeScreen(
@@ -82,65 +81,66 @@ fun HomeScreen(
     val totals = sections.associate { it.title to it.entries.size }
     val narrowed = query.isNotBlank() || activeSelection != null
 
-    Column(
-        modifier = Modifier.fillMaxSize().safeDrawingPadding().padding(horizontal = Spacing.s4),
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().safeDrawingPadding().testTag(HOME_LIST_TAG),
+        contentPadding = PaddingValues(start = Spacing.s4, end = Spacing.s4, bottom = Spacing.s4),
         verticalArrangement = Arrangement.spacedBy(Spacing.s4),
     ) {
-        Text(
-            text = stringResource(title),
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.padding(top = Spacing.s4).semantics { heading() },
-        )
-        if (filters) {
-            SearchField(
-                query = query,
-                onQueryChange = { query = it },
-                placeholder = stringResource(R.string.home_search_placeholder),
+        item(key = "title") {
+            Text(
+                text = stringResource(title),
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(top = Spacing.s4).semantics { heading() },
             )
-            SectionChips(sections, activeSelection ?: ALL_SECTIONS, onSelect = { selected = it })
         }
-        Box(Modifier.weight(1f)) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize().testTag(HOME_LIST_TAG),
-                contentPadding = PaddingValues(bottom = Spacing.s4),
-                verticalArrangement = Arrangement.spacedBy(Spacing.s4),
-            ) {
-                items(shown, key = { it.title }) { section ->
-                    SectionCard(section, totals.getValue(section.title), narrowed, onOpen)
-                }
-                if (shown.isEmpty()) {
-                    item {
-                        EmptyState(
-                            title = stringResource(R.string.home_no_match, query.trim()),
-                            description = stringResource(R.string.home_no_match_hint),
-                            icon = Icons.Filled.Search,
-                            actionLabel = stringResource(R.string.component_clear_search),
-                            onAction = {
-                                query = ""
-                                selected = ALL_SECTIONS
-                            },
-                            modifier =
-                                Modifier.padding(top = Spacing.s8).semantics(mergeDescendants = true) {
-                                    liveRegion =
-                                        LiveRegionMode.Polite
-                                },
+        if (filters) {
+            stickyHeader(key = "filters") {
+                // Opaque, so cards scrolling underneath never show through the pinned search and chips.
+                Surface(color = MaterialTheme.colorScheme.background, modifier = Modifier.fillMaxWidth()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(Spacing.s2), modifier = Modifier.padding(vertical = Spacing.s2)) {
+                        SearchField(
+                            query = query,
+                            onQueryChange = { query = it },
+                            placeholder = stringResource(R.string.home_search_placeholder),
                         )
+                        SectionChips(sections, activeSelection ?: ALL_SECTIONS, onSelect = { selected = it })
+                        if (narrowed && shown.isNotEmpty()) ResultsLine(shown.sumOf { it.entries.size })
                     }
                 }
             }
-            if (query.isNotBlank() && shown.isNotEmpty()) ResultsAnnouncement(shown.sumOf { it.entries.size })
+        }
+        items(shown, key = { it.title }) { section ->
+            SectionCard(section, totals.getValue(section.title), onOpen)
+        }
+        if (shown.isEmpty()) {
+            item(key = "empty") {
+                EmptyState(
+                    title = stringResource(R.string.home_no_match, query.trim()),
+                    description = stringResource(R.string.home_no_match_hint),
+                    icon = Icons.Filled.Search,
+                    actionLabel = stringResource(R.string.component_clear_search),
+                    onAction = {
+                        query = ""
+                        selected = ALL_SECTIONS
+                    },
+                    modifier =
+                        Modifier.padding(top = Spacing.s8).semantics(mergeDescendants = true) {
+                            liveRegion = LiveRegionMode.Polite
+                        },
+                )
+            }
         }
     }
 }
 
-/** A one-pixel, invisible polite live region, so a screen reader hears how many entries the search left. */
+/** A small visible line under the chips; a polite live region, so a screen reader hears how many entries are left. */
 @Composable
-private fun ResultsAnnouncement(count: Int) {
+private fun ResultsLine(count: Int) {
     Text(
         pluralStringResource(R.plurals.home_results, count, count),
-        modifier = Modifier.size(1.dp).alpha(0f).semantics { liveRegion = LiveRegionMode.Polite },
-        maxLines = 1,
-        softWrap = false,
+        style = MaterialTheme.typography.labelMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
     )
 }
 
@@ -183,14 +183,13 @@ private fun Chip(
 private fun SectionCard(
     section: ExampleSection,
     total: Int,
-    narrowed: Boolean,
     onOpen: (Any) -> Unit,
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
         modifier = Modifier.fillMaxWidth(),
     ) {
-        SectionHeader(section, total, narrowed)
+        SectionHeader(section, total)
         section.entries.forEachIndexed { index, entry ->
             HorizontalDivider(
                 modifier = Modifier.padding(start = if (index == 0) 0.dp else Spacing.s4),
@@ -205,10 +204,10 @@ private fun SectionCard(
 private fun SectionHeader(
     section: ExampleSection,
     total: Int,
-    narrowed: Boolean,
 ) {
     val shown = section.entries.size
-    // While a query or chip is active the badge reads "2/7", so a filtered count is not mistaken for the total.
+    val narrowed = shown < total
+    // When the section is cut down the badge reads "2/7", so a filtered count is not mistaken for the total.
     val badge = if (narrowed) stringResource(R.string.home_section_badge_of, shown, total) else shown.toString()
     val count =
         if (narrowed) {

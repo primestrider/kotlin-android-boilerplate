@@ -142,16 +142,55 @@ class HomeScreenTest {
         rule.onNodeWithContentDescription("$matched of $total examples").assertExists()
     }
 
+    private fun resultsLine() =
+        SemanticsMatcher("a results summary") { node ->
+            node.config.getOrNull(SemanticsProperties.Text)?.any { Regex("""\d+ results?""").matches(it.text) } == true
+        }
+
     @Test
-    fun a_search_announces_how_many_results_it_found() {
+    fun a_search_shows_a_visible_polite_results_line() {
         show {}
         rule.onNodeWithText("Search features").performTextInput("camera")
-        rule
-            .onAllNodes(
-                SemanticsMatcher("a results summary") { node ->
-                    node.config.getOrNull(SemanticsProperties.Text)?.any { Regex("""\d+ results?""").matches(it.text) } == true
-                } and SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite),
-            ).assertCountEquals(1)
+        val line = resultsLine() and SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite)
+        rule.onAllNodes(line).assertCountEquals(1)
+        rule.onNode(line).assertIsDisplayed()
+    }
+
+    @Test
+    fun a_chip_alone_shows_the_results_line_and_no_filter_hides_it() {
+        show {}
+        rule.onAllNodes(resultsLine()).assertCountEquals(0)
+        rule.onNode(hasText("Features") and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)).performClick()
+        rule.onNode(resultsLine()).assertIsDisplayed()
+        rule.onNode(hasText("All") and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)).performClick()
+        rule.onAllNodes(resultsLine()).assertCountEquals(0)
+    }
+
+    @Test
+    fun a_chip_alone_shows_the_plain_count_not_n_of_n() {
+        show {}
+        val total = exampleSections.first { it.title == R.string.example_home_features_title }.entries.size
+        rule.onNode(hasText("Features") and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)).performClick()
+        rule.onNodeWithContentDescription("$total examples").assertExists()
+        rule.onNodeWithContentDescription("$total of $total examples").assertDoesNotExist()
+    }
+
+    @Test
+    fun the_title_scrolls_away_while_search_and_chips_stay_pinned() {
+        show {}
+        rule.onNode(hasText("Kotlin Starter") and isHeading()).assertIsDisplayed()
+        rule.onNodeWithTag(HOME_LIST_TAG).performScrollToNode(hasText("Form"))
+        rule.onNode(hasText("Kotlin Starter") and isHeading()).assertDoesNotExist()
+        rule.onNodeWithText("Search features").assertIsDisplayed()
+        rule.onNode(hasText("All") and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)).assertIsDisplayed()
+    }
+
+    @Test
+    @Config(sdk = [36], qualifiers = "w640dp-h360dp-land", fontScale = 2.0f)
+    fun the_first_entry_is_reachable_in_a_short_window_at_a_large_font() {
+        show {}
+        rule.onNodeWithTag(HOME_LIST_TAG).performScrollToNode(hasText("Products"))
+        rule.onNodeWithText("Products").assertIsDisplayed()
     }
 
     @Test
