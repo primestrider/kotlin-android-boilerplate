@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
@@ -91,8 +93,8 @@ private fun itemColors(id: Int): Pair<Color, Color> {
 /**
  * The demo's own [NavHost], inside a [SharedTransitionLayout] so container transform can morph a card into its
  * page. Every destination reads [pattern] when a transition starts, so a new choice applies to the next
- * navigation. The NavHost pops the detail on back (and follows the predictive back gesture); the page decides
- * what back does on the list.
+ * navigation. The NavHost pops the detail on back (and follows the predictive back gesture); on the list its
+ * handler is disabled, so back reaches the app's NavHost and leaves the page.
  */
 @Composable
 internal fun DemoNavHost(
@@ -209,7 +211,8 @@ private fun SharedTransitionScope.DemoDetail(
     val (container, content) = itemColors(item.id)
     val title = stringResource(item.title)
     Surface(morphBounds(item.id, morph, visibilityScope).fillMaxSize(), color = MaterialTheme.colorScheme.surface) {
-        Column(verticalArrangement = Arrangement.spacedBy(Spacing.s3)) {
+        // Scrolls so the Back button stays reachable inside the fixed frame at large font sizes.
+        Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(Spacing.s3)) {
             Box(
                 Modifier
                     .fillMaxWidth()

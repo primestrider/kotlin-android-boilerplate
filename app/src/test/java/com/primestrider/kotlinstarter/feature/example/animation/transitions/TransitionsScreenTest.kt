@@ -1,12 +1,20 @@
 package com.primestrider.kotlinstarter.feature.example.animation.transitions
 
+import androidx.activity.BackEventCompat
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -26,7 +34,19 @@ class TransitionsScreenTest {
 
     private var backs = 0
 
-    private fun show() = rule.setContent { AppTheme(false) { TransitionsScreen(onBack = { backs++ }) } }
+    /**
+     * Stand-in for the app NavHost: a back callback registered before the screen's own (so with lower priority),
+     * which counts the presses that would leave the page. The screen has no page-level handler of its own.
+     */
+    @Composable
+    private fun Host() {
+        AppTheme(false) {
+            BackHandler { backs++ }
+            TransitionsScreen(onBack = {})
+        }
+    }
+
+    private fun show() = rule.setContent { Host() }
 
     private fun systemBack() {
         rule.runOnUiThread { rule.activity.onBackPressedDispatcher.onBackPressed() }
@@ -48,7 +68,9 @@ class TransitionsScreenTest {
         detail("Mountain Trip").assertDoesNotExist()
         open("Mountain Trip")
         detail("Mountain Trip").assertExists()
-        rule.onNodeWithText("Back").performScrollTo().performClick()
+        // The detail scrolls on its own, so bring the whole frame into the page viewport first.
+        rule.onNodeWithTag("demoFrame").performScrollTo()
+        rule.onNodeWithText("Back").performClick()
         rule.waitForIdle()
         detail("Mountain Trip").assertDoesNotExist()
         rule.onNodeWithText("City Lights").assertExists()
@@ -111,7 +133,7 @@ class TransitionsScreenTest {
     @Test
     fun selected_pattern_and_open_detail_survive_state_restoration() {
         val tester = StateRestorationTester(rule)
-        tester.setContent { AppTheme(false) { TransitionsScreen(onBack = { backs++ }) } }
+        tester.setContent { Host() }
         patternChip("Container transform").assertIsSelected()
         patternChip("Shared axis Z").performScrollTo().performClick()
         open("Mountain Trip")
@@ -144,5 +166,59 @@ class TransitionsScreenTest {
         systemBack()
         rule.onNodeWithText("Swipe back from the edge", substring = true).assertDoesNotExist()
         assertEquals(0, backs)
+    }
+
+    private fun gesture(progress: Float) = BackEventCompat(10f, 500f, progress, BackEventCompat.EDGE_LEFT)
+
+    /** Starts a predictive back gesture and drags it halfway, as the system does while the finger moves. */
+    private fun startGesture() {
+        // Idle before and between events, as on a device: the panel's handler is registered and collecting
+        // before the finger moves.
+        rule.waitForIdle()
+        rule.runOnUiThread { rule.activity.onBackPressedDispatcher.dispatchOnBackStarted(gesture(0f)) }
+        rule.waitForIdle()
+        rule.runOnUiThread { rule.activity.onBackPressedDispatcher.dispatchOnBackProgressed(gesture(0.5f)) }
+        rule.waitForIdle()
+    }
+
+    private fun cancelGesture() {
+        rule.runOnUiThread { rule.activity.onBackPressedDispatcher.dispatchOnBackCancelled() }
+        rule.waitForIdle()
+    }
+
+    @Test
+    fun cancelled_back_gesture_keeps_the_preview_and_a_committed_one_closes_it() {
+        show()
+        rule.onNodeWithText("Open preview").performScrollTo().performClick()
+        startGesture()
+        cancelGesture()
+        rule.onNodeWithText("Swipe back from the edge", substring = true).assertExists()
+        startGesture()
+        systemBack()
+        rule.onNodeWithText("Swipe back from the edge", substring = true).assertDoesNotExist()
+        assertEquals(0, backs)
+    }
+
+    @Test
+    fun cancelled_back_gesture_keeps_the_demo_detail_and_a_committed_one_pops_only_it() {
+        show()
+        open("City Lights")
+        startGesture()
+        cancelGesture()
+        detail("City Lights").assertExists()
+        startGesture()
+        systemBack()
+        detail("City Lights").assertDoesNotExist()
+        rule.onNodeWithText("City Lights").assertExists()
+        assertEquals(0, backs)
+    }
+
+    @Test
+    fun pattern_chips_are_radio_buttons_with_a_selected_state() {
+        show()
+        val radio = SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton)
+        patternChip("Fade through").assert(radio).assertIsNotSelected().performClick()
+        patternChip("Fade through").assert(radio).assertIsSelected()
+        patternChip("Container transform").assert(radio).assertIsNotSelected()
     }
 }
