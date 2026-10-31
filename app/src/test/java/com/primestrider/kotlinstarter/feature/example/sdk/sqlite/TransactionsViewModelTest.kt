@@ -10,7 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -25,17 +25,20 @@ import org.robolectric.annotation.Config
 @Config(sdk = [36])
 @OptIn(ExperimentalCoroutinesApi::class)
 class TransactionsViewModelTest {
+    // One dispatcher for Main, Room queries and runTest, so no arch-IO thread resumes via Main during setMain/resetMain.
+    private val main = StandardTestDispatcher()
     private lateinit var database: ExampleDatabase
     private var now = 0L
     private val created = mutableListOf<TransactionsViewModel>()
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        Dispatchers.setMain(main)
         database =
             Room
                 .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ExampleDatabase::class.java)
                 .allowMainThreadQueries()
+                .setQueryCoroutineContext(main)
                 .build()
     }
 
@@ -58,7 +61,7 @@ class TransactionsViewModelTest {
 
     @Test
     fun payment_is_stored_as_a_negative_amount() =
-        runTest {
+        runTest(main) {
             val vm = viewModel()
             vm.selectKind(TransactionKind.PAYMENT)
             vm.selectAmount(50_000)
@@ -71,7 +74,7 @@ class TransactionsViewModelTest {
 
     @Test
     fun clear_removes_everything() =
-        runTest {
+        runTest(main) {
             val vm = viewModel()
             vm.add()
             vm.state.first { it.items.isNotEmpty() }

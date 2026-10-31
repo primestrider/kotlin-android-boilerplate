@@ -14,7 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -30,6 +31,8 @@ import org.robolectric.annotation.Config
 @Config(sdk = [36])
 @OptIn(ExperimentalCoroutinesApi::class)
 class TodosViewModelTest {
+    // One dispatcher for Main, Room queries and runTest, so no arch-IO thread resumes via Main during setMain/resetMain.
+    private val main = StandardTestDispatcher()
     private lateinit var database: ExampleDatabase
     private lateinit var repository: TodosRepository
     private val messenger = Messenger()
@@ -38,11 +41,12 @@ class TodosViewModelTest {
 
     @Before
     fun setUp() {
-        Dispatchers.setMain(UnconfinedTestDispatcher())
+        Dispatchers.setMain(main)
         database =
             Room
                 .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ExampleDatabase::class.java)
                 .allowMainThreadQueries()
+                .setQueryCoroutineContext(main)
                 .build()
         repository = TodosRepository(database.todoDao()) { ++now }
     }
@@ -62,36 +66,39 @@ class TodosViewModelTest {
 
     @Test
     fun too_short_title_is_rejected_and_not_stored() =
-        runTest {
+        runTest(main) {
             val viewModel = viewModel()
             viewModel.onInputChange("  ab ")
             viewModel.add()
+            advanceUntilIdle()
             assertEquals(R.string.todos_validation_min, viewModel.state.value.inputError)
             assertTrue(repository.todos.first().isEmpty())
         }
 
     @Test
     fun too_long_title_is_rejected() =
-        runTest {
+        runTest(main) {
             val viewModel = viewModel()
             viewModel.onInputChange("x".repeat(101))
             viewModel.add()
+            advanceUntilIdle()
             assertEquals(R.string.todos_validation_max, viewModel.state.value.inputError)
         }
 
     @Test
     fun error_updates_live_after_a_failed_submit() =
-        runTest {
+        runTest(main) {
             val viewModel = viewModel()
             viewModel.onInputChange("ab")
             viewModel.add()
             viewModel.onInputChange("abc")
+            advanceUntilIdle()
             assertEquals(null, viewModel.state.value.inputError)
         }
 
     @Test
     fun valid_title_is_stored_trimmed_and_announced() =
-        runTest {
+        runTest(main) {
             val viewModel = viewModel()
             messenger.messages.test {
                 viewModel.onInputChange("  Buy milk ")
@@ -111,7 +118,7 @@ class TodosViewModelTest {
 
     @Test
     fun active_filter_hides_done_and_progress_counts() =
-        runTest {
+        runTest(main) {
             repository.add("First")
             repository.add("Second")
             repository.toggle(
@@ -130,7 +137,7 @@ class TodosViewModelTest {
 
     @Test
     fun input_and_filter_survive_recreation() =
-        runTest {
+        runTest(main) {
             val handle = SavedStateHandle()
             viewModel(handle).apply {
                 onInputChange("draft")
@@ -143,7 +150,7 @@ class TodosViewModelTest {
 
     @Test
     fun clear_completed_with_nothing_done_is_silent() =
-        runTest {
+        runTest(main) {
             repository.add("Active")
             val viewModel = viewModel()
             messenger.messages.test {
@@ -154,7 +161,7 @@ class TodosViewModelTest {
 
     @Test
     fun remove_deletes_and_announces() =
-        runTest {
+        runTest(main) {
             repository.add("Gone soon")
             val id =
                 repository.todos
@@ -171,7 +178,7 @@ class TodosViewModelTest {
 
     @Test
     fun failed_insert_keeps_the_draft_and_reports_it() =
-        runTest {
+        runTest(main) {
             val failing =
                 object : TodoDao by database.todoDao() {
                     override suspend fun insert(todo: TodoEntity) = throw android.database.sqlite.SQLiteFullException("disk full")
