@@ -20,6 +20,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
+import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkSection
 import java.net.Inet4Address
@@ -70,7 +71,7 @@ fun DeviceScreen(onBack: () -> Unit) {
             )
         }
         SdkSection(R.string.sdk_device_info_title, R.string.sdk_device_info_description) {
-            InfoCard(deviceRows(context))
+            InfoCard(deviceRows(context, currentLocale()))
         }
     }
 }
@@ -80,7 +81,10 @@ private fun yesNo(
     value: Boolean,
 ): String = context.getString(if (value) R.string.sdk_device_yes else R.string.sdk_device_no)
 
-private fun deviceRows(context: Context): List<Pair<String, String?>> {
+private fun deviceRows(
+    context: Context,
+    locale: Locale,
+): List<Pair<String, String?>> {
     val memory =
         ActivityManager.MemoryInfo().also {
             (
@@ -106,7 +110,7 @@ private fun deviceRows(context: Context): List<Pair<String, String?>> {
         context.getString(R.string.sdk_device_kind) to deviceKind(context),
         context.getString(R.string.sdk_device_physical) to
             context.getString(if (isEmulator()) R.string.sdk_device_physical_no else R.string.sdk_device_yes),
-        context.getString(R.string.sdk_device_memory) to String.format(Locale.getDefault(), "%.1f GB", memory.totalMem / BYTES_PER_GB),
+        context.getString(R.string.sdk_device_memory) to String.format(locale, "%.1f GB", memory.totalMem / BYTES_PER_GB),
         context.getString(R.string.sdk_device_performance_class) to performanceClass,
     )
 }

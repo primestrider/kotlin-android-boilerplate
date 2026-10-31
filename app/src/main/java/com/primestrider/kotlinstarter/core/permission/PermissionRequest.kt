@@ -33,7 +33,10 @@ class PermissionRequest internal constructor(
     val status: PermissionStatus,
     private val request: () -> Unit,
 ) {
-    /** Launches the system prompt, or [onResult] right away with true when the permission is already granted. */
+    /**
+     * Launches the system prompt; when the permission is already granted, calls the `onResult` given to
+     * [rememberPermissionRequest] with true right away instead.
+     */
     fun launch() = request()
 }
 
