@@ -14,10 +14,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
@@ -32,7 +32,6 @@ import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -42,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,7 +49,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -58,7 +58,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
@@ -171,7 +170,7 @@ private fun TabIndicatorExample() {
         }
     }
     val density = LocalDensity.current
-    AnimExample(R.string.anim_micro_tabs_title, R.string.anim_micro_tabs_usage, "Animatable + Modifier.offset { }") {
+    AnimExample(R.string.anim_micro_tabs_title, R.string.anim_micro_tabs_usage, "Animatable + Modifier.absoluteOffset { }") {
         Box(Modifier.fillMaxWidth()) {
             Row(Modifier.fillMaxWidth().selectableGroup(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 labels.forEachIndexed { index, label ->
@@ -201,17 +200,17 @@ private fun TabIndicatorExample() {
                 }
             }
             if (placed) {
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
-                    Box(
-                        Modifier
-                            .align(Alignment.BottomStart)
-                            .offset { IntOffset(x.value.roundToInt(), 0) }
-                            .width(with(density) { w.value.toDp() })
-                            .height(3.dp)
-                            .clip(RoundedCornerShape(percent = 50))
-                            .background(MaterialTheme.colorScheme.primary),
-                    )
-                }
+                // AbsoluteAlignment + absoluteOffset: pairs with positionInParent, which is also absolute, in LTR and RTL.
+                Box(
+                    Modifier
+                        .align(AbsoluteAlignment.BottomLeft)
+                        .absoluteOffset { IntOffset(x.value.roundToInt(), 0) }
+                        .width(with(density) { w.value.toDp() })
+                        .height(3.dp)
+                        .testTag("tabIndicator")
+                        .clip(RoundedCornerShape(percent = 50))
+                        .background(MaterialTheme.colorScheme.primary),
+                )
             }
         }
     }

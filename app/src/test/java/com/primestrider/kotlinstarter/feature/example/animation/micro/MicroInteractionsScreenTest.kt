@@ -1,17 +1,26 @@
 package com.primestrider.kotlinstarter.feature.example.animation.micro
 
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -83,6 +92,33 @@ class MicroInteractionsScreenTest {
         tab("Photos").assertIsNotSelected()
         tab("Videos").assertIsSelected()
     }
+
+    private fun assertIndicatorUnder(text: String) {
+        rule.waitForIdle()
+        val tab = rule.onNode(hasText(text) and isSelectable()).getBoundsInRoot()
+        val bar = rule.onNodeWithTag("tabIndicator").getBoundsInRoot()
+        assertTrue("$bar not inside $tab", bar.left >= tab.left - 1.dp && bar.right <= tab.right + 1.dp && bar.right > bar.left)
+    }
+
+    private fun indicatorFollowsSelection(direction: LayoutDirection) {
+        rule.setContent {
+            CompositionLocalProvider(LocalLayoutDirection provides direction) {
+                AppTheme(false) { MicroInteractionsScreen(onBack = {}) }
+            }
+        }
+        tab("Photos")
+        assertIndicatorUnder("Photos")
+        tab("Albums").performClick()
+        assertIndicatorUnder("Albums")
+        tab("Videos").performClick()
+        assertIndicatorUnder("Videos")
+    }
+
+    @Test
+    fun indicator_sits_under_the_selected_tab_in_ltr() = indicatorFollowsSelection(LayoutDirection.Ltr)
+
+    @Test
+    fun indicator_sits_under_the_selected_tab_in_rtl() = indicatorFollowsSelection(LayoutDirection.Rtl)
 
     @Test
     fun state_survives_recreation() {
