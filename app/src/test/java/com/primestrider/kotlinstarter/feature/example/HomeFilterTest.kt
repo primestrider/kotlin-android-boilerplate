@@ -26,8 +26,8 @@ class HomeFilterTest {
 
     private fun filter(
         query: String,
-        selected: Int? = null,
-    ) = filterSections(sections, query, selected) { text.getValue(it) }
+        selectedTitle: Int? = null,
+    ) = filterSections(sections, query, selectedTitle) { text.getValue(it) }
 
     @Test
     fun blank_query_and_no_section_keeps_everything() {
@@ -47,12 +47,19 @@ class HomeFilterTest {
 
     @Test
     fun selected_section_limits_the_list_and_combines_with_the_query() {
-        assertEquals(listOf(features), filter("", selected = 0))
-        assertEquals(emptyList<ExampleSection>(), filter("camera", selected = 0))
+        assertEquals(listOf(features), filter("", selectedTitle = 1))
+        assertEquals(emptyList<ExampleSection>(), filter("camera", selectedTitle = 1))
     }
 
     @Test
-    fun out_of_range_selection_falls_back_to_all_sections() {
-        assertEquals(sections, filter("", selected = 5))
+    fun a_title_id_no_section_has_falls_back_to_all_sections() {
+        assertEquals(sections, filter("", selectedTitle = 99))
+    }
+
+    @Test
+    fun a_section_title_matches_at_the_start_of_a_word_only() {
+        assertEquals(listOf(device), filter("api"))
+        assertEquals(emptyList<ExampleSection>(), filter("pis"))
+        assertEquals(emptyList<ExampleSection>(), filter("eatures"))
     }
 }

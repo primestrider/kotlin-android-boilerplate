@@ -1,28 +1,35 @@
 package com.primestrider.kotlinstarter.feature.example
 
 /**
- * The Home list after the search box and the section chips: [selected] is the index of the chosen section
- * (null or out of range = all), and [query] matches an entry's title or subtitle, or its section's title (which
- * keeps the whole section). [text] resolves string resources, so matching follows the app language.
+ * The Home list after the search box and the section chips: [selectedTitle] is the string-resource id of the
+ * chosen section's title (null, or an id no section has, = all), and [query] matches an entry's title or subtitle
+ * anywhere, or the start of a word in its section's title (which keeps the whole section, and keeps one letter
+ * from matching every section). [text] resolves string resources, so matching follows the app language.
  * Sections left without entries are dropped.
  */
 internal fun filterSections(
     sections: List<ExampleSection>,
     query: String,
-    selected: Int?,
+    selectedTitle: Int?,
     text: (Int) -> String,
 ): List<ExampleSection> {
-    val scoped = sections.getOrNull(selected ?: -1)?.let(::listOf) ?: sections
+    val scoped = sections.firstOrNull { it.title == selectedTitle }?.let(::listOf) ?: sections
     val needle = query.trim()
     if (needle.isEmpty()) return scoped
 
-    fun matches(res: Int) = text(res).contains(needle, ignoreCase = true)
+    fun contains(res: Int) = text(res).contains(needle, ignoreCase = true)
+
+    fun startsAWord(res: Int): Boolean {
+        val title = text(res)
+        return title.indices.any { (it == 0 || title[it - 1] == ' ') && title.startsWith(needle, it, ignoreCase = true) }
+    }
+
     return scoped.mapNotNull { section ->
-        if (matches(section.title)) {
+        if (startsAWord(section.title)) {
             section
         } else {
             section.entries
-                .filter { matches(it.title) || matches(it.subtitle) }
+                .filter { contains(it.title) || contains(it.subtitle) }
                 .takeIf { it.isNotEmpty() }
                 ?.let { section.copy(entries = it) }
         }

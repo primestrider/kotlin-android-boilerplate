@@ -1,21 +1,33 @@
 package com.primestrider.kotlinstarter.feature.example
 
+import android.content.Context
 import androidx.compose.material3.Surface
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeUp
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -106,6 +118,70 @@ class HomeScreenTest {
         rule.onNodeWithText("Todos").assertIsDisplayed()
         rule.onNodeWithText("Products").assertDoesNotExist()
         rule.onNode(hasText("Features") and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)).assertIsSelected()
+    }
+
+    @Test
+    fun chips_are_radio_buttons_and_the_chosen_one_is_selected() {
+        show {}
+        val styling = hasText("Styling") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton)
+        rule.onNode(styling).performClick()
+        rule.onNode(styling).assertIsSelected()
+        rule.onNode(hasText("All") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton)).assertIsNotSelected()
+    }
+
+    @Test
+    fun a_search_shows_how_many_of_a_sections_examples_matched() {
+        show {}
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val total = exampleSections.first { it.title == R.string.example_home_sdk_title }.entries.size
+        val matched =
+            filterSections(exampleSections, "camera", null) { context.getString(it) }
+                .first { it.title == R.string.example_home_sdk_title }
+                .entries.size
+        rule.onNodeWithText("Search features").performTextInput("camera")
+        rule.onNodeWithContentDescription("$matched of $total examples").assertExists()
+    }
+
+    @Test
+    fun a_search_announces_how_many_results_it_found() {
+        show {}
+        rule.onNodeWithText("Search features").performTextInput("camera")
+        rule
+            .onAllNodes(
+                SemanticsMatcher("a results summary") { node ->
+                    node.config.getOrNull(SemanticsProperties.Text)?.any { Regex("""\d+ results?""").matches(it.text) } == true
+                } and SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite),
+            ).assertCountEquals(1)
+    }
+
+    @Test
+    fun the_empty_state_is_a_polite_live_region() {
+        show {}
+        rule.onNodeWithText("Search features").performTextInput("zzzz")
+        rule
+            .onNode(
+                SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite) and
+                    hasText("No features match \"zzzz\""),
+            ).assertExists()
+    }
+
+    @Test
+    fun scrolling_the_list_keeps_focus_in_the_search_field() {
+        show {}
+        rule.onNode(hasSetTextAction()).performTextInput("e")
+        rule.onNode(hasSetTextAction()).assertIsFocused()
+        rule.onNodeWithTag(HOME_LIST_TAG).performTouchInput { swipeUp() }
+        rule.onNode(hasSetTextAction()).assertIsFocused()
+    }
+
+    @Test
+    @Config(sdk = [36], qualifiers = "in")
+    fun indonesian_search_matches_translated_titles() {
+        show {}
+        rule.onNodeWithText("Cari fitur").performTextInput("kamera")
+        rule.onNodeWithTag(HOME_LIST_TAG).performScrollToNode(hasText("Kamera & Pemindai QR"))
+        rule.onNodeWithText("Kamera & Pemindai QR").assertIsDisplayed()
+        rule.onNodeWithText("Formulir").assertDoesNotExist()
     }
 
     @Test
