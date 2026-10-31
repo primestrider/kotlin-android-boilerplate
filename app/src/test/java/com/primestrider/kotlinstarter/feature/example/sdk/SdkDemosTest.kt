@@ -38,6 +38,8 @@ class SdkDemosTest {
     fun registry_holds_demos_in_reference_order() {
         assertEquals(
             listOf(
+                "camera",
+                "image-picker",
                 "location",
                 "notifications",
                 "contacts",

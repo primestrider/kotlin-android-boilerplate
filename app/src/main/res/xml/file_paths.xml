@@ -3,4 +3,6 @@
 <paths>
     <!-- Share & Print demo: the receipt PDF written to cache/receipts/. -->
     <cache-path name="receipts" path="receipts/" />
+    <!-- Camera & QR and Image Picker demos: photos taken to cache/camera/. -->
+    <cache-path name="camera" path="camera/" />
 </paths>

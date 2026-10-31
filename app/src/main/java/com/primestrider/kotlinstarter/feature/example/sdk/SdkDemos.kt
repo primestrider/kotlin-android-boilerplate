@@ -9,6 +9,7 @@ import com.primestrider.kotlinstarter.feature.example.sdk.appinfo.AppInfoScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.blob.BlobScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.browser.WebBrowserScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.calendar.CalendarScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.camera.CameraScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.clipboard.ClipboardScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.contacts.ContactsScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.device.DeviceScreen
@@ -18,6 +19,7 @@ import com.primestrider.kotlinstarter.feature.example.sdk.livephoto.LivePhotoScr
 import com.primestrider.kotlinstarter.feature.example.sdk.location.LocationScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.notifications.NotificationsScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.payment.PaymentCodeScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.picker.ImagePickerScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.share.ShareScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.sqlite.TransactionsScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.statusbar.StatusBarScreen
@@ -36,6 +38,8 @@ data class SdkDemo(
  */
 val sdkDemos: List<SdkDemo> =
     listOf(
+        SdkDemo("camera", R.string.sdk_camera_title, R.string.sdk_camera_subtitle) { CameraScreen(it) },
+        SdkDemo("image-picker", R.string.sdk_picker_title, R.string.sdk_picker_subtitle) { ImagePickerScreen(it) },
         SdkDemo("location", R.string.sdk_location_title, R.string.sdk_location_subtitle) { LocationScreen(it) },
         SdkDemo("notifications", R.string.sdk_notifications_title, R.string.sdk_notifications_subtitle) { NotificationsScreen(it) },
         SdkDemo("contacts", R.string.sdk_contacts_title, R.string.sdk_contacts_subtitle) { ContactsScreen(it) },
