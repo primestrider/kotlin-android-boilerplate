@@ -13,7 +13,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -140,9 +139,9 @@ private fun LocationContent() {
     val accuracyLabels = Accuracy.entries.associateWith { stringResource(it.label) }
     val failure = stringResource(R.string.sdk_location_error)
 
-    // Live updates run only while the switch is on; a new accuracy restarts them, leaving the screen stops them.
-    DisposableEffect(watch, accuracy) {
-        if (!watch) return@DisposableEffect onDispose {}
+    // Live updates run only while the switch is on and the screen is in the foreground (STARTED); a new
+    // accuracy restarts them, and going to the background or leaving the screen stops them.
+    ForegroundWatchEffect(watch, accuracy) {
         val request =
             LocationRequest
                 .Builder(
@@ -161,7 +160,7 @@ private fun LocationContent() {
         } catch (e: SecurityException) {
             error = failure
         }
-        onDispose { client.removeLocationUpdates(callback) }
+        return@ForegroundWatchEffect { client.removeLocationUpdates(callback) }
     }
 
     SdkSection(R.string.sdk_location_position_title, R.string.sdk_location_position_description) {
