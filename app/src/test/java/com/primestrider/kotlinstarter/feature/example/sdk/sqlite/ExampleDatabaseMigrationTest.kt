@@ -6,10 +6,12 @@ import androidx.sqlite.driver.AndroidSQLiteDriver
 import androidx.sqlite.execSQL
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.feature.example.todos.ExampleDatabase
 import com.primestrider.kotlinstarter.feature.example.todos.ExampleDatabase_Impl
 import com.primestrider.kotlinstarter.feature.example.todos.MIGRATION_1_2
 import org.junit.Assert.assertEquals
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,6 +34,8 @@ class ExampleDatabaseMigrationTest {
 
     @Test
     fun todos_survive_the_upgrade_from_v1_to_v2() {
+        // The schema assets exist only in the debug variant (app/build.gradle.kts); release unit tests skip this.
+        assumeTrue("Room schemas are debug-only assets", BuildConfig.DEBUG)
         helper.createDatabase(1).apply {
             execSQL("INSERT INTO todos (id, title, done, createdAt) VALUES ('a', 'Keep me', 1, 42)")
             close()
