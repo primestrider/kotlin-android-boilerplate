@@ -42,7 +42,8 @@ class MainActivity : AppCompatActivity() {
             val navController = rememberNavController()
             // singleTop: a deep link delivered to the running activity arrives here instead of recreating it.
             DisposableEffect(navController) {
-                val listener = Consumer<Intent> { navController.handleDeepLink(it) }
+                // No graph exists while the crash fallback replaces MainShell; handleDeepLink would throw then.
+                val listener = Consumer<Intent> { if (navController.currentBackStackEntry != null) navController.handleDeepLink(it) }
                 addOnNewIntentListener(listener)
                 onDispose { removeOnNewIntentListener(listener) }
             }

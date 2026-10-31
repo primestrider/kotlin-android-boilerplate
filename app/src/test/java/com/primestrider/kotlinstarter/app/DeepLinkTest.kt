@@ -22,7 +22,7 @@ import org.robolectric.annotation.Config
 
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
-@Config(application = HiltTestApplication::class, sdk = [36])
+@Config(application = HiltTestApplication::class, sdk = [36], qualifiers = "in")
 class DeepLinkTest {
     private val hiltRule = HiltAndroidRule(this)
     private val composeRule = createEmptyComposeRule()
@@ -39,16 +39,16 @@ class DeepLinkTest {
     @Test
     fun payment_code_link_opens_the_screen_with_the_amount() {
         launch("kotlinstarter://example/sdk/payment-code?amount=50000").use {
-            composeRule.onNodeWithText("Show this code to the cashier").assertIsDisplayed()
-            composeRule.onNode(hasText("Amount ", substring = true) and hasText("50", substring = true)).assertIsDisplayed()
+            composeRule.onNodeWithText("Tunjukkan kode ini ke kasir").assertIsDisplayed()
+            composeRule.onNodeWithText("Jumlah Rp50.000").assertIsDisplayed()
         }
     }
 
     @Test
     fun a_link_without_amount_opens_the_screen_without_the_amount_row() {
         launch("kotlinstarter://example/sdk/payment-code").use {
-            composeRule.onNodeWithText("Show this code to the cashier").assertIsDisplayed()
-            composeRule.onAllNodes(hasText("Amount ", substring = true)).assertCountEquals(0)
+            composeRule.onNodeWithText("Tunjukkan kode ini ke kasir").assertIsDisplayed()
+            composeRule.onAllNodes(hasText("Jumlah", substring = true)).assertCountEquals(0)
         }
     }
 }
