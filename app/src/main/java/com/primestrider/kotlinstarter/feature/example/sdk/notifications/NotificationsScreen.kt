@@ -1,0 +1,173 @@
+package com.primestrider.kotlinstarter.feature.example.sdk.notifications
+
+import android.Manifest
+import android.content.Intent
+import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.core.util.Consumer
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
+import com.primestrider.kotlinstarter.core.designsystem.component.AppTextField
+import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
+import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
+import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
+import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
+import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.permission.PermissionGate
+import com.primestrider.kotlinstarter.core.util.findActivity
+import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
+import com.primestrider.kotlinstarter.feature.example.sdk.SdkSection
+
+private val DELAYS =
+    listOf(
+        0 to R.string.sdk_notifications_delay_now,
+        5 to R.string.sdk_notifications_delay_5s,
+        30 to R.string.sdk_notifications_delay_30s,
+        60 to R.string.sdk_notifications_delay_1m,
+    )
+
+/** Local notifications: right now or after a delay, shown or held back while the app is open, with a log of what happened. */
+@Composable
+fun NotificationsScreen(
+    onBack: () -> Unit,
+    viewModel: NotificationsViewModel = hiltViewModel(),
+) {
+    val context = LocalContext.current
+    val scheduler = remember(context) { NotificationScheduler(context) }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    var pending by remember { mutableIntStateOf(scheduler.pending()) }
+    var showInForeground by remember { mutableStateOf(scheduler.showInForeground) }
+    val tappedLabel = stringResource(R.string.sdk_notifications_event_tapped)
+    val receivedLabel = stringResource(R.string.sdk_notifications_event_received)
+    val currentTapped by rememberUpdatedState(tappedLabel)
+    val currentReceived by rememberUpdatedState(receivedLabel)
+
+    LaunchedEffect(scheduler) { scheduler.ensureChannel() }
+    LaunchedEffect(scheduler) {
+        NotificationEvents.received.collect { title ->
+            viewModel.log(currentReceived.format(title))
+            pending = scheduler.pending()
+        }
+    }
+    LifecycleResumeEffect(scheduler) {
+        pending = scheduler.pending()
+        onPauseOrDispose {}
+    }
+    // A tap on a notification arrives as the activity's intent (cold start) or as a new intent (singleTop).
+    DisposableEffect(context) {
+        val activity = context.findActivity() as? ComponentActivity
+
+        fun handle(intent: Intent) {
+            val (id, title) = NotificationScheduler.tapOf(intent) ?: return
+            // The launch intent stays on the activity: report each notification once per process.
+            if (NotificationEvents.firstTap(id)) viewModel.onTapped(id, currentTapped.format(title))
+        }
+        val listener = Consumer<Intent> { handle(it) }
+        activity?.let {
+            handle(it.intent)
+            it.addOnNewIntentListener(listener)
+        }
+        onDispose { activity?.removeOnNewIntentListener(listener) }
+    }
+
+    ExamplePageScaffold(
+        title = R.string.sdk_notifications_title,
+        subtitle = R.string.sdk_notifications_subtitle,
+        onBack = onBack,
+    ) {
+        PermissionGate(
+            permissions = notificationPermissions(),
+            reason = stringResource(R.string.sdk_notifications_reason),
+        ) {
+            SdkSection(R.string.sdk_notifications_permission_title, R.string.sdk_notifications_permission_description) {
+                InfoCard(listOf(stringResource(R.string.sdk_notifications_status) to permissionStatusText()))
+            }
+            SdkSection(R.string.sdk_notifications_local_title, R.string.sdk_notifications_local_description) {
+                AppTextField(
+                    value = state.title,
+                    onValueChange = viewModel::setTitle,
+                    label = stringResource(R.string.sdk_notifications_field_title),
+                )
+                SelectField(
+                    label = stringResource(R.string.sdk_notifications_delay),
+                    options = DELAYS.map { (seconds, label) -> SelectOption(seconds, stringResource(label)) },
+                    selected = state.delaySeconds,
+                    onSelect = viewModel::setDelay,
+                )
+                SwitchRow(
+                    label = stringResource(R.string.sdk_notifications_foreground),
+                    checked = showInForeground,
+                    onCheckedChange = {
+                        showInForeground = it
+                        scheduler.showInForeground = it
+                    },
+                )
+                val scheduledLog = stringResource(R.string.sdk_notifications_log_scheduled, state.delaySeconds)
+                val sentLog = stringResource(R.string.sdk_notifications_log_sent)
+                val cancelledLog = stringResource(R.string.sdk_notifications_log_cancelled)
+                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.s2)) {
+                    AppButton(
+                        stringResource(R.string.sdk_notifications_schedule),
+                        onClick = {
+                            scheduler.schedule(state.title, notificationBody(context, state.delaySeconds), state.delaySeconds)
+                            viewModel.log(if (state.delaySeconds > 0) scheduledLog else sentLog)
+                            pending = scheduler.pending()
+                        },
+                    )
+                    AppButton(
+                        stringResource(R.string.sdk_notifications_cancel_all),
+                        onClick = {
+                            scheduler.cancelAll()
+                            viewModel.log(cancelledLog)
+                            pending = scheduler.pending()
+                        },
+                        variant = ButtonVariant.OUTLINED,
+                    )
+                }
+                Text(
+                    stringResource(R.string.sdk_notifications_pending, pending),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            SdkSection(R.string.sdk_notifications_events_title, R.string.sdk_notifications_events_description) {
+                if (state.events.isEmpty()) {
+                    Text(stringResource(R.string.sdk_notifications_events_empty), style = MaterialTheme.typography.bodyMedium)
+                } else {
+                    state.events.forEach { Text(it, style = MaterialTheme.typography.bodyMedium) }
+                }
+            }
+        }
+    }
+}
+
+/** POST_NOTIFICATIONS is a runtime permission from Android 13; before that there is nothing to ask for. */
+private fun notificationPermissions(): List<String> =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(Manifest.permission.POST_NOTIFICATIONS) else emptyList()
+
+@Composable
+private fun permissionStatusText(): String =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        stringResource(R.string.sdk_notifications_granted)
+    } else {
+        stringResource(R.string.sdk_notifications_granted_legacy)
+    }

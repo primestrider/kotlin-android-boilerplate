@@ -38,6 +38,9 @@ class SdkDemosTest {
     fun registry_holds_demos_in_reference_order() {
         assertEquals(
             listOf(
+                "location",
+                "notifications",
+                "contacts",
                 "clipboard",
                 "device",
                 "share",
@@ -45,6 +48,7 @@ class SdkDemosTest {
                 "payment-code",
                 "sqlite",
                 "files",
+                "calendar",
                 "app-info",
                 "effects",
                 "live-photo",

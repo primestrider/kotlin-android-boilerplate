@@ -136,6 +136,8 @@ dependencies {
     implementation(libs.play.review.ktx)
     implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.browser)
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.play.services.location)
 
     testImplementation(libs.okhttp.mockwebserver3)
     testImplementation(libs.androidx.room.testing)

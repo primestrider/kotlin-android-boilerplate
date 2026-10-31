@@ -6,6 +6,14 @@
 
     <uses-permission android:name="android.permission.DETECT_SCREEN_CAPTURE" />
 
+    <!-- Permissions of the Notifications, Calendar, Contacts and Location demos (feature/example/sdk). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.READ_CALENDAR" />
+    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <!-- Package visibility for the Web Browser demo (feature/example/sdk/browser). -->
     <queries>
         <intent>
@@ -69,6 +77,11 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
+
+        <!-- Fires the scheduled notifications of the Notifications demo. -->
+        <receiver
+            android:name=".feature.example.sdk.notifications.NotificationReceiver"
+            android:exported="false" />
 
         <service
             android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
