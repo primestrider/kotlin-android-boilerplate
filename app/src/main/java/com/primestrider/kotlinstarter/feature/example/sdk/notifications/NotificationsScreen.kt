@@ -21,6 +21,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.util.Consumer
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -50,7 +51,10 @@ private val DELAYS =
         60 to R.string.sdk_notifications_delay_1m,
     )
 
-/** Where the notification permission stands; [GRANTED_LEGACY] is Android 12 and below, where nothing has to be asked. */
+/**
+ * Where the notification permission stands; [GRANTED_LEGACY] is Android 12 and below, where nothing has to be asked.
+ * There, [DENIED] means the user turned the app's notifications off in Settings.
+ */
 enum class NotificationStatus(
     val label: Int,
     val granted: Boolean,
@@ -63,7 +67,17 @@ enum class NotificationStatus(
 
 internal fun notificationStatus(context: Context): NotificationStatus =
     when {
-        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> NotificationStatus.GRANTED_LEGACY
+        // Nothing to ask before Android 13, but the user can still turn the app's notifications off in Settings.
+        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ->
+            if (NotificationManagerCompat
+                    .from(
+                        context,
+                    ).areNotificationsEnabled()
+            ) {
+                NotificationStatus.GRANTED_LEGACY
+            } else {
+                NotificationStatus.DENIED
+            }
         ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED ->
             NotificationStatus.GRANTED
         permissionRequested(context, Manifest.permission.POST_NOTIFICATIONS) -> NotificationStatus.DENIED

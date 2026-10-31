@@ -1,5 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.notifications
 
+import android.Manifest
+import android.app.Application
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Modifier
@@ -10,12 +12,14 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
@@ -91,8 +95,12 @@ class NotificationsContentTest {
 
     @Test
     fun granted_enables_schedule_and_hides_the_grant_card() {
+        // The gate under the status reads the real permission: grant it, as the status says.
+        shadowOf(ApplicationProvider.getApplicationContext<Application>()).grantPermissions(Manifest.permission.POST_NOTIFICATIONS)
         show(NotificationStatus.GRANTED)
         rule.onNodeWithText("granted").assertIsDisplayed()
         rule.onNodeWithText("Schedule").assertIsEnabled()
+        rule.onNodeWithText("Grant access").assertDoesNotExist()
+        rule.onNodeWithText("Notifications need your permission to appear.").assertDoesNotExist()
     }
 }

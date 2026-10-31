@@ -61,7 +61,11 @@ class NotificationScheduler(
         manager.createNotificationChannel(channel)
     }
 
-    /** Posts now (delay 0) or in [delaySeconds]; returns the notification id. A blank [title] becomes "Notification". */
+    /**
+     * Posts now (delay 0) or in [delaySeconds]; returns the notification id. A blank [title] becomes "Notification".
+     * Delay 0 is treated like an alarm arriving while the app is open: it is shown only when [showInForeground] is on,
+     * and reported to [NotificationEvents] either way.
+     */
     fun schedule(
         title: String,
         body: String,
@@ -70,7 +74,9 @@ class NotificationScheduler(
         val shownTitle = title.trim().ifEmpty { context.getString(R.string.sdk_notifications_default_title) }
         val id = nextId()
         if (delaySeconds <= 0) {
-            post(id, shownTitle, body)
+            // "Now" is sent from the open app, so it arrives in the foreground: same rule as the receiver.
+            if (shouldPost(foreground = true, showInForeground = showInForeground)) post(id, shownTitle, body)
+            NotificationEvents.emit(shownTitle)
             return id
         }
         prefs.edit { putStringSet(PENDING_KEY, pendingIds() + id.toString()) }

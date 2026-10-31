@@ -7,6 +7,10 @@ import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -20,6 +24,7 @@ import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [36])
+@OptIn(ExperimentalCoroutinesApi::class)
 class NotificationSchedulerTest {
     private val context: Context = ApplicationProvider.getApplicationContext()
     private val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -110,4 +115,29 @@ class NotificationSchedulerTest {
         assertFalse(NotificationScheduler(context).showInForeground)
         scheduler.showInForeground = true
     }
+
+    @Test
+    fun now_with_show_while_open_off_is_not_posted_but_reported_as_received() =
+        runTest(UnconfinedTestDispatcher()) {
+            val received = mutableListOf<String>()
+            backgroundScope.launch { NotificationEvents.received.collect { received += it } }
+            scheduler.showInForeground = false
+            try {
+                scheduler.schedule("Quiet", "Body", 0)
+            } finally {
+                scheduler.showInForeground = true
+            }
+            assertTrue(posted().isEmpty())
+            assertEquals(listOf("Quiet"), received)
+        }
+
+    @Test
+    fun now_with_show_while_open_on_is_posted_and_reported_as_received() =
+        runTest(UnconfinedTestDispatcher()) {
+            val received = mutableListOf<String>()
+            backgroundScope.launch { NotificationEvents.received.collect { received += it } }
+            scheduler.schedule("Loud", "Body", 0)
+            assertEquals("Loud", title(posted().single()))
+            assertEquals(listOf("Loud"), received)
+        }
 }
