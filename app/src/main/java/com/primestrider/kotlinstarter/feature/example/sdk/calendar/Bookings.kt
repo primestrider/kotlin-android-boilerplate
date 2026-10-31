@@ -1,11 +1,13 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.calendar
 
+import android.database.sqlite.SQLiteException
 import androidx.annotation.StringRes
 import com.primestrider.kotlinstarter.R
 import kotlinx.coroutines.CancellationException
 import java.util.Calendar
 import java.util.TimeZone
 
+private const val DAY_MILLIS = 86_400_000L
 private const val MILLIS_PER_HOUR = 3_600_000L
 private const val START_HOUR = 9
 
@@ -96,4 +98,38 @@ suspend fun CalendarSource.addBooking(
         AddOutcome.Failed
     } catch (e: IllegalArgumentException) {
         AddOutcome.Failed
+    }
+
+/** The "Next 7 days" list: the target calendar and its events, or [Failed] when the calendar could not be read. */
+sealed interface UpcomingLoad {
+    /** [calendarName] is null when there is no writable calendar (then there are no [events] either). */
+    data class Loaded(
+        val calendarName: String?,
+        val events: List<CalendarEvent>,
+    ) : UpcomingLoad
+
+    data object Failed : UpcomingLoad
+}
+
+/**
+ * Reads the first writable calendar and its events in [now, now + [days] days). A revoked permission, a provider
+ * that rejects the query or a broken calendar database becomes [UpcomingLoad.Failed] instead of a crash.
+ */
+suspend fun CalendarSource.loadUpcoming(
+    now: Long,
+    days: Int,
+): UpcomingLoad =
+    try {
+        val calendar = writableCalendar()
+        UpcomingLoad.Loaded(calendar?.name, calendar?.let { upcoming(it.id, now, now + days * DAY_MILLIS) }.orEmpty())
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: SecurityException) {
+        UpcomingLoad.Failed
+    } catch (e: IllegalArgumentException) {
+        UpcomingLoad.Failed
+    } catch (e: IllegalStateException) {
+        UpcomingLoad.Failed
+    } catch (e: SQLiteException) {
+        UpcomingLoad.Failed
     }

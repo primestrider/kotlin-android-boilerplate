@@ -33,7 +33,6 @@ import java.util.Date
 import java.util.TimeZone
 
 private const val UPCOMING_DAYS = 8
-private const val DAY_MILLIS = 86_400_000L
 private const val EVENT_TIME_PATTERN = "EEE dd MMM, HH:mm"
 
 private enum class AddResult { NONE, ADDED, NO_CALENDAR, FAILED }
@@ -68,19 +67,24 @@ private fun CalendarContent() {
     var calendarName by rememberSaveable { mutableStateOf<String?>(null) }
     var events by remember { mutableStateOf<List<CalendarEvent>?>(null) }
     var refresh by remember { mutableIntStateOf(0) }
+    var loadFailed by remember { mutableStateOf(false) }
     val bookingTitles = Booking.entries.associateWith { stringResource(it.title) }
     val dayLabels = BookingDay.entries.associateWith { stringResource(it.label) }
     val format = remember(locale) { SimpleDateFormat(EVENT_TIME_PATTERN, locale) }
 
     // Runs again after each added event, so the list shows it.
     LaunchedEffect(repository, refresh) {
-        val calendar = repository.writableCalendar()
-        calendarName = calendar?.name
-        events =
-            calendar?.let {
-                val now = System.currentTimeMillis()
-                repository.upcoming(it.id, now, now + UPCOMING_DAYS * DAY_MILLIS)
+        when (val load = repository.loadUpcoming(System.currentTimeMillis(), UPCOMING_DAYS)) {
+            is UpcomingLoad.Loaded -> {
+                loadFailed = false
+                calendarName = load.calendarName
+                events = load.events
             }
+            UpcomingLoad.Failed -> {
+                loadFailed = true
+                events = null
+            }
+        }
     }
 
     SdkSection(R.string.sdk_calendar_add_title, R.string.sdk_calendar_add_description) {
@@ -149,7 +153,9 @@ private fun CalendarContent() {
             )
         }
         val upcoming = events.orEmpty()
-        if (upcoming.isEmpty()) {
+        if (loadFailed) {
+            Banner(title = stringResource(R.string.sdk_calendar_load_failed), variant = BannerVariant.ERROR)
+        } else if (upcoming.isEmpty()) {
             Text(stringResource(R.string.sdk_calendar_next_empty), style = MaterialTheme.typography.bodyMedium)
         } else {
             InfoCard(upcoming.map { it.title to format.format(Date(it.start)) })

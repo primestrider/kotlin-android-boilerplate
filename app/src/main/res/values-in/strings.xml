@@ -688,6 +688,7 @@
     <string name="sdk_calendar_added">Ditambahkan ke “%1$s”.</string>
     <string name="sdk_calendar_no_calendar">Tidak ada kalender yang bisa ditulis di perangkat ini.</string>
     <string name="sdk_calendar_failed">Tidak bisa menambahkan acara.</string>
+    <string name="sdk_calendar_load_failed">Tidak bisa membaca kalender.</string>
     <string name="sdk_calendar_next_title">7 hari ke depan</string>
     <string name="sdk_calendar_next_description">Acara di “%1$s”</string>
     <string name="sdk_calendar_next_empty">Tidak ada acara dalam 7 hari ke depan.</string>

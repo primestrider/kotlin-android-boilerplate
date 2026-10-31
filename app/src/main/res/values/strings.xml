@@ -688,6 +688,7 @@
     <string name="sdk_calendar_added">Added to “%1$s”.</string>
     <string name="sdk_calendar_no_calendar">No writable calendar on this device.</string>
     <string name="sdk_calendar_failed">Could not add the event.</string>
+    <string name="sdk_calendar_load_failed">Could not read the calendar.</string>
     <string name="sdk_calendar_next_title">Next 7 days</string>
     <string name="sdk_calendar_next_description">Events in “%1$s”</string>
     <string name="sdk_calendar_next_empty">No events in the next 7 days.</string>
