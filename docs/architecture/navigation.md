@@ -68,6 +68,18 @@ composable<AccountRoute> {
 
 After a successful sign-in, `SignInRoute` navigates to `AccountRoute` with `popUpTo<SignInRoute> { inclusive = true }`.
 
+## Page transitions
+
+Navigation Compose animates every navigation with four lambdas, each an `AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition` or `ExitTransition`: `enterTransition` and `exitTransition` for navigating forward (the new page enters, the old one exits), and `popEnterTransition` and `popExitTransition` for going back.
+
+- **NavHost-level:** passed to `NavHost(...)`, they apply to every destination that does not set its own. Leave out the pop pair and they repeat the forward pair.
+- **Per destination:** passed to `composable<Route>(enterTransition = { ... }, ...)`, they override the NavHost defaults for that destination. The lambdas run when a transition starts, so they can read state (the transitions demo reads the chosen pattern there) or inspect `initialState`/`targetState`.
+- **The app's own defaults:** the app `NavHost` in `app/navigation/MainShell.kt` sets no transitions, so every page uses Navigation Compose's `DefaultNavTransitions` (a 700 ms fade in and out). Change the app-wide motion there, not per page; give a single destination its own lambdas only when it needs to differ.
+- **Predictive back:** with targetSdk 34+ (no manifest flag needed), `NavHost` drives the pop transitions from the back gesture: the outgoing page follows the finger and a cancelled gesture restores it.
+- **Shared elements:** wrap the `NavHost` in `SharedTransitionLayout` and give the matching composables `Modifier.sharedBounds` or `Modifier.sharedElement` with the same key, passing each destination's `AnimatedVisibilityScope` (`this` inside `composable { }`).
+
+Animations > Page transitions (`feature/example/animation/transitions/`) shows all of this on a nested `NavHost` with six Material patterns, container transform through `sharedBounds`, and back that pops the nested page before leaving; the app's `NavHost` transitions are left unchanged.
+
 ## Deep links: scheme config and `navDeepLink`
 
 The example feature opens screens from outside the app with `<scheme>://example/...`.
