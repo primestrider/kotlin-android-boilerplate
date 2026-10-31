@@ -10,9 +10,11 @@ import androidx.work.testing.TestListenableWorkerBuilder
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import javax.inject.Singleton
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [36])
@@ -51,6 +53,11 @@ class SyncWorkerTest {
         run { 2_000L }
         assertEquals(2, log.runs())
         assertEquals(2_000L, log.lastRun())
+    }
+
+    @Test
+    fun the_log_is_one_instance_per_process_so_record_is_serialised() {
+        assertTrue(SyncLog::class.java.isAnnotationPresent(Singleton::class.java))
     }
 
     @Test

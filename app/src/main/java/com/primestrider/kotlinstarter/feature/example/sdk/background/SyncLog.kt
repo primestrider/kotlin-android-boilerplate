@@ -3,12 +3,17 @@ package com.primestrider.kotlinstarter.feature.example.sdk.background
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import javax.inject.Singleton
 
 private const val PREFS_NAME = "example_sync"
 private const val LAST_RUN_KEY = "last_run"
 private const val RUNS_KEY = "runs"
 
-/** What [SyncWorker] records about its runs, in `SharedPreferences("example_sync")`; the worker may run in a fresh process. */
+/**
+ * What [SyncWorker] records about its runs, in `SharedPreferences("example_sync")`; the worker may run in a fresh
+ * process. One instance per process (`@Singleton`), so [record]'s `@Synchronized` serialises concurrent workers.
+ */
+@Singleton
 class SyncLog
     @Inject
     constructor(
