@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.todos
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -11,6 +12,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -32,6 +34,7 @@ class TodosViewModelTest {
     private lateinit var repository: TodosRepository
     private val messenger = Messenger()
     private var now = 0L
+    private val created = mutableListOf<TodosViewModel>()
 
     @Before
     fun setUp() {
@@ -46,11 +49,13 @@ class TodosViewModelTest {
 
     @After
     fun tearDown() {
+        created.forEach { it.viewModelScope.cancel() }
         database.close()
         Dispatchers.resetMain()
     }
 
-    private fun viewModel(handle: SavedStateHandle = SavedStateHandle()) = TodosViewModel(repository, handle, messenger)
+    private fun viewModel(handle: SavedStateHandle = SavedStateHandle()) =
+        TodosViewModel(repository, handle, messenger).also { created += it }
 
     /** The state once the database has delivered [count] todos. */
     private suspend fun TodosViewModel.settled(count: Int) = state.first { it.loaded && it.total == count }
@@ -171,7 +176,7 @@ class TodosViewModelTest {
                 object : TodoDao by database.todoDao() {
                     override suspend fun insert(todo: TodoEntity) = throw android.database.sqlite.SQLiteFullException("disk full")
                 }
-            val viewModel = TodosViewModel(TodosRepository(failing) { ++now }, SavedStateHandle(), messenger)
+            val viewModel = TodosViewModel(TodosRepository(failing) { ++now }, SavedStateHandle(), messenger).also { created += it }
             messenger.messages.test {
                 viewModel.onInputChange("Buy milk")
                 viewModel.add()

@@ -66,6 +66,7 @@ class BackgroundSyncViewModelTest {
     @After
     fun tearDown() {
         created.forEach { it.viewModelScope.cancel() }
+        WorkManagerTestInitHelper.closeWorkDatabase()
         Dispatchers.resetMain()
     }
 

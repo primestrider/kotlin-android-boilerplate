@@ -3,6 +3,7 @@ package com.primestrider.kotlinstarter.feature.example.settings
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.lifecycle.viewModelScope
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreferenceRepository
@@ -11,6 +12,7 @@ import com.primestrider.kotlinstarter.core.i18n.LanguageController
 import com.primestrider.kotlinstarter.testing.InMemoryPreferencesDataStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -30,6 +32,8 @@ import java.util.Locale
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [36])
 class SettingsViewModelTest {
+    private val created = mutableListOf<SettingsViewModel>()
+
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -37,10 +41,12 @@ class SettingsViewModelTest {
 
     @After
     fun tearDown() {
+        created.forEach { it.viewModelScope.cancel() }
         Dispatchers.resetMain()
     }
 
-    private fun viewModel() = SettingsViewModel(ThemePreferenceRepository(InMemoryPreferencesDataStore()), LanguageController())
+    private fun viewModel() =
+        SettingsViewModel(ThemePreferenceRepository(InMemoryPreferencesDataStore()), LanguageController()).also { created += it }
 
     @Test
     fun setThemeModeUpdatesState() =
@@ -68,7 +74,7 @@ class SettingsViewModelTest {
                     override suspend fun updateData(transform: suspend (Preferences) -> Preferences): Preferences =
                         throw IOException("disk full")
                 }
-            val vm = SettingsViewModel(ThemePreferenceRepository(failing), LanguageController())
+            val vm = SettingsViewModel(ThemePreferenceRepository(failing), LanguageController()).also { created += it }
             vm.setThemeMode(ThemeMode.DARK)
             assertEquals(ThemeMode.SYSTEM, vm.state.value.themeMode)
         }

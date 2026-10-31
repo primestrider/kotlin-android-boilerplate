@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.products
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.MessageVariant
@@ -8,6 +9,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -36,17 +38,21 @@ import java.io.IOException
 @OptIn(ExperimentalCoroutinesApi::class)
 class ProductDetailViewModelTest {
     private val messenger = Messenger()
+    private val created = mutableListOf<ProductDetailViewModel>()
 
     @Before
     fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
 
     @After
-    fun tearDown() = Dispatchers.resetMain()
+    fun tearDown() {
+        created.forEach { it.viewModelScope.cancel() }
+        Dispatchers.resetMain()
+    }
 
     private fun viewModel(
         id: Long,
         repository: FakeProductsRepository,
-    ) = ProductDetailViewModel(SavedStateHandle(mapOf("id" to id)), repository, Json, messenger)
+    ) = ProductDetailViewModel(SavedStateHandle(mapOf("id" to id)), repository, Json, messenger).also { created += it }
 
     @Test
     fun non_positive_id_is_not_found_without_a_request() {

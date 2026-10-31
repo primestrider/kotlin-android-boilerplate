@@ -43,14 +43,22 @@ class CrashDeepLinkTest {
         }
 
         val controller = Robolectric.buildActivity(MainActivity::class.java).setup()
-        composeRule.onNodeWithText("Something went wrong").assertIsDisplayed()
+        try {
+            composeRule.onNodeWithText("Something went wrong").assertIsDisplayed()
 
-        val link =
-            Intent(Intent.ACTION_VIEW, "kotlinstarter://example/sdk/payment-code?amount=50000".toUri(), context, MainActivity::class.java)
-        controller.newIntent(link)
-        composeRule.waitForIdle()
+            val link =
+                Intent(
+                    Intent.ACTION_VIEW,
+                    "kotlinstarter://example/sdk/payment-code?amount=50000".toUri(),
+                    context,
+                    MainActivity::class.java,
+                )
+            controller.newIntent(link)
+            composeRule.waitForIdle()
 
-        composeRule.onNodeWithText("Something went wrong").assertIsDisplayed()
-        controller.destroy()
+            composeRule.onNodeWithText("Something went wrong").assertIsDisplayed()
+        } finally {
+            controller.destroy()
+        }
     }
 }
