@@ -1,5 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.camera
 
+import androidx.annotation.OptIn
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.mlkit.vision.barcode.BarcodeScanner
@@ -20,6 +22,7 @@ class QrAnalyzer(
     private val scanner: BarcodeScanner =
         BarcodeScanning.getClient(BarcodeScannerOptions.Builder().setBarcodeFormats(Barcode.FORMAT_QR_CODE).build()),
 ) : ImageAnalysis.Analyzer {
+    @OptIn(ExperimentalGetImage::class)
     override fun analyze(image: ImageProxy) {
         val media = image.image
         if (media == null || !gate.scanning || gate.current != null) {

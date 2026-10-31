@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.camera
 
 import android.content.Context
+import android.view.Surface
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -49,8 +50,10 @@ class CameraController(
     private var provider: ProcessCameraProvider? = null
     private var camera: Camera? = null
     private var imageCapture: ImageCapture? = null
+    private var imageAnalysis: ImageAnalysis? = null
     private var released = false
 
+    private var rotation: Int? = null
     private var flash = FlashSetting.OFF
     private var torch = false
     private var zoom = 0f
@@ -85,20 +88,24 @@ class CameraController(
             provider = cameraProvider
             val preview = Preview.Builder().build().also { it.surfaceProvider = previewView.surfaceProvider }
             val selector = if (front) CameraSelector.DEFAULT_FRONT_CAMERA else CameraSelector.DEFAULT_BACK_CAMERA
+            val targetRotation = rotation ?: previewView.display?.rotation ?: Surface.ROTATION_0
             try {
                 cameraProvider.unbindAll()
                 camera =
                     when (mode) {
                         CameraMode.SCAN -> {
                             imageCapture = null
-                            cameraProvider.bindToLifecycle(owner, selector, preview, analysis())
+                            val analysis = analysis(targetRotation).also { imageAnalysis = it }
+                            cameraProvider.bindToLifecycle(owner, selector, preview, analysis)
                         }
                         CameraMode.PHOTO -> {
+                            imageAnalysis = null
                             val capture =
                                 ImageCapture
                                     .Builder()
                                     .setJpegQuality(JPEG_QUALITY)
                                     .setFlashMode(flash.mode)
+                                    .setTargetRotation(targetRotation)
                                     .build()
                             imageCapture = capture
                             cameraProvider.bindToLifecycle(owner, selector, preview, capture)
@@ -116,13 +123,24 @@ class CameraController(
         }, mainExecutor)
     }
 
-    private fun analysis(): ImageAnalysis {
+    private fun analysis(targetRotation: Int): ImageAnalysis {
         analyzerCreated = true
         return ImageAnalysis
             .Builder()
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .setTargetRotation(targetRotation)
             .build()
             .also { it.setAnalyzer(analysisExecutor, analyzer) }
+    }
+
+    /**
+     * The device's current `Surface.ROTATION_*`. MainActivity handles orientation changes without being
+     * recreated, so the bound use cases are updated here; otherwise photos keep the rotation of bind time.
+     */
+    fun setTargetRotation(value: Int) {
+        rotation = value
+        imageCapture?.targetRotation = value
+        imageAnalysis?.targetRotation = value
     }
 
     fun setFlash(value: FlashSetting) {

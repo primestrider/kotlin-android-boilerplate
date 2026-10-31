@@ -96,6 +96,7 @@ private fun CameraContent(gate: QrResultGate) {
     val previewView = remember(context) { PreviewView(context) }
 
     DisposableEffect(controller) { onDispose(controller::release) }
+    DeviceRotationEffect(controller::setTargetRotation)
     // The gate only accepts codes in the scan mode; leaving the screen also stops it.
     DisposableEffect(mode) {
         gate.scanning = mode == CameraMode.SCAN
