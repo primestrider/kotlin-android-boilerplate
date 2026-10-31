@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.biometric
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Modifier
@@ -12,6 +13,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
@@ -39,7 +41,8 @@ class BiometricContentTest {
     ) {
         rule.setContent {
             AppTheme(false) {
-                Column(Modifier.verticalScroll(rememberScrollState())) {
+                // A narrow phone, so a one-line title would have to ellipsise long text.
+                Column(Modifier.width(320.dp).verticalScroll(rememberScrollState())) {
                     BiometricContent(
                         support = support,
                         fallbackSupported = fallbackSupported,
@@ -96,5 +99,30 @@ class BiometricContentTest {
         rule.onNodeWithText("Stored PIN: 123456").performScrollTo().assertIsDisplayed()
         rule.onNodeWithContentDescription("Stored PIN: 123456", substring = true).performClick()
         assertEquals(1, dismissed)
+    }
+
+    // Robolectric does not measure text like a device, so these check the structure: the long text is the banner's
+    // wrapping message, a node of its own holding the whole sentence, not part of the one-line, ellipsised title.
+    @Test
+    fun an_error_shows_its_remedy_in_full_as_its_own_node() {
+        show(
+            status =
+                BiometricStatus(
+                    R.string.sdk_biometric_status_storage_failed,
+                    BannerVariant.ERROR,
+                    detail = R.string.sdk_biometric_status_storage_failed_detail,
+                ),
+        )
+        rule.onNodeWithText("Secure storage failed").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Enroll a fingerprint or face, then try again.").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun a_long_system_error_is_the_message_not_the_title() {
+        val lockout = "Too many attempts. Fingerprint sensor disabled. Use your screen lock to continue."
+        show(status = BiometricStatus(R.string.sdk_biometric_status_not_verified, BannerVariant.ERROR, detailText = lockout))
+        rule.onNodeWithText("Not verified").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText(lockout).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Not verified: ", substring = true).assertDoesNotExist()
     }
 }

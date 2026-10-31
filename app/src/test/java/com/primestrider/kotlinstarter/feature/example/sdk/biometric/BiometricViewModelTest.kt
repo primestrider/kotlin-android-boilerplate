@@ -33,7 +33,11 @@ class BiometricViewModelTest {
 
     private fun viewModel(handle: SavedStateHandle = SavedStateHandle()) = BiometricViewModel(handle).also { created += it }
 
-    private fun BiometricStatus?.text(): String? = this?.let { context.getString(it.message, *listOfNotNull(it.arg).toTypedArray()) }
+    // (title, detail) as the banner shows them.
+    private fun BiometricStatus?.shown(): Pair<String, String?>? =
+        this?.let {
+            context.getString(it.title, *listOfNotNull(it.titleArg).toTypedArray()) to (it.detailText ?: it.detail?.let(context::getString))
+        }
 
     @Before
     fun setUp() {
@@ -51,7 +55,7 @@ class BiometricViewModelTest {
         val vm = viewModel()
         assertFalse(vm.onSave("12a456"))
         val status = vm.state.value.status
-        assertEquals("PIN must be exactly 6 digits.", status.text())
+        assertEquals("Invalid PIN" to "PIN must be exactly 6 digits.", status.shown())
         assertEquals(BannerVariant.ERROR, status?.variant)
     }
 
@@ -71,9 +75,9 @@ class BiometricViewModelTest {
         vm.onRevealed("123456")
         vm.setAllowFallback(false)
         assertEquals(
-            "Stored PIN: 123456",
+            "Stored PIN: 123456" to null,
             vm.state.value.status
-                .text(),
+                .shown(),
         )
         handle.keys().forEach { key ->
             assertFalse("$key holds the PIN", handle.get<Any?>(key).toString().contains("123456"))
@@ -90,13 +94,13 @@ class BiometricViewModelTest {
     }
 
     @Test
-    fun outcomes_map_to_their_statuses() {
+    fun outcomes_map_to_a_short_title_and_a_full_detail() {
         val vm = viewModel()
         vm.onVerified()
         assertEquals(
-            "Verified.",
+            "Verified." to null,
             vm.state.value.status
-                .text(),
+                .shown(),
         )
         assertEquals(
             BannerVariant.SUCCESS,
@@ -105,21 +109,21 @@ class BiometricViewModelTest {
         )
         vm.onSaved()
         assertEquals(
-            "PIN saved to secure storage.",
+            "PIN saved" to "PIN saved to secure storage.",
             vm.state.value.status
-                .text(),
+                .shown(),
         )
         vm.onDeleted()
         assertEquals(
-            "PIN removed.",
+            "PIN removed." to null,
             vm.state.value.status
-                .text(),
+                .shown(),
         )
-        vm.onPromptError("Fingerprint operation canceled by user.")
+        vm.onPromptError("Too many attempts. Use screen lock instead.")
         assertEquals(
-            "Not verified: Fingerprint operation canceled by user.",
+            "Not verified" to "Too many attempts. Use screen lock instead.",
             vm.state.value.status
-                .text(),
+                .shown(),
         )
         assertEquals(
             BannerVariant.ERROR,
@@ -128,11 +132,16 @@ class BiometricViewModelTest {
         )
         vm.onKeyInvalidated()
         assertEquals(
-            "Biometrics changed; the PIN was removed.",
+            "Biometrics changed" to "The PIN was removed.",
             vm.state.value.status
-                .text(),
+                .shown(),
         )
         vm.onStorageFailed()
+        assertEquals(
+            "Secure storage failed" to "Enroll a fingerprint or face, then try again.",
+            vm.state.value.status
+                .shown(),
+        )
         assertEquals(
             BannerVariant.ERROR,
             vm.state.value.status

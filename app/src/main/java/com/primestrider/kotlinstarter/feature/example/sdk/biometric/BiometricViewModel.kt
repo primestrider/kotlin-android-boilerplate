@@ -55,11 +55,16 @@ fun biometricSupport(
     )
 }
 
-/** A status line: [message] formatted with [arg] when there is one. */
+/**
+ * A status banner: a short one-line [title] (formatted with [titleArg] when there is one) and, for anything longer, the
+ * full sentence as the banner message: [detail] from resources, or [detailText] from the system (a prompt's errString).
+ */
 data class BiometricStatus(
-    @StringRes val message: Int,
+    @StringRes val title: Int,
     val variant: BannerVariant,
-    val arg: String? = null,
+    val titleArg: String? = null,
+    @StringRes val detail: Int? = null,
+    val detailText: String? = null,
 )
 
 data class BiometricUiState(
@@ -91,36 +96,60 @@ class BiometricViewModel
         /** True when [pin] is valid and the screen should prompt to save it; otherwise shows the validation error. */
         fun onSave(pin: String): Boolean {
             if (isValidPin(pin)) return true
-            show(R.string.sdk_biometric_status_invalid_pin, BannerVariant.ERROR)
+            show(
+                BiometricStatus(
+                    R.string.sdk_biometric_status_invalid_pin,
+                    BannerVariant.ERROR,
+                    detail = R.string.sdk_biometric_status_invalid_pin_detail,
+                ),
+            )
             return false
         }
 
-        fun onVerified() = show(R.string.sdk_biometric_status_verified, BannerVariant.SUCCESS)
+        fun onVerified() = show(BiometricStatus(R.string.sdk_biometric_status_verified, BannerVariant.SUCCESS))
 
-        fun onSaved() = show(R.string.sdk_biometric_status_saved, BannerVariant.SUCCESS)
+        fun onSaved() =
+            show(
+                BiometricStatus(
+                    R.string.sdk_biometric_status_saved,
+                    BannerVariant.SUCCESS,
+                    detail = R.string.sdk_biometric_status_saved_detail,
+                ),
+            )
 
-        fun onRevealed(pin: String) = show(R.string.sdk_biometric_status_stored, BannerVariant.INFO, pin)
+        fun onRevealed(pin: String) = show(BiometricStatus(R.string.sdk_biometric_status_stored, BannerVariant.INFO, titleArg = pin))
 
-        fun onDeleted() = show(R.string.sdk_biometric_status_removed, BannerVariant.INFO)
+        fun onDeleted() = show(BiometricStatus(R.string.sdk_biometric_status_removed, BannerVariant.INFO))
 
         /** The prompt ended without success (cancel, lockout, nothing enrolled...); [message] is the system's text for it. */
-        fun onPromptError(message: String) = show(R.string.sdk_biometric_status_not_verified, BannerVariant.ERROR, message)
+        fun onPromptError(message: String) =
+            show(BiometricStatus(R.string.sdk_biometric_status_not_verified, BannerVariant.ERROR, detailText = message.ifBlank { null }))
 
         /** The key was invalidated by a biometric change; the screen already deleted the PIN. */
-        fun onKeyInvalidated() = show(R.string.sdk_biometric_status_invalidated, BannerVariant.WARNING)
+        fun onKeyInvalidated() =
+            show(
+                BiometricStatus(
+                    R.string.sdk_biometric_status_invalidated,
+                    BannerVariant.WARNING,
+                    detail = R.string.sdk_biometric_status_invalidated_detail,
+                ),
+            )
 
         /** The Keystore refused (no secure lock screen, nothing enrolled, no Keystore). */
-        fun onStorageFailed() = show(R.string.sdk_biometric_status_storage_failed, BannerVariant.ERROR)
+        fun onStorageFailed() =
+            show(
+                BiometricStatus(
+                    R.string.sdk_biometric_status_storage_failed,
+                    BannerVariant.ERROR,
+                    detail = R.string.sdk_biometric_status_storage_failed_detail,
+                ),
+            )
 
         fun dismissStatus() {
             status.value = null
         }
 
-        private fun show(
-            @StringRes message: Int,
-            variant: BannerVariant,
-            arg: String? = null,
-        ) {
-            status.value = BiometricStatus(message, variant, arg)
+        private fun show(value: BiometricStatus) {
+            status.value = value
         }
     }

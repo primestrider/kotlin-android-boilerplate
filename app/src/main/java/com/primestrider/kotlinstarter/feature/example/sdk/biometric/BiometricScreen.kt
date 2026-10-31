@@ -246,7 +246,9 @@ internal fun BiometricContent(
     }
     status?.let {
         Banner(
-            title = stringResource(it.message, *listOfNotNull(it.arg).toTypedArray()),
+            // The title is one line; anything longer (a remedy, the system's error text) goes in the wrapping message.
+            title = stringResource(it.title, *listOfNotNull(it.titleArg).toTypedArray()),
+            message = it.detailText ?: it.detail?.let { detail -> stringResource(detail) },
             variant = it.variant,
             onDismiss = onDismissStatus,
         )
