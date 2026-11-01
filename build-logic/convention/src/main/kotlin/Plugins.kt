@@ -1,5 +1,7 @@
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.dsl.TestExtension
+import com.primestrider.kotlinstarter.buildlogic.AndroidConfig
 import com.primestrider.kotlinstarter.buildlogic.configureAndroidApplication
 import com.primestrider.kotlinstarter.buildlogic.configureAndroidLibrary
 import com.primestrider.kotlinstarter.buildlogic.lib
@@ -64,6 +66,23 @@ class HiltConventionPlugin : Plugin<Project> {
                 add("ksp", libs.lib("hilt-compiler"))
                 add("testImplementation", libs.lib("hilt-android-testing"))
                 add("kspTest", libs.lib("hilt-compiler"))
+            }
+        }
+}
+
+/** `com.android.test` (instrumented test-only modules such as :baselineprofile) with the shared SDK levels and JVM 17. */
+class AndroidTestConventionPlugin : Plugin<Project> {
+    override fun apply(target: Project) =
+        with(target) {
+            pluginManager.apply("com.android.test")
+            pluginManager.apply("org.jlleitschuh.gradle.ktlint")
+            extensions.configure<TestExtension> {
+                compileSdk = AndroidConfig.COMPILE_SDK
+                defaultConfig.targetSdk = AndroidConfig.TARGET_SDK
+                compileOptions {
+                    sourceCompatibility = AndroidConfig.JAVA_VERSION
+                    targetCompatibility = AndroidConfig.JAVA_VERSION
+                }
             }
         }
 }

@@ -10,6 +10,7 @@ plugins {
     id("kotlinstarter.android.compose")
     id("kotlinstarter.hilt")
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.baselineprofile)
 }
 
 /**
@@ -138,6 +139,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.splashscreen)
+    // Installs the committed baseline profile (src/main/generated/baselineProfiles) on devices without Play.
+    implementation(libs.androidx.profileinstaller)
+    baselineProfile(projects.baselineprofile)
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
