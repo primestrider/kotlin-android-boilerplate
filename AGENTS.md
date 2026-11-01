@@ -23,12 +23,14 @@ namespace follows its path (e.g. `…core.network`, `…feature.products.impl`).
 build-logic/                 convention plugins: kotlinstarter.android.{application,library,test,compose}, kotlinstarter.hilt,
                              kotlinstarter.feature.{api,impl}; AndroidConfig (SDK levels), localOrEnv, verifyReleaseKeeps
 app/                         MainActivity, AppViewModel, MainShell (tabs) and AppNavHost.kt: the only place that wires features;
-                             EnvironmentModule provides @ApiBaseUrl from the flavour's BuildConfig.API_URL; PlaceholderHomeScreen
+                             EnvironmentModule provides @ApiBaseUrl (BuildConfig.API_URL) and @CertificatePins (API_PINS); PlaceholderHomeScreen
 core/common                  @ApplicationScope, formatters (core.util), AppLanguage/LanguageController (core.i18n), CrashRecorder, AppConfig
 core/model                   ThemeMode (shared domain types)
 core/datastore               DataStore module, StorageKeys, DataStoreFiles, ThemePreferenceRepository
-core/designsystem            theme, tokens, ControlColors, reusable components incl. form controls (docs/architecture/components.md)
-core/network                 Retrofit/OkHttp, ApiError, safeApiCall, @Anonymous, @AppInterceptors extension point (docs/architecture/networking.md)
+core/designsystem            theme, tokens, ControlColors, reusable components incl. form controls and AppNavigationSuite (bar/rail),
+                             @ThemePreviews + PreviewTheme (docs/architecture/components.md)
+core/network                 Retrofit/OkHttp, ApiError, safeApiCall, @Anonymous, @AppInterceptors extension point, optional
+                             certificate pinning (@CertificatePins) (docs/architecture/networking.md)
 core/auth                    SessionRepository, AuthAdapter seam (@AuthBackend, NotConfiguredAuthAdapter), bearer + 401 refresh (docs/architecture/auth-session.md)
 core/ui                      CrashFallbackScreen, PermissionGate, PiP host/frame, ExamplePageScaffold/DemoSection
 core/testing                 shared test doubles: in-memory DataStore, FakeSessionCipher, TestApi, resetAndroidUiDispatcher
@@ -38,9 +40,13 @@ baselineprofile/             startup baseline profile generator and startup benc
 scripts/remove-examples.sh   removes every example feature (see below)
 ```
 
-Example features (all deletable): `catalog` (Home, Components tab, component and styling pages, form), `products`,
-`todos`, `account` (Profile hub, sign-in, protected Account, DummyJSON `AuthAdapter`), `settings`, `devices` (the 21
-Device APIs demos, docs/examples.md), `animation`.
+Example features (all deletable): `catalog` (Home, Components tab, component and styling pages, form), `products`
+(offline-first list cached in Room by a `RemoteMediator`, list-detail on wide screens), `todos` (plus the Glance
+home-screen widget), `account` (Profile hub, sign-in, protected Account, DummyJSON `AuthAdapter`), `settings`, `devices`
+(the Device APIs demos incl. the music foreground service, share target, in-app update and Play Integrity;
+docs/examples.md), `animation`.
+
+Every screen and design-system component file has a light/dark `@ThemePreviews` preview (`PreviewCoverageTest`).
 
 ## Layer rules (enforced by Gradle dependencies)
 

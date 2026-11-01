@@ -56,6 +56,7 @@ A feature is two Gradle modules: `:feature:<name>:api` (routes other modules may
       `lint-baseline.xml` and stops once; run it again and commit the (normally empty) baseline.
 - [ ] No `import …feature.<other>.impl` anywhere (it would not compile anyway).
 - [ ] Strings present in both locales (`TranslationCompletenessTest`).
+- [ ] Every `XxxScreen` file ends with a private `@ThemePreviews` preview of its stateless content (`PreviewCoverageTest`).
 
 See also: `docs/architecture/overview.md`, `docs/architecture/navigation.md`, `docs/architecture/data-loading.md`,
 `docs/architecture/testing.md`.

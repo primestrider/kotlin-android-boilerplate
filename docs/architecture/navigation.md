@@ -4,7 +4,7 @@ The app uses Navigation Compose with type-safe routes (kotlinx.serialization) in
 
 ## Shell and tabs
 
-`app/navigation/MainShell.kt` is the app's root composable (set by `MainActivity`). It is a `Scaffold` whose bottom bar is `AppNavigationBar` (`core/designsystem/component/`) and whose content is one `NavHost` with a nested graph per tab:
+`app/navigation/MainShell.kt` is the app's root composable (set by `MainActivity`). It is a `Scaffold` holding `AppNavigationSuite` (`core/designsystem/component/`), which puts the tabs in a bottom `AppNavigationBar` on compact width (phones in portrait) and in a `NavigationRail` at the start from medium width (tablets, foldables, phones in landscape), chosen from `currentWindowAdaptiveInfo()`. Its content is one `NavHost` with a nested graph per tab:
 
 | Tab (`TopLevelTab`) | Graph | Start route | Contents |
 | --- | --- | --- | --- |
@@ -17,7 +17,13 @@ Behavior:
 - Switching tabs uses `navigate(graph) { popUpTo(start) { saveState = true }; launchSingleTop = true; restoreState = true }`, so each tab keeps its own back stack.
 - Re-selecting the current tab pops it to its start route.
 - Back at the root of a non-Home tab switches to Home and restores Home's saved stack (a `BackHandler` composed after the `NavHost`, so Home's stale saved state is never resurrected later); back at Home's root leaves the app.
-- The `NavHost` consumes the shell's bottom inset, so screens use `AppScaffold` normally without a double navigation-bar gap.
+- The `NavHost` consumes the inset the bar or rail already pads for, so screens use `AppScaffold` normally without a double navigation-bar gap.
+
+## Adaptive layouts
+
+- **Shell:** bar or rail, see above (`AppNavigationSuiteTest` checks both with Robolectric `qualifiers = "w840dp-h900dp"`).
+- **List-detail:** `ProductsListDetail` (`feature/products/impl/src/main/java/com/primestrider/kotlinstarter/feature/example/products/ui/ProductsListDetail.kt`) uses Material's `ListDetailPaneScaffold`. When the window fits two panes (`navigator.scaffoldDirective.maxHorizontalPartitions >= 2`), tapping a product shows it beside the list; on narrower windows it is just `ProductsScreen` and a tap navigates to `ProductDetailRoute` as before. The detail's ViewModel takes the id through assisted injection (`hiltViewModel<ProductDetailViewModel, ProductDetailViewModel.Factory>(key = "product-$id") { it.create(id) }`), so the same ViewModel serves the page and the pane.
+- **Sizes inside a screen:** derive from the window, not the device type, e.g. the camera preview's `cameraPreviewHeight(screenHeightDp)` keeps the controls visible in landscape.
 
 ## Route objects
 

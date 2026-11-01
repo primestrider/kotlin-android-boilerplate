@@ -45,3 +45,4 @@ Route in `feature/catalog/api/src/main/java/com/primestrider/kotlinstarter/featu
 
 - [ ] `./gradlew test ktlintCheck lint assembleDevDebug` green.
 - [ ] Light and dark theme checked (both are in the screenshot test).
+- [ ] The component or page file ends with a private `@ThemePreviews` preview wrapped in `PreviewTheme` (`PreviewCoverageTest`).

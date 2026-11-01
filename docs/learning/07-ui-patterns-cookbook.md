@@ -579,4 +579,11 @@ AnimatedContent(targetState = count) { value -> Text("$value") }
 | Nested layouts | `<Outlet/>` | `<router-view>` | nested graphs per tab inside `MainShell` |
 | Deep link | the URL itself | the URL itself | `navDeepLink<Route>(basePath = "$appScheme://example/…")` + the manifest intent filter |
 
+## Tip: previews instead of Storybook
+
+Where a React or Vue project keeps stories in Storybook, Compose keeps previews next to the code: a private
+`@ThemePreviews` function at the end of the file renders the composable in light and dark in Android Studio's design
+pane, with no app run. Every screen and component here has one (`PreviewCoverageTest` checks), so the quickest way to
+see a pattern from this chapter is to open its file and look at the preview.
+
 Back to the [index](README.md).

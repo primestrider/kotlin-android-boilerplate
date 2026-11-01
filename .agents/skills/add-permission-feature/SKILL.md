@@ -27,6 +27,10 @@ every common permission: copy the closest one.
 4. **Keep the logic testable:** platform calls behind a small class or interface, the decisions (formatting, state
    machine) in pure functions or the ViewModel.
 5. **Strings** for rationale, denied and blocked texts in both locales.
+6. **Foreground services** need a type on Android 14+: declare `android:foregroundServiceType` on the `<service>` and
+   its matching normal permission (`FOREGROUND_SERVICE` plus e.g. `FOREGROUND_SERVICE_MEDIA_PLAYBACK`,
+   `..._LOCATION`, `..._DATA_SYNC`). For media, use Media3's `MediaSessionService`, which handles the notification and
+   the foreground promotion (`sdk/music/MusicService.kt`); for deferrable work prefer WorkManager.
 
 ## Tests
 

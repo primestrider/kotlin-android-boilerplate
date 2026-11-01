@@ -154,6 +154,18 @@ suspend fun <T> safeApiCall(json: Json, block: suspend () -> T): ApiResult<T> =
 Every failure (HTTP status, no network, unexpected JSON) becomes one `ApiError`; `ApiError.userMessage()` turns it into
 a localized text. `CancellationException` is rethrown: a cancelled coroutine (the user left the page) is not an error.
 
+### Offline-first and pinning
+
+The full product list does not page straight from the network: `ProductsRemoteMediator` writes pages into the
+feature's own Room database (`products.db`) and the screen pages **from the database**, so the last list loaded still
+shows without a connection (searches stay online). A web app would reach for a service worker or a React Query
+persister; here the database is the cache and the single source the UI reads. Details: `docs/architecture/data-loading.md`,
+"Offline-first".
+
+The API host can also be **pinned**: set `api.pins` / `API_PINS` to its `sha256/...` key hashes and both OkHttp clients
+refuse any other certificate. It is off by default because a stale pin locks every installed copy out; see
+`docs/architecture/networking.md`, "Certificate pinning".
+
 ## Local data: Room
 
 The todos feature keeps its rows in SQLite through Room:

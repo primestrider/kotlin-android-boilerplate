@@ -16,6 +16,7 @@ Rules:
 | --- | --- | --- |
 | `AppScaffold`, `AppTopBar` | `AppScaffold.kt` | Every screen: title, optional back arrow (`onBack = null` hides it), actions, snackbar/FAB slots |
 | `AppNavigationBar`, `NavBarItem` | `AppNavigationBar.kt` | Bottom navigation for top-level destinations, with optional count badge ("99+") |
+| `AppNavigationSuite` | `AppNavigationSuite.kt` | Top-level navigation that follows the window: `AppNavigationBar` on compact width, a `NavigationRail` from medium width |
 | `AppButton`, `ButtonVariant` | `AppButton.kt` | Any button: `PRIMARY`, `SECONDARY` (tonal), `OUTLINED`, `TEXT`, `DESTRUCTIVE`; `loading = true` shows a spinner, reports disabled and ignores clicks (no double submit); `fullWidth`, `leadingIcon` |
 | `AppTextField` | `TextFields.kt` | Full-width filled text input: no border, radius 16, floating label aligned with the value, tinted with `primary` while focused and with `destructive` in error. Placeholder, `errorText` (wins over `supportingText`), `maxLength` (counted in characters, emoji-safe) with an "n/max" counter, keyboard type, IME action, and `prefix` (a small chip before the value, e.g. `+62`). No decorative trailing icons |
 | `PasswordTextField` | `TextFields.kt` | Password input with its own show/hide toggle |
@@ -43,6 +44,20 @@ Rules:
 
 Checkbox, radio and switch follow Material's contract: pass a callback and the control is its own 48dp target with the right role; pass `null` inside a `toggleable` / `selectable` row and the row owns the click, so TalkBack announces it once.
 | `InfoCard` | `InfoCard.kt` | Outlined card of `InfoRow`s from (label, value) pairs; null or blank values show an em dash |
+
+## Previews
+
+Every screen file (a public `fun XxxScreen(`) and every design-system component file ends with a private preview:
+
+```kotlin
+@ThemePreviews
+@Composable
+private fun TodosScreenPreview() {
+    PreviewTheme { TodosScreen(state = sampleState, onAdd = {}, /* ... */) }
+}
+```
+
+`@ThemePreviews` renders it twice (light and dark); `PreviewTheme` applies `AppTheme` for that mode on a surface with a `Messenger`. Screens that need a ViewModel or hardware preview their stateless content (`MusicContent`, `AppUpdateContent`). `PreviewCoverageTest` fails the build when a screen or component file has no preview.
 
 ## Showing messages
 
