@@ -373,4 +373,4 @@ killing the process, so anything the user typed belongs there.
 - **A release is permanent.** You cannot hot-fix a phone; that is why CI checks the minified release, the signature and
   the version before anything ships.
 
-Back to the [index](README.md).
+Next: [Cookbook: UI patterns side by side](07-ui-patterns-cookbook.md).
