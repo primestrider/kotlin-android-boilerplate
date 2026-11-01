@@ -1,11 +1,20 @@
+import com.primestrider.kotlinstarter.buildlogic.localOrEnv
+
 plugins {
     id("kotlinstarter.feature.impl")
 }
+
+// Google Cloud project number for the Play Integrity demo; 0 (the default) shows "not configured".
+val playIntegrityProject: Long =
+    localOrEnv("play.integrity.project", "PLAY_INTEGRITY_PROJECT", "0").let {
+        it.toLongOrNull() ?: error("play.integrity.project / PLAY_INTEGRITY_PROJECT must be a number, was '$it'")
+    }
 
 android {
     namespace = "com.primestrider.kotlinstarter.feature.devices.impl"
     defaultConfig {
         consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("long", "PLAY_INTEGRITY_PROJECT", "${playIntegrityProject}L")
     }
     buildFeatures {
         buildConfig = true
@@ -36,6 +45,9 @@ dependencies {
     implementation(libs.androidx.exifinterface)
     implementation(libs.androidx.browser)
     implementation(libs.play.review.ktx)
+    implementation(libs.play.app.update.ktx)
+    implementation(libs.play.integrity)
+    implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.play.services.location)
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.lifecycle)

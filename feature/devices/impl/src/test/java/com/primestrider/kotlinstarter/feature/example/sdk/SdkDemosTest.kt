@@ -58,6 +58,8 @@ class SdkDemosTest {
                 "status-bar",
                 "music",
                 "share-target",
+                "in-app-update",
+                "play-integrity",
             ),
             sdkDemos.map {
                 it.id

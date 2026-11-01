@@ -137,6 +137,23 @@ Tests go with the demos: they live in `feature/devices/impl/src/test/`. Three `:
 - **API-level fallback:** none needed.
 - **Files:** `sdk/sharetarget/SharedContent.kt`, `sdk/sharetarget/ShareReceiverActivity.kt`, `sdk/sharetarget/SharedContentScreen.kt`; filters in `feature/devices/impl/src/main/AndroidManifest.xml`.
 
+### In-App Update (`in-app-update`)
+
+- **Purpose:** Play's **flexible** update: ask Play whether a newer version exists, show Play's confirmation, download in the background while the app keeps working (progress bar), then "Install and restart" when the user chooses.
+- **Android API:** `AppUpdateManager` (`app-update-ktx`): `appUpdateInfo`, `startUpdateFlowForResult(info, launcher, AppUpdateOptions(FLEXIBLE))` with an `ActivityResultLauncher<IntentSenderRequest>`, an `InstallStateUpdatedListener` for progress, `completeUpdate()`. The immediate (blocking) type is the same call with `AppUpdateType.IMMEDIATE`.
+- **Play only:** an app not installed from Play (debug builds, sideloaded APKs) gets an error and the page says so. Try the real flow with Play internal app sharing (install an older build, then open a newer link), or in tests with `FakeAppUpdateManager` (`AppUpdateViewModelTest`).
+- **Permissions:** none.
+- **Files:** `sdk/appupdate/AppUpdateViewModel.kt` (states, `AppUpdateModule`), `sdk/appupdate/AppUpdateScreen.kt`.
+
+### Play Integrity (`play-integrity`)
+
+- **Purpose:** request a Play Integrity token bound to one action (`transfer:amount=50000`) and show a short preview of it, with what the server must do next.
+- **Android API:** `StandardIntegrityManager`: `prepareIntegrityToken` once (with the Cloud project number), then `request` with a **request hash** (SHA-256 of the action, `requestHash()`), so a token captured for one request cannot be replayed for another. Tasks are awaited with `kotlinx-coroutines-play-services`.
+- **Setup:** link a Google Cloud project in Play Console > App integrity and put its **project number** in `play.integrity.project` (`local.properties`) or `PLAY_INTEGRITY_PROJECT`; it becomes `BuildConfig.PLAY_INTEGRITY_PROJECT` of `feature/devices/impl`. With the default `0` the page shows "Not configured" and makes no call.
+- **The verdict is the server's job:** the token is encrypted and signed by Google; send it with the request and let your backend decode it (Play Integrity API `decodeIntegrityToken`) and check `requestDetails.requestHash` and the app and device verdicts. A check on the device can be patched out, so the app never decides on its own.
+- **Permissions:** none (needs the Play Store and Play services on the device).
+- **Files:** `sdk/integrity/IntegrityViewModel.kt` (states, `requestHash`, `PlayIntegrityTokens`, `IntegrityModule`), `sdk/integrity/IntegrityScreen.kt`.
+
 ### Blur & Gradients (`effects`)
 
 - **Purpose:** a wallet card with a linear gradient at any angle (three palettes), a balance hidden behind a blur with an intensity slider, and a 3×3 mesh gradient whose middle point and smoothing you can change.
@@ -297,6 +314,8 @@ Robolectric covers the logic; these need real hardware (or a well-equipped emula
 - **System Bars:** dark theme with Inverted, and the style after a rotation.
 - **Todos widget:** add it to the home screen, add and complete todos in the app (the widget follows), tap it (Todos opens), and resize it.
 - **Share Target:** share a link from Chrome, one photo and several photos from the gallery: each opens the page, back returns to the sender.
+- **In-App Update:** with internal app sharing, install an older version and open the page: Update, download progress, Install and restart.
+- **Play Integrity:** with a project number set and the app from Play (internal testing), request a token and decode it on a server.
 - **Background Music:** play, lock the screen (lock-screen controls work), leave the app (keeps playing), pause and swipe the app away from Recents (the service stops), and on Android 13+ with notifications denied (plays without a notification).
 - **Payment Code:** brightness goes to full and returns; the screenshot banner on Android 14+.
 - **Web Browser & Linking:** Custom Tabs and each external app (phone, mail, maps).

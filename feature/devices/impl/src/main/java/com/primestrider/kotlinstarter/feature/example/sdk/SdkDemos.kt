@@ -7,6 +7,7 @@ import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
 import com.primestrider.kotlinstarter.feature.example.sdk.appinfo.AppInfoScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.appupdate.AppUpdateScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.background.BackgroundSyncScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.biometric.BiometricScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.blob.BlobScreen
@@ -18,6 +19,7 @@ import com.primestrider.kotlinstarter.feature.example.sdk.contacts.ContactsScree
 import com.primestrider.kotlinstarter.feature.example.sdk.device.DeviceScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.effects.EffectsScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.files.FilesScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.integrity.IntegrityScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.livephoto.LivePhotoScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.location.LocationScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.media.MediaScreen
@@ -67,6 +69,8 @@ val sdkDemos: List<SdkDemo> =
         SdkDemo("status-bar", R.string.sdk_status_bar_title, R.string.sdk_status_bar_subtitle) { StatusBarScreen(it) },
         SdkDemo("music", R.string.sdk_music_title, R.string.sdk_music_subtitle) { MusicScreen(it) },
         SdkDemo("share-target", R.string.sdk_share_target_title, R.string.sdk_share_target_subtitle) { ShareTargetScreen(it) },
+        SdkDemo("in-app-update", R.string.sdk_app_update_title, R.string.sdk_app_update_subtitle) { AppUpdateScreen(it) },
+        SdkDemo("play-integrity", R.string.sdk_integrity_title, R.string.sdk_integrity_subtitle) { IntegrityScreen(it) },
     )
 
 /** Home entries for the "Device APIs" section, built from [sdkDemos]. */
