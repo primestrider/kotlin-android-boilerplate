@@ -1,5 +1,7 @@
 package com.primestrider.kotlinstarter.app
 
+// remove-examples: exercises the example features, so scripts/remove-examples.sh deletes it with them.
+
 import android.content.Context
 import android.content.Intent
 import androidx.compose.ui.test.assertCountEquals

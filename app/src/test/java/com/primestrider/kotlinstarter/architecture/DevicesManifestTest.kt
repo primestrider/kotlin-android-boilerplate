@@ -1,5 +1,7 @@
 package com.primestrider.kotlinstarter.architecture
 
+// remove-examples: exercises the example features, so scripts/remove-examples.sh deletes it with them.
+
 import android.content.pm.PackageManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
