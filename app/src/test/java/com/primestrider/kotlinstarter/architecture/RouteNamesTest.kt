@@ -1,0 +1,74 @@
+package com.primestrider.kotlinstarter.architecture
+
+import com.primestrider.kotlinstarter.feature.example.AccountRoute
+import com.primestrider.kotlinstarter.feature.example.ActionsRoute
+import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute
+import com.primestrider.kotlinstarter.feature.example.AnimListsRoute
+import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
+import com.primestrider.kotlinstarter.feature.example.AnimTransitionsRoute
+import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
+import com.primestrider.kotlinstarter.feature.example.ColorsRoute
+import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
+import com.primestrider.kotlinstarter.feature.example.DisplayRoute
+import com.primestrider.kotlinstarter.feature.example.FeedbackRoute
+import com.primestrider.kotlinstarter.feature.example.FormExampleRoute
+import com.primestrider.kotlinstarter.feature.example.InputsRoute
+import com.primestrider.kotlinstarter.feature.example.LayoutRoute
+import com.primestrider.kotlinstarter.feature.example.OverlaysRoute
+import com.primestrider.kotlinstarter.feature.example.ProductDetailRoute
+import com.primestrider.kotlinstarter.feature.example.ProductsRoute
+import com.primestrider.kotlinstarter.feature.example.ProfileRoute
+import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
+import com.primestrider.kotlinstarter.feature.example.SettingsRoute
+import com.primestrider.kotlinstarter.feature.example.SignInRoute
+import com.primestrider.kotlinstarter.feature.example.SizingRoute
+import com.primestrider.kotlinstarter.feature.example.SpacingRoute
+import com.primestrider.kotlinstarter.feature.example.ThemeRoute
+import com.primestrider.kotlinstarter.feature.example.TodosRoute
+import com.primestrider.kotlinstarter.feature.example.TypographyRoute
+import kotlinx.serialization.serializer
+import org.junit.Assert.assertEquals
+import org.junit.Test
+
+/**
+ * Type-safe navigation stores routes by serial name in the saved back stack and deep-link patterns. Moving a
+ * route to another module must not change it, or a restored back stack no longer decodes.
+ */
+class RouteNamesTest {
+    @Test
+    fun restored_back_stack_survives_route_move() {
+        val names =
+            listOf(
+                serializer<SettingsRoute>(),
+                serializer<ColorsRoute>(),
+                serializer<TypographyRoute>(),
+                serializer<SpacingRoute>(),
+                serializer<SizingRoute>(),
+                serializer<LayoutRoute>(),
+                serializer<AppearanceRoute>(),
+                serializer<ThemeRoute>(),
+                serializer<ActionsRoute>(),
+                serializer<InputsRoute>(),
+                serializer<DisplayRoute>(),
+                serializer<OverlaysRoute>(),
+                serializer<FormExampleRoute>(),
+                serializer<ComponentsHomeRoute>(),
+                serializer<FeedbackRoute>(),
+                serializer<SignInRoute>(),
+                serializer<ProfileRoute>(),
+                serializer<AccountRoute>(),
+                serializer<ProductsRoute>(),
+                serializer<ProductDetailRoute>(),
+                serializer<TodosRoute>(),
+                serializer<SdkDemoRoute>(),
+                serializer<AnimMicroRoute>(),
+                serializer<AnimCardsRoute>(),
+                serializer<AnimListsRoute>(),
+                serializer<AnimTransitionsRoute>(),
+            ).map { it.descriptor.serialName.substringAfterLast('.') to it.descriptor.serialName }
+        names.forEach { (simple, serialName) ->
+            assertEquals("com.primestrider.kotlinstarter.feature.example.$simple", serialName)
+        }
+        assertEquals(26, names.size)
+    }
+}

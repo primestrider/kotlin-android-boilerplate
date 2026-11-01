@@ -2,11 +2,12 @@ package com.primestrider.kotlinstarter.feature.example.animation
 
 import androidx.annotation.StringRes
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
+import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
 import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimListsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
 import com.primestrider.kotlinstarter.feature.example.AnimTransitionsRoute
-import com.primestrider.kotlinstarter.feature.example.ExampleEntry
 
 /** One page of the "Animations" Home section. */
 data class AnimationPage(
@@ -28,4 +29,5 @@ val animationPages: List<AnimationPage> =
     )
 
 /** Home entries for the "Animations" section, built from [animationPages]. */
-fun animationEntries(): List<ExampleEntry> = animationPages.map { ExampleEntry(it.title, it.subtitle, it.route) }
+fun animationEntries(): List<CatalogEntry> =
+    animationPages.mapIndexed { index, page -> CatalogEntry(page.title, page.subtitle, page.route, CatalogSections.ANIMATION, index) }

@@ -38,6 +38,14 @@ gradlePlugin {
             id = "kotlinstarter.android.compose"
             implementationClass = "AndroidComposeConventionPlugin"
         }
+        register("featureApi") {
+            id = "kotlinstarter.feature.api"
+            implementationClass = "FeatureApiConventionPlugin"
+        }
+        register("featureImpl") {
+            id = "kotlinstarter.feature.impl"
+            implementationClass = "FeatureImplConventionPlugin"
+        }
         register("hilt") {
             id = "kotlinstarter.hilt"
             implementationClass = "HiltConventionPlugin"

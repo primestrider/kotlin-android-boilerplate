@@ -7,48 +7,6 @@ import kotlinx.serialization.Serializable
 data object SettingsRoute
 
 @Serializable
-data object ColorsRoute
-
-@Serializable
-data object TypographyRoute
-
-@Serializable
-data object SpacingRoute
-
-@Serializable
-data object SizingRoute
-
-@Serializable
-data object LayoutRoute
-
-@Serializable
-data object AppearanceRoute
-
-@Serializable
-data object ThemeRoute
-
-@Serializable
-data object ActionsRoute
-
-@Serializable
-data object InputsRoute
-
-@Serializable
-data object DisplayRoute
-
-@Serializable
-data object OverlaysRoute
-
-@Serializable
-data object FormExampleRoute
-
-@Serializable
-data object ComponentsHomeRoute
-
-@Serializable
-data object FeedbackRoute
-
-@Serializable
 data object SignInRoute
 
 @Serializable

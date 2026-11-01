@@ -14,33 +14,19 @@ import androidx.navigation.toRoute
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.feature.example.AccountRoute
-import com.primestrider.kotlinstarter.feature.example.ActionsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimListsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
 import com.primestrider.kotlinstarter.feature.example.AnimTransitionsRoute
-import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
-import com.primestrider.kotlinstarter.feature.example.ColorsRoute
+import com.primestrider.kotlinstarter.feature.example.CatalogHome
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
-import com.primestrider.kotlinstarter.feature.example.ComponentsHomeScreen
-import com.primestrider.kotlinstarter.feature.example.DisplayRoute
-import com.primestrider.kotlinstarter.feature.example.FeedbackRoute
-import com.primestrider.kotlinstarter.feature.example.FormExampleRoute
-import com.primestrider.kotlinstarter.feature.example.HomeScreen
-import com.primestrider.kotlinstarter.feature.example.InputsRoute
-import com.primestrider.kotlinstarter.feature.example.LayoutRoute
-import com.primestrider.kotlinstarter.feature.example.OverlaysRoute
 import com.primestrider.kotlinstarter.feature.example.ProductDetailRoute
 import com.primestrider.kotlinstarter.feature.example.ProductsRoute
 import com.primestrider.kotlinstarter.feature.example.ProfileRoute
 import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
 import com.primestrider.kotlinstarter.feature.example.SettingsRoute
 import com.primestrider.kotlinstarter.feature.example.SignInRoute
-import com.primestrider.kotlinstarter.feature.example.SizingRoute
-import com.primestrider.kotlinstarter.feature.example.SpacingRoute
-import com.primestrider.kotlinstarter.feature.example.ThemeRoute
 import com.primestrider.kotlinstarter.feature.example.TodosRoute
-import com.primestrider.kotlinstarter.feature.example.TypographyRoute
 import com.primestrider.kotlinstarter.feature.example.animation.cards.CardsScreen
 import com.primestrider.kotlinstarter.feature.example.animation.lists.ListsScreen
 import com.primestrider.kotlinstarter.feature.example.animation.micro.MicroInteractionsScreen
@@ -50,16 +36,8 @@ import com.primestrider.kotlinstarter.feature.example.auth.AccountViewModel
 import com.primestrider.kotlinstarter.feature.example.auth.ProfileScreen
 import com.primestrider.kotlinstarter.feature.example.auth.SignInScreen
 import com.primestrider.kotlinstarter.feature.example.auth.SignInViewModel
-import com.primestrider.kotlinstarter.feature.example.componentEntries
-import com.primestrider.kotlinstarter.feature.example.components.ActionsScreen
-import com.primestrider.kotlinstarter.feature.example.components.DisplayScreen
-import com.primestrider.kotlinstarter.feature.example.components.FeedbackScreen
-import com.primestrider.kotlinstarter.feature.example.components.FeedbackViewModel
-import com.primestrider.kotlinstarter.feature.example.components.InputsScreen
-import com.primestrider.kotlinstarter.feature.example.components.OverlaysScreen
-import com.primestrider.kotlinstarter.feature.example.exampleSections
-import com.primestrider.kotlinstarter.feature.example.form.FormExampleScreen
-import com.primestrider.kotlinstarter.feature.example.form.FormExampleViewModel
+import com.primestrider.kotlinstarter.feature.example.catalogComponentsDestinations
+import com.primestrider.kotlinstarter.feature.example.catalogHomeDestinations
 import com.primestrider.kotlinstarter.feature.example.products.ProductDetailScreen
 import com.primestrider.kotlinstarter.feature.example.products.ProductDetailViewModel
 import com.primestrider.kotlinstarter.feature.example.products.ProductsScreen
@@ -67,13 +45,6 @@ import com.primestrider.kotlinstarter.feature.example.products.ProductsViewModel
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkDemoScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsViewModel
-import com.primestrider.kotlinstarter.feature.example.styling.AppearanceScreen
-import com.primestrider.kotlinstarter.feature.example.styling.ColorsScreen
-import com.primestrider.kotlinstarter.feature.example.styling.LayoutScreen
-import com.primestrider.kotlinstarter.feature.example.styling.SizingScreen
-import com.primestrider.kotlinstarter.feature.example.styling.SpacingScreen
-import com.primestrider.kotlinstarter.feature.example.styling.ThemeScreen
-import com.primestrider.kotlinstarter.feature.example.styling.TypographyScreen
 import com.primestrider.kotlinstarter.feature.example.todos.TodosScreen
 import com.primestrider.kotlinstarter.feature.example.todos.TodosViewModel
 import kotlinx.serialization.Serializable
@@ -91,13 +62,17 @@ data object ComponentsGraph
 @Serializable
 data object ProfileGraph
 
-/** Home tab: example index, form example and styling pages. Register new Home destinations here. */
+/**
+ * Home tab: the catalog index and the pages it opens. Each feature registers its own destinations; `// region
+ * example:<feature>` blocks are what `scripts/remove-examples.sh` deletes together with the feature's modules.
+ */
 fun NavGraphBuilder.homeGraph(navController: NavHostController) {
     val back: () -> Unit = { navController.popBackStack() }
     navigation<HomeGraph>(startDestination = HomeRoute) {
-        composable<HomeRoute> {
-            HomeScreen(sections = exampleSections, onOpen = { route -> navController.navigate(route) })
-        }
+        // region example:catalog
+        composable<HomeRoute> { CatalogHome(onOpen = { route -> navController.navigate(route) }) }
+        catalogHomeDestinations(navController)
+        // endregion
         composable<ProductsRoute> {
             val viewModel: ProductsViewModel = hiltViewModel()
             val query by viewModel.query.collectAsStateWithLifecycle()
@@ -128,17 +103,6 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                 onBack = back,
             )
         }
-        composable<FormExampleRoute> {
-            val viewModel: FormExampleViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsStateWithLifecycle()
-            FormExampleScreen(
-                state = state,
-                onChange = viewModel::onChange,
-                onSubmit = viewModel::submit,
-                onClear = viewModel::clear,
-                onBack = back,
-            )
-        }
         composable<SdkDemoRoute>(
             deepLinks = listOf(navDeepLink<SdkDemoRoute>(basePath = "${BuildConfig.APP_SCHEME}://example/sdk")),
         ) { entry -> SdkDemoScreen(id = entry.toRoute<SdkDemoRoute>().id, onBack = back) }
@@ -146,36 +110,15 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
         composable<AnimCardsRoute> { CardsScreen(onBack = back) }
         composable<AnimListsRoute> { ListsScreen(onBack = back) }
         composable<AnimMicroRoute> { MicroInteractionsScreen(onBack = back) }
-        composable<ColorsRoute> { ColorsScreen(onBack = back) }
-        composable<TypographyRoute> { TypographyScreen(onBack = back) }
-        composable<SpacingRoute> { SpacingScreen(onBack = back) }
-        composable<SizingRoute> { SizingScreen(onBack = back) }
-        composable<LayoutRoute> { LayoutScreen(onBack = back) }
-        composable<AppearanceRoute> { AppearanceScreen(onBack = back) }
-        composable<ThemeRoute> {
-            // Reuses the Settings state holder: the theme preference logic lives there only.
-            val viewModel: SettingsViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsStateWithLifecycle()
-            ThemeScreen(themeMode = state.themeMode, onThemeModeChange = viewModel::setThemeMode, onBack = back)
-        }
     }
 }
 
 /** Components tab: the component example pages. */
 fun NavGraphBuilder.componentsGraph(navController: NavHostController) {
-    val back: () -> Unit = { navController.popBackStack() }
     navigation<ComponentsGraph>(startDestination = ComponentsHomeRoute) {
-        composable<ComponentsHomeRoute> {
-            ComponentsHomeScreen(entries = componentEntries, onOpen = { route -> navController.navigate(route) })
-        }
-        composable<ActionsRoute> { ActionsScreen(onBack = back) }
-        composable<InputsRoute> { InputsScreen(onBack = back) }
-        composable<DisplayRoute> { DisplayScreen(onBack = back) }
-        composable<OverlaysRoute> { OverlaysScreen(onBack = back) }
-        composable<FeedbackRoute> {
-            val viewModel: FeedbackViewModel = hiltViewModel()
-            FeedbackScreen(onBack = back, onSaveSucceeded = viewModel::saveSucceeded, onSaveFailed = viewModel::saveFailed)
-        }
+        // region example:catalog
+        catalogComponentsDestinations(navController)
+        // endregion
     }
 }
 

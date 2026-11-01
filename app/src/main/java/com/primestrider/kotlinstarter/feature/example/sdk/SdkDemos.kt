@@ -3,7 +3,8 @@ package com.primestrider.kotlinstarter.feature.example.sdk
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import com.primestrider.kotlinstarter.R
-import com.primestrider.kotlinstarter.feature.example.ExampleEntry
+import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
+import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
 import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
 import com.primestrider.kotlinstarter.feature.example.sdk.appinfo.AppInfoScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.background.BackgroundSyncScreen
@@ -65,4 +66,5 @@ val sdkDemos: List<SdkDemo> =
     )
 
 /** Home entries for the "Device APIs" section, built from [sdkDemos]. */
-fun sdkEntries(): List<ExampleEntry> = sdkDemos.map { ExampleEntry(it.title, it.subtitle, SdkDemoRoute(it.id)) }
+fun sdkEntries(): List<CatalogEntry> =
+    sdkDemos.mapIndexed { index, demo -> CatalogEntry(demo.title, demo.subtitle, SdkDemoRoute(demo.id), CatalogSections.DEVICES, index) }

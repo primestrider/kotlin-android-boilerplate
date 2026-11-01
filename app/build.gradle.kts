@@ -79,6 +79,11 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.core.auth)
     implementation(projects.core.ui)
+
+    // region example:catalog
+    implementation(projects.feature.catalog.api)
+    implementation(projects.feature.catalog.impl)
+    // endregion
     testImplementation(projects.core.testing)
 
     implementation(libs.androidx.core.ktx)
