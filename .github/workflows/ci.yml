@@ -32,6 +32,8 @@ jobs:
       # ktlint, Android Lint against the committed baselines, a dev debug build, and the minified prod release
       # with the check that R8 kept every navigation route.
       - run: ./gradlew test ktlintCheck lint assembleDevDebug assembleProdRelease verifyReleaseKeeps
+      # build-logic is an included build: `test` above does not run its tests (versionCode rules).
+      - run: ./gradlew -p build-logic test
       - name: Verify screenshots
         if: hashFiles('core/designsystem/src/test/screenshots/**') != ''
         run: ./gradlew :core:designsystem:verifyRoborazziDebug

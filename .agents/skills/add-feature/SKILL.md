@@ -39,6 +39,9 @@ A feature is two Gradle modules: `:feature:<name>:api` (routes other modules may
    examples `scripts/remove-examples.sh` deletes.
 7. **Optional Home row:** contribute `@Provides @IntoSet fun homeEntry(): CatalogEntry` (and a `CatalogSection` if the
    feature owns a section) from the feature's Hilt module; needs `implementation(projects.feature.catalog.api)`.
+   **Caution:** `catalog` is one of the examples `scripts/remove-examples.sh` deletes. A real feature that depends on
+   `catalog:api` stops compiling after that; if you plan to remove the examples, give your app its own Home instead (or
+   keep the catalog feature).
 
 ## Tests (in the feature module)
 

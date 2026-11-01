@@ -45,5 +45,6 @@ demo needed outside its module.
 ## Checklist
 
 - [ ] Copy builds and tests green before applying.
-- [ ] Your own `feature/<name>` modules and their `include` lines still present.
+- [ ] Your own `feature/<name>` modules and their `include` lines still present, and none of them depends on an example
+      module (e.g. `catalog:api` for Home rows): those would no longer compile.
 - [ ] Docs rewritten and `DocsLinksTest` back.

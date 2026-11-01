@@ -52,4 +52,20 @@ class DeployWorkflowTest {
             "vars.FIREBASE_TESTER_GROUPS",
         ).forEach { assertTrue("$it missing", workflow.contains(it)) }
     }
+
+    /** Without pipefail a missing or failing apksigner piped into tee passes the signature check unverified. */
+    @Test
+    fun signature_check_cannot_fail_open() {
+        assertTrue("job steps must run bash with pipefail", Regex("""defaults:\s+run:\s+shell: bash""").containsMatchIn(workflow))
+        val verify = step("Verify APK is signed with the release key")
+        assertTrue(verify.contains("Signer #1 certificate"))
+        assertTrue(verify.contains("-z \"\$APKSIGNER\""))
+    }
+
+    /** The versionCode rules live in build-logic, whose tests `./gradlew test` does not reach. */
+    @Test
+    fun build_logic_tests_run_in_both_workflows() {
+        assertTrue(workflow.contains("./gradlew -p build-logic test"))
+        assertTrue(File(repoRoot, ".github/workflows/ci.yml").readText().contains("./gradlew -p build-logic test"))
+    }
 }

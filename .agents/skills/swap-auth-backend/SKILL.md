@@ -21,8 +21,10 @@ this skill relies on.
 2. **Mark login and refresh `@Anonymous`** on the Retrofit interface: they must never carry the bearer token or trigger
    the 401 flow.
 3. **Bind it** in a Hilt module of the feature that owns sign-in:
-   `@Binds @AuthBackend abstract fun bindAuthAdapter(impl: YourAuthAdapter): AuthAdapter`. Without `@AuthBackend` the
-   binding is ignored and `NotConfiguredAuthAdapter` stays in charge (sign-in fails as "not set up"). Replace the
+   `@Binds @AuthBackend abstract fun bindAuthAdapter(impl: YourAuthAdapter): AuthAdapter`. The qualifier is required:
+   `core:auth` already provides the plain `AuthAdapter` (your `@AuthBackend` one, else `NotConfiguredAuthAdapter`), so an
+   unqualified binding fails the build with a duplicate `AuthAdapter` binding. With no `@AuthBackend` binding at all,
+   `NotConfiguredAuthAdapter` is used and sign-in fails as "not set up". Replace the
    binding in `ExampleAuthModule` (account feature), or remove the account example and bind yours elsewhere; exactly
    one `@AuthBackend` binding may exist.
 4. **Base URL**: set the `prod` (and `dev`) default in `apiUrl(...)` in `app/build.gradle.kts`, or override with

@@ -5,7 +5,7 @@ instrumented (`androidTest`) tests; the device-only work is the baseline profile
 
 ## Running
 
-- `./gradlew test` runs every module's debug unit tests (AGP 9 creates debug unit-test tasks only). `:app`'s tests run
+- `./gradlew test` runs every module's debug unit tests; `./gradlew -p build-logic test` runs the build-logic tests (versionCode rules), which `test` does not reach (AGP 9 creates debug unit-test tasks only). `:app`'s tests run
   on the `dev` flavour only (`testDevDebugUnitTest`); they do not depend on the environment.
 - One module: `./gradlew :feature:products:impl:testDebugUnitTest`; one class: add `--tests "*ProductsScreenTest"`.
 - On Windows the DataStore corruption test is skipped (file locking); CI runs it on Linux.
@@ -33,7 +33,7 @@ They read the source tree, so they cannot pass by scanning nothing:
 - `RouteNamesTest`: route serial names (stored in the saved back stack) never change.
 - `DocsLinksTest`: every path quoted in the docs and the project skills exists.
 - `SkillsTest`: every `.agents/skills/<name>/SKILL.md` has frontmatter matching its folder, and `AGENTS.md` lists it.
-- `DeployWorkflowTest`: the guards of the distribution workflow (bump only on main, no debug-signed release, `[skip ci]`, tag last).
+- `DeployWorkflowTest`: the guards of the distribution workflow (bump only on main, a fail-closed signature check, `[skip ci]`, tag last, build-logic tests in both workflows).
 
 A test in `:app` that drives example screens without importing a feature package starts with the line
 `// remove-examples: ...`, so `scripts/remove-examples.sh` deletes it with the examples.

@@ -32,6 +32,12 @@ jobs:
     # the message this workflow would trigger itself forever. This guard makes that loop impossible.
     if: ${{ !startsWith(github.event.head_commit.message, 'chore(release):') }}
 
+    # Every step runs as `bash -eo pipefail`: without pipefail a failing command piped into tee (the signature check)
+    # would pass unnoticed.
+    defaults:
+      run:
+        shell: bash
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -115,7 +121,10 @@ jobs:
       # A release build takes several minutes, so the suite runs first: distributing a build whose tests are red is far
       # more expensive.
       - name: Run tests
-        run: ./gradlew test
+        run: |
+          ./gradlew test
+          # The versionCode rules live in build-logic, which `test` does not reach.
+          ./gradlew -p build-logic test
 
       - name: Decode release keystore
         env:
@@ -203,9 +212,18 @@ jobs:
       # testers with no symptom at all.
       - name: Verify APK is signed with the release key
         run: |
-          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -r | head -1)"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -name apksigner | sort -Vr | head -1)"
+          if [ -z "$APKSIGNER" ]; then
+            echo "::error::apksigner not found under $ANDROID_HOME/build-tools; the signature cannot be verified."
+            exit 1
+          fi
           "$APKSIGNER" verify --print-certs app/build/outputs/apk/prod/release/app-prod-release.apk \
             | tee "$RUNNER_TEMP/certs.txt"
+          # Fail closed: no certificate printed means nothing was verified.
+          if ! grep -q "Signer #1 certificate" "$RUNNER_TEMP/certs.txt"; then
+            echo "::error::apksigner printed no signer certificate."
+            exit 1
+          fi
           if grep -qi "CN=Android Debug" "$RUNNER_TEMP/certs.txt"; then
             echo "::error::The APK is signed with the debug key, not the release key."
             exit 1
