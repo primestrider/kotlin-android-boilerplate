@@ -34,3 +34,18 @@ Three levels, from narrow to wide:
 The recorder deliberately does not try to keep the process alive: after an uncaught exception the app's state is unknown, and continuing would hide the bug and risk corrupting data. A crash reporter (Firebase Crashlytics, Sentry) installs its own handler; install it before `CrashRecorder.install()` so the chain is recorder → reporter → system.
 
 Debug builds have Settings → Developer → "Crash the app" to try it.
+
+## Background work
+
+WorkManager (`work-runtime-ktx`) runs deferrable work that must survive the app closing. It is initialised on demand, not at startup: the manifest removes `androidx.work.WorkManagerInitializer` from `androidx.startup.InitializationProvider` (`tools:node="remove"`), and `KotlinStarterApp` implements `Configuration.Provider` with the injected `HiltWorkerFactory`. The first `WorkManager.getInstance(context)` builds WorkManager with that configuration, so app start pays nothing for it.
+
+- Write workers as `@HiltWorker class XxxWorker @AssistedInject constructor(@Assisted context: Context, @Assisted params: WorkerParameters, ...deps) : CoroutineWorker(...)`; Hilt injects the other constructor parameters.
+- Use unique work names (`enqueueUniquePeriodicWork(name, UPDATE, ...)`) so a worker is never enqueued twice, and keep what a worker records somewhere a fresh process can read (it may run without any activity).
+- Periodic work runs at most every 15 minutes, and the OS decides when (Doze, battery saver, app standby).
+- Tests: `TestListenableWorkerBuilder` with a `WorkerFactory` for the worker itself; `WorkManagerTestInitHelper.initializeTestWorkManager(context, config)` (with a `SynchronousExecutor`) for code that enqueues work. `HiltTestApplication` is not a `Configuration.Provider`, so a Hilt test that reaches `WorkManager.getInstance` must initialise the test WorkManager first.
+
+The Background Task demo (`feature/example/sdk/background/`) is the reference implementation (docs/examples.md).
+
+## Picture-in-picture
+
+`core/pip/PictureInPictureHost` (a singleton) holds what to show while `MainActivity` is in picture-in-picture. A screen sets it (Audio & Video sets a `PlayerView` while its video plays) and clears it when it stops or leaves. `MainActivity` wraps `MainShell` in `PictureInPictureFrame`: in PiP with host content, only that content is shown full screen; `MainShell` stays composed underneath (hidden and out of the semantics tree), so the NavHost, its back stack and the screen that set the host are untouched when the window returns to full size. `MainActivity` declares `supportsPictureInPicture` and handles size, layout and orientation changes itself (`configChanges`), so entering and leaving PiP does not recreate it.

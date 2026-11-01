@@ -12,7 +12,7 @@ All dependencies and plugins are declared in `gradle/libs.versions.toml`.
 Single module `:app`, root package `com.primestrider.kotlinstarter`.
 
 ```
-KotlinStarterApp.kt          # @HiltAndroidApp
+KotlinStarterApp.kt          # @HiltAndroidApp; WorkManager Configuration.Provider (HiltWorkerFactory, on-demand init)
 app/                         # MainActivity, AppViewModel, navigation (MainShell tabs + per-tab graphs in AppNavHost.kt)
 core/storage/                # DataStore module and preference keys (Room vs DataStore: docs/architecture/storage-database.md)
 core/network/                # Retrofit/OkHttp clients (app + refresh), ApiError, safeApiCall, toApiError, @Anonymous (docs/architecture/networking.md, data-loading.md)
@@ -22,10 +22,13 @@ core/designsystem/component/ # reusable components (see docs/architecture/compon
 core/i18n/                   # AppLanguage, LanguageController
 core/util/                   # formatCurrency, formatPercent, currentLocale
 core/crash/                  # CrashRecorder (last uncaught exception) + CrashFallbackScreen (docs/architecture/overview.md, Error handling)
+core/permission/             # PermissionGate + permissionStatus: one shared runtime-permission card (docs/examples.md)
+core/pip/                    # PictureInPictureHost + PictureInPictureFrame: what MainActivity shows in picture-in-picture (docs/architecture/overview.md)
 feature/example/             # example catalog, Home, Profile hub, sign-in, protected Account, Settings, component + styling pages, form example (deletable)
 feature/example/todos/       # Todos in Room: ExampleDatabase (example.db), DAO, repository; schemas in app/schemas
 feature/example/products/    # Products list + detail: Retrofit API, Paging 3 source, debounced search, tabs, add-to-cart sheet (docs/architecture/data-loading.md)
 feature/example/auth/        # DummyJSON AuthAdapter and its Hilt binding (ExampleAuthModule): swap the backend here
+feature/example/sdk/         # "Device APIs" Home section: sdkDemos registry, SdkDemoRoute(id), one package per demo (docs/examples.md)
 ```
 
 Tests mirror the main source tree under `app/src/test/`.
@@ -42,7 +45,7 @@ Tests mirror the main source tree under `app/src/test/`.
 
 ## Example routes and adding a page
 
-Routes in `feature/example/ExampleRoutes.kt`: `ProfileRoute`, `AccountRoute` (protected), `SignInRoute`, `SettingsRoute`, `FormExampleRoute`, `ProductsRoute`, `ProductDetailRoute(id)`, `TodosRoute`; the component pages `ActionsRoute`, `InputsRoute`, `DisplayRoute`, `OverlaysRoute`; and the styling pages `ColorsRoute`, `TypographyRoute`, `SpacingRoute`, `SizingRoute`, `LayoutRoute`, `AppearanceRoute`, `ThemeRoute`. `HomeRoute` is in `app/navigation/AppNavHost.kt`.
+Routes in `feature/example/ExampleRoutes.kt`: `ProfileRoute`, `AccountRoute` (protected), `SignInRoute`, `SettingsRoute`, `FormExampleRoute`, `ProductsRoute`, `ProductDetailRoute(id)`, `TodosRoute`, `SdkDemoRoute(id, amount?)` (all Device APIs demos; add one in `sdkDemos`, see docs/examples.md); the component pages `ActionsRoute`, `InputsRoute`, `DisplayRoute`, `OverlaysRoute`; and the styling pages `ColorsRoute`, `TypographyRoute`, `SpacingRoute`, `SizingRoute`, `LayoutRoute`, `AppearanceRoute`, `ThemeRoute`. `HomeRoute` is in `app/navigation/AppNavHost.kt`.
 
 To add an example page:
 

@@ -13,16 +13,22 @@ import java.util.TimeZone
 import kotlin.math.abs
 import kotlin.math.round
 
-/** [amount] in [currencyCode], with the symbol, grouping and decimals of [locale]. */
+/** [amount] in [currencyCode], with the symbol, grouping and decimals of [locale]; [fractionDigits] overrides the decimals (0 for whole rupiah). */
 fun formatCurrency(
     amount: Double,
     currencyCode: String = "USD",
     locale: Locale = Locale.getDefault(),
+    fractionDigits: Int? = null,
 ): String =
     NumberFormat
         .getCurrencyInstance(locale)
-        .apply { currency = Currency.getInstance(currencyCode) }
-        .format(amount)
+        .apply {
+            currency = Currency.getInstance(currencyCode)
+            fractionDigits?.let {
+                minimumFractionDigits = it
+                maximumFractionDigits = it
+            }
+        }.format(amount)
 
 /** [fraction] as a percentage (0.125 → "12.5%"): no decimals for whole percentages, otherwise one. */
 fun formatPercent(

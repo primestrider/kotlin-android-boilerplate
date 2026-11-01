@@ -2,6 +2,7 @@ package com.primestrider.kotlinstarter.feature.example.auth
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.lifecycle.viewModelScope
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.auth.AuthTokens
 import com.primestrider.kotlinstarter.core.auth.AuthUser
@@ -15,6 +16,7 @@ import com.primestrider.kotlinstarter.testing.InMemoryPreferencesDataStore
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -47,6 +49,7 @@ class AccountViewModelTest {
     private val session = Session(user, AuthTokens("a1", "r1"))
     private lateinit var server: MockWebServer
     private lateinit var api: DummyJsonApi
+    private val created = mutableListOf<AccountViewModel>()
 
     /** Writes can be made to fail to exercise a broken storage layer. */
     private class FlakyDataStore(
@@ -77,6 +80,7 @@ class AccountViewModelTest {
 
     @After
     fun tearDown() {
+        created.forEach { it.viewModelScope.cancel() }
         Dispatchers.resetMain()
         server.close()
     }
@@ -90,7 +94,7 @@ class AccountViewModelTest {
         val repository = SessionRepository(store, FakeSessionCipher(), json, backgroundScope)
         runCurrent()
         if (signedIn) repository.signIn(session)
-        return AccountViewModel(repository, api, json, messenger) to repository
+        return AccountViewModel(repository, api, json, messenger).also { created += it } to repository
     }
 
     private suspend fun AccountViewModel.awaitResult(): ProfileLoad =

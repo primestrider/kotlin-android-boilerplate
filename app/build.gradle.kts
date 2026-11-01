@@ -10,19 +10,30 @@ plugins {
     alias(libs.plugins.ktlint)
 }
 
+val localProperties: Properties =
+    Properties().apply {
+        rootProject
+            .file("local.properties")
+            .takeIf { it.exists() }
+            ?.reader()
+            ?.use { load(it) }
+    }
+
 // API base URL: local.properties `api.url`, else env API_URL, else DummyJSON (keep the trailing slash).
 val apiUrl: String =
-    Properties()
-        .apply {
-            rootProject
-                .file("local.properties")
-                .takeIf { it.exists() }
-                ?.reader()
-                ?.use { load(it) }
-        }.getProperty("api.url")
+    localProperties
+        .getProperty("api.url")
         ?.takeIf { it.isNotBlank() }
         ?: System.getenv("API_URL")?.takeIf { it.isNotBlank() }
         ?: "https://dummyjson.com/"
+
+// Deep link scheme (`<scheme>://example/...`): local.properties `app.scheme`, else env APP_SCHEME, else "kotlinstarter".
+val appScheme: String =
+    localProperties
+        .getProperty("app.scheme")
+        ?.takeIf { it.isNotBlank() }
+        ?: System.getenv("APP_SCHEME")?.takeIf { it.isNotBlank() }
+        ?: "kotlinstarter"
 
 android {
     namespace = "com.primestrider.kotlinstarter"
@@ -36,6 +47,8 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"
+        manifestPlaceholders["appScheme"] = appScheme
+        buildConfigField("String", "APP_SCHEME", "\"$appScheme\"")
         buildConfigField("String", "API_URL", "\"${apiUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
     }
 
@@ -58,6 +71,11 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+    sourceSets {
+        // MigrationTestHelper reads the exported schemas as assets. Robolectric unit tests only see the variant's merged
+        // assets, so they are added to debug (never release).
+        getByName("debug").assets.directories.add("$projectDir/schemas")
     }
     testOptions {
         unitTests {
@@ -115,8 +133,25 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+    implementation(libs.play.review.ktx)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.browser)
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.play.services.location)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.mlkit.barcode.scanning)
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.ui)
+    implementation(libs.androidx.biometric)
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.hilt.work)
+    ksp(libs.androidx.hilt.compiler)
+    implementation(libs.zxing.core)
 
     testImplementation(libs.okhttp.mockwebserver3)
+    testImplementation(libs.androidx.room.testing)
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
@@ -125,6 +160,7 @@ dependencies {
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
+    testImplementation(libs.androidx.work.testing)
     testImplementation(libs.hilt.android.testing)
     kspTest(libs.hilt.compiler)
 }

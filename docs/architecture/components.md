@@ -32,6 +32,10 @@ Rules:
 | `Skeleton`, `SkeletonText` | `Skeleton.kt` | Pulsing placeholders while content loads; `SkeletonText` is announced as "Loading" |
 | `SectionHeader` | `SectionHeader.kt` | Section title marked as an accessibility heading, with an optional "See all" style action |
 | `InfoRow` | `InfoRow.kt` | Label / value pairs (order id, status, address); long values wrap |
+| `SegmentedChoice` | `ChoiceControls.kt` | One of up to four short options as a segmented row; more options use `SelectField` |
+| `SwitchRow` | `ChoiceControls.kt` | Label plus switch where the whole row toggles and reports the switch role |
+| `LabeledSlider` | `ChoiceControls.kt` | Slider with its label and a value readout (`valueText`) |
+| `InfoCard` | `InfoCard.kt` | Outlined card of `InfoRow`s from (label, value) pairs; null or blank values show an em dash |
 
 ## Showing messages
 

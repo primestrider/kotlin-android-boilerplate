@@ -2,6 +2,7 @@ package com.primestrider.kotlinstarter.feature.example.auth
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.lifecycle.viewModelScope
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.auth.AuthAdapter
 import com.primestrider.kotlinstarter.core.auth.AuthResult
@@ -20,6 +21,7 @@ import com.primestrider.kotlinstarter.testing.InMemoryPreferencesDataStore
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -47,6 +49,7 @@ class SignInViewModelTest {
     private val dispatcher = StandardTestDispatcher()
     private val json = Json { ignoreUnknownKeys = true }
     private val user = AuthUser(1, "emilys", "e@x.com", "Emily", "Johnson")
+    private val created = mutableListOf<SignInViewModel>()
 
     private class FakeAdapter(
         var behavior: suspend () -> AuthResult,
@@ -67,7 +70,10 @@ class SignInViewModelTest {
     fun setUp() = Dispatchers.setMain(dispatcher)
 
     @After
-    fun tearDown() = Dispatchers.resetMain()
+    fun tearDown() {
+        created.forEach { it.viewModelScope.cancel() }
+        Dispatchers.resetMain()
+    }
 
     private fun TestScope.viewModel(
         adapter: FakeAdapter,
@@ -76,7 +82,7 @@ class SignInViewModelTest {
         store: DataStore<Preferences> = InMemoryPreferencesDataStore(),
     ): Pair<SignInViewModel, SessionRepository> {
         val repository = SessionRepository(store, FakeSessionCipher(), json, backgroundScope)
-        return SignInViewModel(adapter, repository, demo, messenger, json) to repository
+        return SignInViewModel(adapter, repository, demo, messenger, json).also { created += it } to repository
     }
 
     private val ok: suspend () -> AuthResult = { AuthResult(user, AuthTokens("a1", "r1")) }

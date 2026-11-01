@@ -9,9 +9,16 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navDeepLink
+import androidx.navigation.toRoute
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.feature.example.AccountRoute
 import com.primestrider.kotlinstarter.feature.example.ActionsRoute
+import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute
+import com.primestrider.kotlinstarter.feature.example.AnimListsRoute
+import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
+import com.primestrider.kotlinstarter.feature.example.AnimTransitionsRoute
 import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
 import com.primestrider.kotlinstarter.feature.example.ColorsRoute
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
@@ -26,6 +33,7 @@ import com.primestrider.kotlinstarter.feature.example.OverlaysRoute
 import com.primestrider.kotlinstarter.feature.example.ProductDetailRoute
 import com.primestrider.kotlinstarter.feature.example.ProductsRoute
 import com.primestrider.kotlinstarter.feature.example.ProfileRoute
+import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
 import com.primestrider.kotlinstarter.feature.example.SettingsRoute
 import com.primestrider.kotlinstarter.feature.example.SignInRoute
 import com.primestrider.kotlinstarter.feature.example.SizingRoute
@@ -33,6 +41,10 @@ import com.primestrider.kotlinstarter.feature.example.SpacingRoute
 import com.primestrider.kotlinstarter.feature.example.ThemeRoute
 import com.primestrider.kotlinstarter.feature.example.TodosRoute
 import com.primestrider.kotlinstarter.feature.example.TypographyRoute
+import com.primestrider.kotlinstarter.feature.example.animation.cards.CardsScreen
+import com.primestrider.kotlinstarter.feature.example.animation.lists.ListsScreen
+import com.primestrider.kotlinstarter.feature.example.animation.micro.MicroInteractionsScreen
+import com.primestrider.kotlinstarter.feature.example.animation.transitions.TransitionsScreen
 import com.primestrider.kotlinstarter.feature.example.auth.AccountScreen
 import com.primestrider.kotlinstarter.feature.example.auth.AccountViewModel
 import com.primestrider.kotlinstarter.feature.example.auth.ProfileScreen
@@ -52,6 +64,7 @@ import com.primestrider.kotlinstarter.feature.example.products.ProductDetailScre
 import com.primestrider.kotlinstarter.feature.example.products.ProductDetailViewModel
 import com.primestrider.kotlinstarter.feature.example.products.ProductsScreen
 import com.primestrider.kotlinstarter.feature.example.products.ProductsViewModel
+import com.primestrider.kotlinstarter.feature.example.sdk.SdkDemoScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsViewModel
 import com.primestrider.kotlinstarter.feature.example.styling.AppearanceScreen
@@ -126,6 +139,13 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
                 onBack = back,
             )
         }
+        composable<SdkDemoRoute>(
+            deepLinks = listOf(navDeepLink<SdkDemoRoute>(basePath = "${BuildConfig.APP_SCHEME}://example/sdk")),
+        ) { entry -> SdkDemoScreen(id = entry.toRoute<SdkDemoRoute>().id, onBack = back) }
+        composable<AnimTransitionsRoute> { TransitionsScreen(onBack = back) }
+        composable<AnimCardsRoute> { CardsScreen(onBack = back) }
+        composable<AnimListsRoute> { ListsScreen(onBack = back) }
+        composable<AnimMicroRoute> { MicroInteractionsScreen(onBack = back) }
         composable<ColorsRoute> { ColorsScreen(onBack = back) }
         composable<TypographyRoute> { TypographyScreen(onBack = back) }
         composable<SpacingRoute> { SpacingScreen(onBack = back) }
