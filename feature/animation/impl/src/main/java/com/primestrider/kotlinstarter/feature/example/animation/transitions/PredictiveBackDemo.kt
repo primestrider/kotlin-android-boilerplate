@@ -33,8 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.animation.impl.R
 import com.primestrider.kotlinstarter.feature.example.animation.AnimExample
 import com.primestrider.kotlinstarter.feature.example.animation.MinTouchTarget
 import kotlinx.coroutines.CancellationException

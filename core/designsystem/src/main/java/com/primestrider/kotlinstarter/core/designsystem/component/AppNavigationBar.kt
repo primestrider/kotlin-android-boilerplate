@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 
 private const val BADGE_MAX = 99
@@ -20,6 +21,8 @@ data class NavBarItem(
     val badgeCount: Int? = null,
 )
 
+const val APP_NAVIGATION_BAR_TAG = "app_navigation_bar"
+
 /** Bottom navigation bar for top-level destinations. Stateless: the caller owns [selectedIndex]. */
 @Composable
 fun AppNavigationBar(
@@ -28,7 +31,7 @@ fun AppNavigationBar(
     onSelect: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    NavigationBar(modifier) {
+    NavigationBar(modifier.testTag(APP_NAVIGATION_BAR_TAG)) {
         items.forEachIndexed { index, item ->
             NavigationBarItem(
                 selected = index == selectedIndex,

@@ -25,8 +25,8 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.animation.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.animation.AnimExample
 

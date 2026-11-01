@@ -1,7 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.animation
 
 import androidx.annotation.StringRes
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.feature.animation.impl.R
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
 import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute

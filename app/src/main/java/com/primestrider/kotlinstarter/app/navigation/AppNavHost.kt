@@ -1,21 +1,21 @@
 package com.primestrider.kotlinstarter.app.navigation
 
-import androidx.compose.runtime.getValue
+import androidx.annotation.StringRes
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute
-import com.primestrider.kotlinstarter.feature.example.AnimListsRoute
-import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
-import com.primestrider.kotlinstarter.feature.example.AnimTransitionsRoute
+import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.feature.example.CatalogHome
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
 import com.primestrider.kotlinstarter.feature.example.ProfileRoute
-import com.primestrider.kotlinstarter.feature.example.animation.cards.CardsScreen
-import com.primestrider.kotlinstarter.feature.example.animation.lists.ListsScreen
-import com.primestrider.kotlinstarter.feature.example.animation.micro.MicroInteractionsScreen
-import com.primestrider.kotlinstarter.feature.example.animation.transitions.TransitionsScreen
+import com.primestrider.kotlinstarter.feature.example.animation.animationDestinations
 import com.primestrider.kotlinstarter.feature.example.auth.accountDestinations
 import com.primestrider.kotlinstarter.feature.example.catalogComponentsDestinations
 import com.primestrider.kotlinstarter.feature.example.catalogHomeDestinations
@@ -24,6 +24,10 @@ import com.primestrider.kotlinstarter.feature.example.sdk.devicesDestinations
 import com.primestrider.kotlinstarter.feature.example.settings.settingsDestinations
 import com.primestrider.kotlinstarter.feature.example.todos.ui.todosDestinations
 import kotlinx.serialization.Serializable
+import kotlin.reflect.KClass
+
+// The app wires its features here. Every `// region example:<feature>` block belongs to one example feature:
+// `scripts/remove-examples.sh` deletes those blocks together with the feature's modules, and the app still runs.
 
 @Serializable
 data object HomeRoute
@@ -38,15 +42,60 @@ data object ComponentsGraph
 @Serializable
 data object ProfileGraph
 
-/**
- * Home tab: the catalog index and the pages it opens. Each feature registers its own destinations; `// region
- * example:<feature>` blocks are what `scripts/remove-examples.sh` deletes together with the feature's modules.
- */
-fun NavGraphBuilder.homeGraph(navController: NavHostController) {
-    val back: () -> Unit = { navController.popBackStack() }
-    navigation<HomeGraph>(startDestination = HomeRoute) {
+/** A bottom-navigation destination: its label and icon, its nested graph and that graph's start route. */
+data class TopLevelTab(
+    @StringRes val label: Int,
+    val icon: ImageVector,
+    val graph: Any,
+    val startRoute: Any,
+    val graphClass: KClass<*>,
+)
+
+/** Always present: the app's Home. */
+val HomeTab = TopLevelTab(R.string.nav_home, Icons.Filled.Home, HomeGraph, HomeRoute, HomeGraph::class)
+
+/** The tabs in display order: Home, then whatever the wired features add. One tab hides the bottom bar. */
+val topLevelTabs: List<TopLevelTab> =
+    buildList {
+        add(HomeTab)
         // region example:catalog
-        composable<HomeRoute> { CatalogHome(onOpen = { route -> navController.navigate(route) }) }
+        add(
+            TopLevelTab(
+                R.string.nav_components,
+                Icons.AutoMirrored.Filled.List,
+                ComponentsGraph,
+                ComponentsHomeRoute,
+                ComponentsGraph::class,
+            ),
+        )
+        // endregion
+        // region example:account
+        add(TopLevelTab(R.string.nav_profile, Icons.Filled.Person, ProfileGraph, ProfileRoute, ProfileGraph::class))
+        // endregion
+    }
+
+/** Renders Home; receives the navigation callback for the routes Home opens. */
+typealias HomeScreenContent = @Composable (onOpen: (Any) -> Unit) -> Unit
+
+/** What Home shows: the first entry, or [PlaceholderHomeScreen] when no feature provides one. */
+val homeScreens: List<HomeScreenContent> =
+    buildList {
+        // region example:catalog
+        add { onOpen -> CatalogHome(onOpen = onOpen) }
+        // endregion
+    }
+
+/** Home tab: Home itself and every page reachable from it. Register new Home destinations here. */
+fun NavGraphBuilder.homeGraph(
+    navController: NavHostController,
+    screens: List<HomeScreenContent> = homeScreens,
+) {
+    navigation<HomeGraph>(startDestination = HomeRoute) {
+        composable<HomeRoute> {
+            val home = screens.firstOrNull()
+            if (home == null) PlaceholderHomeScreen() else home { route -> navController.navigate(route) }
+        }
+        // region example:catalog
         catalogHomeDestinations(navController)
         // endregion
         // region example:products
@@ -58,30 +107,25 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
         // region example:devices
         devicesDestinations(navController)
         // endregion
-        composable<AnimTransitionsRoute> { TransitionsScreen(onBack = back) }
-        composable<AnimCardsRoute> { CardsScreen(onBack = back) }
-        composable<AnimListsRoute> { ListsScreen(onBack = back) }
-        composable<AnimMicroRoute> { MicroInteractionsScreen(onBack = back) }
+        // region example:animation
+        animationDestinations(navController)
+        // endregion
     }
 }
 
-/** Components tab: the component example pages. */
-fun NavGraphBuilder.componentsGraph(navController: NavHostController) {
+/** The nested graphs of every tab after Home. */
+fun NavGraphBuilder.featureGraphs(navController: NavHostController) {
+    // region example:catalog
     navigation<ComponentsGraph>(startDestination = ComponentsHomeRoute) {
-        // region example:catalog
         catalogComponentsDestinations(navController)
-        // endregion
     }
-}
-
-/** Profile tab: the account hub (start), sign-in, the protected Account page and Settings. */
-fun NavGraphBuilder.profileGraph(navController: NavHostController) {
+    // endregion
+    // region example:account
     navigation<ProfileGraph>(startDestination = ProfileRoute) {
-        // region example:account
         accountDestinations(navController)
-        // endregion
         // region example:settings
         settingsDestinations(navController)
         // endregion
     }
+    // endregion
 }

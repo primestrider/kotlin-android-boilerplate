@@ -74,6 +74,10 @@ dependencies {
     implementation(projects.feature.account.api)
     implementation(projects.feature.account.impl)
     // endregion
+    // region example:animation
+    implementation(projects.feature.animation.api)
+    implementation(projects.feature.animation.impl)
+    // endregion
     // region example:catalog
     implementation(projects.feature.catalog.api)
     implementation(projects.feature.catalog.impl)

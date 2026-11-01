@@ -15,9 +15,10 @@ class NoRawMaterialControlsTest {
 
     private fun scannedModules() = moduleDirs().filter { it.resolve("src/main/java").isDirectory }
 
+    // :app and the 8 core modules always exist (also after removing the examples).
     @Test
     fun scans_every_module() {
-        assertTrue("scanned ${scannedModules().map { it.name }}", scannedModules().size >= 2)
+        assertTrue("scanned ${scannedModules().map { it.name }}", scannedModules().size >= 9)
     }
 
     @Test

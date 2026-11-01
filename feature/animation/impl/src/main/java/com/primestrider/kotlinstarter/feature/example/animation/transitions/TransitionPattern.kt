@@ -17,7 +17,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.feature.animation.impl.R
 
 /** Material Motion durations, distances and scales used by [TransitionPattern]. */
 object MotionSpec {
