@@ -56,6 +56,7 @@ class SdkDemosTest {
                 "live-photo",
                 "blob",
                 "status-bar",
+                "music",
             ),
             sdkDemos.map {
                 it.id

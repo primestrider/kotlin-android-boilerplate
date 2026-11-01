@@ -120,6 +120,14 @@ Tests go with the demos: they live in `feature/devices/impl/src/test/`. Three `:
 - **API-level fallback:** none needed; the compat controller covers API 24 and up. Leaving the screen restores the previous icon style and visibility.
 - **Files:** `sdk/statusbar/StatusBarScreen.kt`, `sdk/statusbar/SystemBarStyle.kt` (the style-to-appearance rule).
 
+### Background Music (`music`)
+
+- **Purpose:** play, pause and stop a bundled 10-second track that keeps playing with the app in the background or the screen locked, with controls in the media notification and on the lock screen.
+- **Android API:** a **foreground service** of type `mediaPlayback`: Media3 `MediaSessionService` with an `ExoPlayer` (`MusicService`), controlled from the screen through a `MediaController` connected with a `SessionToken`. Media3 posts the media notification and moves the service in and out of the foreground as playback starts and pauses; audio focus and "becoming noisy" (headphones unplugged) are handled by the player.
+- **Permissions:** `FOREGROUND_SERVICE` and `FOREGROUND_SERVICE_MEDIA_PLAYBACK` (normal, granted at install). The notification itself needs `POST_NOTIFICATIONS` on Android 13+; without it playback still runs, only the notification is hidden.
+- **API-level fallback:** none needed (Media3 covers API 24+); the service type is declared in the manifest for Android 14+.
+- **Files:** `sdk/music/MusicService.kt`, `sdk/music/MusicController.kt` (controller + `MusicState`), `sdk/music/MusicScreen.kt`, `res/raw/sdk_music_sample.wav` (generated, no licence).
+
 ### Blur & Gradients (`effects`)
 
 - **Purpose:** a wallet card with a linear gradient at any angle (three palettes), a balance hidden behind a blur with an intensity slider, and a 3×3 mesh gradient whose middle point and smoothing you can change.
@@ -268,6 +276,7 @@ Robolectric covers the logic; these need real hardware (or a well-equipped emula
 - **Notifications:** on Android 12 or older (no runtime permission), notifications post and the status reads "granted (not needed before Android 13)".
 - **Clipboard & Haptics:** paste from another app and feel each haptic.
 - **System Bars:** dark theme with Inverted, and the style after a rotation.
+- **Background Music:** play, lock the screen (lock-screen controls work), leave the app (keeps playing), pause and swipe the app away from Recents (the service stops), and on Android 13+ with notifications denied (plays without a notification).
 - **Payment Code:** brightness goes to full and returns; the screenshot banner on Android 14+.
 - **Web Browser & Linking:** Custom Tabs and each external app (phone, mail, maps).
 - **Predictive back gesture on the transitions demo:** on Android 14+, open an item on Animations > Page transitions and swipe back slowly from the edge: the detail follows the finger, cancelling restores it and releasing returns to the list (the page stays); do the same with the predictive back preview panel.

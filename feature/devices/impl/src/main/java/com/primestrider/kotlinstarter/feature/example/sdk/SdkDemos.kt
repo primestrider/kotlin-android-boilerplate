@@ -21,6 +21,7 @@ import com.primestrider.kotlinstarter.feature.example.sdk.files.FilesScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.livephoto.LivePhotoScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.location.LocationScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.media.MediaScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.music.MusicScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.notifications.NotificationsScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.payment.PaymentCodeScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.picker.ImagePickerScreen
@@ -63,6 +64,7 @@ val sdkDemos: List<SdkDemo> =
         SdkDemo("live-photo", R.string.sdk_live_photo_title, R.string.sdk_live_photo_subtitle) { LivePhotoScreen(it) },
         SdkDemo("blob", R.string.sdk_blob_title, R.string.sdk_blob_subtitle) { BlobScreen(it) },
         SdkDemo("status-bar", R.string.sdk_status_bar_title, R.string.sdk_status_bar_subtitle) { StatusBarScreen(it) },
+        SdkDemo("music", R.string.sdk_music_title, R.string.sdk_music_subtitle) { MusicScreen(it) },
     )
 
 /** Home entries for the "Device APIs" section, built from [sdkDemos]. */

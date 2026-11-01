@@ -449,4 +449,16 @@
     <string name="sdk_background_state_failed">Gagal</string>
     <string name="sdk_background_state_blocked">Terblokir</string>
     <string name="sdk_background_state_cancelled">Dibatalkan</string>
+    <string name="sdk_music_title">Musik Latar</string>
+    <string name="sdk_music_subtitle">Foreground service pemutar media dengan kontrol di layar kunci</string>
+    <string name="sdk_music_player_title">Pemutar</string>
+    <string name="sdk_music_player_description">Mengendalikan MediaSessionService lewat MediaController</string>
+    <string name="sdk_music_track_title">Starter Arpeggio</string>
+    <string name="sdk_music_track_artist">Kotlin Starter · contoh bawaan 10 dtk</string>
+    <string name="sdk_music_play">Putar</string>
+    <string name="sdk_music_pause">Jeda</string>
+    <string name="sdk_music_stop">Berhenti</string>
+    <string name="sdk_music_background_title">Tetap berputar di latar belakang</string>
+    <string name="sdk_music_background_description">Mulai putar, lalu tinggalkan aplikasi atau kunci layar: notifikasi dan layar kunci tetap menampilkan kontrol</string>
+    <string name="sdk_music_notification_note">Di Android 13 ke atas, notifikasi media baru tampil setelah Anda mengizinkan notifikasi (demo Notifikasi).</string>
 </resources>

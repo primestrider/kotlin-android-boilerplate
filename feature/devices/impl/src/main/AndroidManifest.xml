@@ -19,6 +19,9 @@
     <!-- Audio & Video (voice notes) and Biometric & Secure Store demos. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <!-- Background Music demo: a media playback foreground service. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <!-- Package visibility for the Web Browser demo. -->
     <queries>
@@ -59,6 +62,17 @@
         <receiver
             android:name="com.primestrider.kotlinstarter.feature.example.sdk.notifications.NotificationReceiver"
             android:exported="false" />
+
+        <!-- Background Music demo. Exported with the session action so media controllers (system media controls,
+             Bluetooth, Android Auto) can bind to it; Media3 runs it in the foreground while it plays. -->
+        <service
+            android:name="com.primestrider.kotlinstarter.feature.example.sdk.music.MusicService"
+            android:exported="true"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

@@ -449,4 +449,16 @@
     <string name="sdk_background_state_failed">Failed</string>
     <string name="sdk_background_state_blocked">Blocked</string>
     <string name="sdk_background_state_cancelled">Cancelled</string>
+    <string name="sdk_music_title">Background Music</string>
+    <string name="sdk_music_subtitle">A media playback foreground service with lock-screen controls</string>
+    <string name="sdk_music_player_title">Player</string>
+    <string name="sdk_music_player_description">Controls a MediaSessionService through a MediaController</string>
+    <string name="sdk_music_track_title">Starter Arpeggio</string>
+    <string name="sdk_music_track_artist">Kotlin Starter · 10 s bundled sample</string>
+    <string name="sdk_music_play">Play</string>
+    <string name="sdk_music_pause">Pause</string>
+    <string name="sdk_music_stop">Stop</string>
+    <string name="sdk_music_background_title">Keeps playing in the background</string>
+    <string name="sdk_music_background_description">Start playback, then leave the app or lock the screen: the notification and lock screen keep the controls</string>
+    <string name="sdk_music_notification_note">On Android 13 and newer the media notification shows only after you allow notifications (Notifications demo).</string>
 </resources>
