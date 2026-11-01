@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -20,6 +19,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
+import com.primestrider.kotlinstarter.core.designsystem.component.AppCheckbox
 import com.primestrider.kotlinstarter.core.designsystem.component.AppTextField
 import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
@@ -79,7 +79,7 @@ fun SignInScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(Spacing.s2),
             ) {
-                Checkbox(checked = state.shortLived, onCheckedChange = null)
+                AppCheckbox(checked = state.shortLived, onCheckedChange = null)
                 Text(stringResource(R.string.auth_short_lived), style = MaterialTheme.typography.bodyMedium)
             }
             AppButton(

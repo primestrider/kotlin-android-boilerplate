@@ -12,25 +12,12 @@ import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.selection.triStateToggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MultiChoiceSegmentedButtonRow
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SecondaryTabRow
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -47,9 +34,16 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.input.KeyboardType
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.AppCheckbox
+import com.primestrider.kotlinstarter.core.designsystem.component.AppRadioButton
+import com.primestrider.kotlinstarter.core.designsystem.component.AppSwitch
 import com.primestrider.kotlinstarter.core.designsystem.component.AppTextField
+import com.primestrider.kotlinstarter.core.designsystem.component.LabeledRangeSlider
+import com.primestrider.kotlinstarter.core.designsystem.component.LabeledSlider
+import com.primestrider.kotlinstarter.core.designsystem.component.MultiSegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.component.PasswordTextField
 import com.primestrider.kotlinstarter.core.designsystem.component.SearchField
+import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
@@ -116,40 +110,34 @@ private fun TextFieldsSection() {
     var query by rememberSaveable { mutableStateOf("") }
     DemoSection(R.string.components_section_text_fields) {
         SearchField(query = query, onQueryChange = { query = it })
-        TextField(
+        AppTextField(
             value = name,
             onValueChange = { name = it },
-            label = { Text(stringResource(R.string.components_field_name)) },
-            placeholder = { Text(stringResource(R.string.components_field_name_placeholder)) },
-            leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null) },
-            supportingText = { Text(stringResource(R.string.components_field_name_hint)) },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
+            label = stringResource(R.string.components_field_name),
+            placeholder = stringResource(R.string.components_field_name_placeholder),
+            leadingIcon = Icons.Filled.Person,
+            supportingText = stringResource(R.string.components_field_name_hint),
         )
-        OutlinedTextField(
+        AppTextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text(stringResource(R.string.components_field_username)) },
-            isError = true,
-            supportingText = { Text(stringResource(R.string.components_field_username_error)) },
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
+            label = stringResource(R.string.components_field_username),
+            errorText = stringResource(R.string.components_field_username_error),
         )
-        OutlinedTextField(
+        AppTextField(
             value = "",
             onValueChange = {},
-            label = { Text(stringResource(R.string.components_field_disabled)) },
+            label = stringResource(R.string.components_field_disabled),
             enabled = false,
-            modifier = Modifier.fillMaxWidth(),
         )
-        OutlinedTextField(
+        AppTextField(
             value = bio,
-            onValueChange = { if (it.length <= BIO_MAX) bio = it },
-            label = { Text(stringResource(R.string.components_field_bio)) },
-            placeholder = { Text(stringResource(R.string.components_field_bio_placeholder)) },
-            supportingText = { Text(stringResource(R.string.component_counter, bio.length, BIO_MAX)) },
+            onValueChange = { bio = it },
+            label = stringResource(R.string.components_field_bio),
+            placeholder = stringResource(R.string.components_field_bio_placeholder),
+            singleLine = false,
             minLines = 3,
-            modifier = Modifier.fillMaxWidth(),
+            maxLength = BIO_MAX,
         )
     }
 }
@@ -162,7 +150,13 @@ private fun KeyboardTypesSection() {
     var password by rememberSaveable { mutableStateOf("") }
     DemoSection(R.string.components_section_keyboard) {
         KeyboardField(email, { email = it }, R.string.components_field_email, KeyboardType.Email)
-        KeyboardField(phone, { phone = it }, R.string.components_field_phone, KeyboardType.Phone)
+        AppTextField(
+            value = phone,
+            onValueChange = { phone = it },
+            label = stringResource(R.string.components_field_phone),
+            keyboardType = KeyboardType.Phone,
+            prefix = stringResource(R.string.components_field_phone_prefix),
+        )
         KeyboardField(amount, { amount = filterDecimal(it) }, R.string.components_field_amount, KeyboardType.Decimal)
         PasswordTextField(
             value = password,
@@ -199,7 +193,7 @@ private fun SelectionSection() {
         LabeledRow(
             Modifier.toggleable(value = terms, role = Role.Checkbox, onValueChange = { terms = it }),
         ) {
-            Checkbox(checked = terms, onCheckedChange = null)
+            AppCheckbox(checked = terms, onCheckedChange = null)
             Text(stringResource(R.string.components_checkbox_terms))
         }
         LabeledRow(
@@ -210,7 +204,7 @@ private fun SelectionSection() {
                     channels.indices.forEach { channels[it] = target }
                 }),
         ) {
-            TriStateCheckbox(state = parentState, onClick = null)
+            AppCheckbox(state = parentState, onClick = null)
             Text(stringResource(R.string.components_checkbox_notifications))
         }
         listOf(
@@ -223,7 +217,7 @@ private fun SelectionSection() {
                     .padding(start = Spacing.s8)
                     .toggleable(value = channels[index], role = Role.Checkbox, onValueChange = { channels[index] = it }),
             ) {
-                Checkbox(checked = channels[index], onCheckedChange = null)
+                AppCheckbox(checked = channels[index], onCheckedChange = null)
                 Text(stringResource(label))
             }
         }
@@ -236,7 +230,7 @@ private fun SelectionSection() {
                 LabeledRow(
                     Modifier.selectable(selected = delivery == index, role = Role.RadioButton, onClick = { delivery = index }),
                 ) {
-                    RadioButton(selected = delivery == index, onClick = null)
+                    AppRadioButton(selected = delivery == index, onClick = null)
                     Text(stringResource(label))
                 }
             }
@@ -250,7 +244,7 @@ private fun SelectionSection() {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Switch(checked = wifiOnly, onCheckedChange = null)
+            AppSwitch(checked = wifiOnly, onCheckedChange = null)
         }
     }
 }
@@ -290,10 +284,20 @@ private fun SlidersSection() {
     var volume by rememberSaveable { mutableFloatStateOf(40f) }
     var range by remember { mutableStateOf(20f..80f) }
     DemoSection(R.string.components_section_sliders) {
-        Text(stringResource(R.string.components_slider_value, volume.roundToInt()))
-        Slider(value = volume, onValueChange = { volume = it }, valueRange = 0f..100f)
-        Text(stringResource(R.string.components_range_value, range.start.roundToInt(), range.endInclusive.roundToInt()))
-        RangeSlider(value = range, onValueChange = { range = it }, valueRange = 0f..100f)
+        LabeledSlider(
+            label = stringResource(R.string.components_slider_label),
+            value = volume,
+            onValueChange = { volume = it },
+            valueRange = 0f..100f,
+            valueText = stringResource(R.string.components_slider_value, volume.roundToInt()),
+        )
+        LabeledRangeSlider(
+            label = stringResource(R.string.components_range_label),
+            value = range,
+            onValueChange = { range = it },
+            valueRange = 0f..100f,
+            valueText = stringResource(R.string.components_range_value, range.start.roundToInt(), range.endInclusive.roundToInt()),
+        )
     }
 }
 
@@ -320,24 +324,15 @@ private fun SegmentedAndTabsSection() {
     var primaryTab by rememberSaveable { mutableIntStateOf(0) }
     var secondaryTab by rememberSaveable { mutableIntStateOf(0) }
     DemoSection(R.string.components_section_segmented_tabs) {
-        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-            periods.forEachIndexed { index, label ->
-                SegmentedButton(
-                    selected = period == index,
-                    onClick = { period = index },
-                    shape = SegmentedButtonDefaults.itemShape(index, periods.size),
-                ) { Text(stringResource(label)) }
-            }
-        }
-        MultiChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-            styles.forEachIndexed { index, label ->
-                SegmentedButton(
-                    checked = styleChecked[index],
-                    onCheckedChange = { styleChecked[index] = it },
-                    shape = SegmentedButtonDefaults.itemShape(index, styles.size),
-                ) { Text(stringResource(label)) }
-            }
-        }
+        val periodLabels = periods.map { stringResource(it) }
+        SegmentedChoice(periods.indices.toList(), period, onSelect = { period = it }, label = { periodLabels[it] })
+        val styleLabels = styles.map { stringResource(it) }
+        MultiSegmentedChoice(
+            options = styles.indices.toList(),
+            selected = styles.indices.filter { styleChecked[it] }.toSet(),
+            onToggle = { styleChecked[it] = !styleChecked[it] },
+            label = { styleLabels[it] },
+        )
         PrimaryTabRow(selectedTabIndex = primaryTab, modifier = Modifier.testTag(TAB_ROW_TAG)) {
             tabs.forEachIndexed { index, label ->
                 Tab(selected = primaryTab == index, onClick = { primaryTab = index }, text = { Text(stringResource(label)) })

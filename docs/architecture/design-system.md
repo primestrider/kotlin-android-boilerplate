@@ -18,6 +18,18 @@ Tokens and theme live in `app/src/main/java/com/primestrider/kotlinstarter/core/
 - `AppThemeTokens.colors` gives the full semantic set (`AppColors`), including `success`, `warning` and `info`, which Material 3 has no slot for.
 - `MaterialTheme.colorScheme` is what Material components read. Use it when styling with Material roles.
 
+### Form control colours
+
+`theme/ControlColors.kt` derives the colours every form control uses from the semantic roles, so changing the brand colour restyles all of them:
+
+- `controlFill` (= `secondary`): resting fill of fields and unselected controls; it differs from both `background` and `card`, so a field stays visible on a card in dark theme.
+- `controlFocusFill`: `primary` at 12% over `background`, the fill of the field being typed in.
+- `controlErrorFill`: `destructive` at 10% over `background`, the fill of a field in error.
+- `controlRaised`: the selected segment (white in light theme, a lighter grey in dark theme).
+- `ControlShapes` (field radius 16, checkbox 7dp, pill) and `CONTROL_ANIMATION_MS` (180).
+
+Fields never get an outline or glow. Focus is shown by the tint plus a primary label and cursor; the tint alone may stay under 3:1 contrast against the resting fill. That is an accepted trade-off of the chosen look, so do not add an outline back.
+
 Never hardcode a `Color` in a screen. Use `AppThemeTokens.colors`, `MaterialTheme.colorScheme`, or (for showcase pages only) `Palette`.
 
 ## Material 3 color mapping
@@ -83,14 +95,14 @@ RN's `helpers` page (`view()`, `space()`, `gridCol()`) is intentionally not port
 
 ## Using components
 
-There is no wrapper component library. Screens call Jetpack Compose / Material 3 composables directly (`Button`, `OutlinedTextField`, `AlertDialog`, `ModalBottomSheet`, `SnackbarHost`, …). Because every `ColorScheme` role is mapped to a token (see above), stock components already use the brand colors in light and dark mode; pass `colors = …Defaults.xxxColors(...)` only for a deliberate variant, such as a destructive button using `colorScheme.error`.
+Screens call Jetpack Compose / Material 3 composables directly (`Button`, `AlertDialog`, `ModalBottomSheet`, `SnackbarHost`, …), except form controls, which always come from `core/designsystem/component` (see [components.md](components.md)). Because every `ColorScheme` role is mapped to a token (see above), stock components already use the brand colors in light and dark mode; pass `colors = …Defaults.xxxColors(...)` only for a deliberate variant, such as a destructive button using `colorScheme.error`.
 
 Examples live in `feature/example/components/`, one page per group:
 
 | Page | File | Shows |
 | --- | --- | --- |
 | Actions | `ActionsScreen.kt` | Button variants, loading button, icon buttons, FABs, chips |
-| Inputs | `InputsScreen.kt` | Text fields, keyboard types, password toggle, checkbox / tri-state, radio, switch, select (`ExposedDropdownMenuBox`), sliders, segmented buttons, tabs |
+| Inputs | `InputsScreen.kt` | Filled text fields in every state (hint, error, disabled, counter), keyboard types, phone `+62` prefix, password toggle, checkbox / tri-state, radio, switch, select, slider and range slider, single and multi segmented choice, tabs |
 | Display | `DisplayScreen.kt` | Cards, list items, badges, dividers, progress, plus patterns M3 lacks: initials avatar, skeleton, empty state, banner alert |
 | Overlays | `OverlaysScreen.kt` | Dialogs (incl. non-dismissable), bottom sheet, snackbars with undo, dropdown menu, tooltips |
 

@@ -6,9 +6,6 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
@@ -32,6 +28,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.LoadingOverlay
 import com.primestrider.kotlinstarter.core.designsystem.component.LoadingState
 import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
 import com.primestrider.kotlinstarter.core.designsystem.component.MessageVariant
+import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.component.UiMessage
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
@@ -112,15 +109,8 @@ private fun StateViewsSection() {
         )
     var selected by rememberSaveable { mutableIntStateOf(0) }
     DemoSection(R.string.feedback_section_states) {
-        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-            states.forEachIndexed { index, label ->
-                SegmentedButton(
-                    selected = selected == index,
-                    onClick = { selected = index },
-                    shape = SegmentedButtonDefaults.itemShape(index, states.size),
-                ) { Text(stringResource(label), maxLines = 1, overflow = TextOverflow.Ellipsis) }
-            }
-        }
+        val labels = states.map { stringResource(it) }
+        SegmentedChoice(states.indices.toList(), selected, onSelect = { selected = it }, label = { labels[it] })
         Box(Modifier.fillMaxWidth().height(STATE_BOX_HEIGHT), contentAlignment = Alignment.Center) {
             when (selected) {
                 0 -> LoadingState(message = stringResource(R.string.component_loading))

@@ -12,7 +12,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,6 +22,7 @@ import androidx.compose.ui.semantics.Role
 import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
+import com.primestrider.kotlinstarter.core.designsystem.component.AppRadioButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.SectionHeader
@@ -75,7 +75,7 @@ private fun SettingsContent(
                         ).padding(vertical = Spacing.s2),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    RadioButton(selected = state.language == language, onClick = null)
+                    AppRadioButton(selected = state.language == language, onClick = null)
                     Text(language.nativeName, Modifier.padding(start = Spacing.s3))
                 }
             }

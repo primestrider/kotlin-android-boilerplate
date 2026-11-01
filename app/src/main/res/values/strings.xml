@@ -109,6 +109,7 @@
     <string name="components_field_bio_placeholder">Tell us about yourself…</string>
     <string name="components_field_email">Email</string>
     <string name="components_field_phone">Phone</string>
+    <string name="components_field_phone_prefix" translatable="false">+62</string>
     <string name="components_field_amount">Amount</string>
     <string name="components_field_password">Password</string>
     <string name="components_checkbox_terms">I accept the terms</string>
@@ -126,8 +127,10 @@
     <string name="components_sort_oldest">Oldest</string>
     <string name="components_sort_price_low">Price: low to high</string>
     <string name="components_sort_price_high">Price: high to low</string>
-    <string name="components_slider_value">Volume: %1$d</string>
-    <string name="components_range_value">Price: %1$d – %2$d</string>
+    <string name="components_slider_label">Volume</string>
+    <string name="components_slider_value">%1$d</string>
+    <string name="components_range_label">Price</string>
+    <string name="components_range_value">%1$d – %2$d</string>
     <string name="components_segment_day">Day</string>
     <string name="components_segment_week">Week</string>
     <string name="components_segment_month">Month</string>

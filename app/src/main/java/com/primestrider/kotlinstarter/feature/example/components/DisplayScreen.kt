@@ -28,7 +28,6 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
@@ -45,6 +44,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.AppSwitch
 import com.primestrider.kotlinstarter.core.designsystem.component.Avatar
 import com.primestrider.kotlinstarter.core.designsystem.component.AvatarGroup
 import com.primestrider.kotlinstarter.core.designsystem.component.AvatarSize
@@ -130,7 +130,7 @@ private fun ListItemsSection() {
             headlineContent = { Text(LONG_HEADLINE, maxLines = 1, overflow = TextOverflow.Ellipsis) },
             leadingContent = { Icon(Icons.Filled.Notifications, contentDescription = null) },
             trailingContent = {
-                Switch(checked = enabled, onCheckedChange = { enabled = it }, modifier = Modifier.testTag(LONG_ROW_SWITCH_TAG))
+                AppSwitch(checked = enabled, onCheckedChange = { enabled = it }, modifier = Modifier.testTag(LONG_ROW_SWITCH_TAG))
             },
         )
         HorizontalDivider()

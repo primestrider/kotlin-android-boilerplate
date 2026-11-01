@@ -4,20 +4,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButton
-import androidx.compose.material3.SegmentedButtonDefaults
-import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,11 +28,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
+import com.primestrider.kotlinstarter.core.designsystem.component.AppCheckbox
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
 import com.primestrider.kotlinstarter.core.designsystem.component.AppTextField
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.ConfirmDialog
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
+import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 
 const val TODO_INPUT_TAG = "todo_input"
@@ -85,15 +82,8 @@ fun TodosScreen(
                 AppButton(stringResource(R.string.todos_add), onClick = onAdd, modifier = Modifier.padding(top = Spacing.s2))
             }
             Text(stringResource(R.string.todos_progress, state.done, state.total), style = MaterialTheme.typography.labelLarge)
-            SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-                TodoFilter.entries.forEachIndexed { index, filter ->
-                    SegmentedButton(
-                        selected = state.filter == filter,
-                        onClick = { onFilterChange(filter) },
-                        shape = SegmentedButtonDefaults.itemShape(index, TodoFilter.entries.size),
-                    ) { Text(stringResource(filterLabels.getValue(filter))) }
-                }
-            }
+            val labels = TodoFilter.entries.associateWith { stringResource(filterLabels.getValue(it)) }
+            SegmentedChoice(TodoFilter.entries, state.filter, onFilterChange, label = { labels.getValue(it) })
             when {
                 !state.loaded -> Unit
                 state.todos.isEmpty() ->
@@ -147,7 +137,7 @@ private fun TodoRow(
                 .padding(vertical = Spacing.s1),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Checkbox(checked = todo.done, onCheckedChange = null, modifier = Modifier.padding(Spacing.s3))
+            AppCheckbox(checked = todo.done, onCheckedChange = null, modifier = Modifier.padding(Spacing.s3))
             Text(
                 todo.title,
                 style = MaterialTheme.typography.bodyLarge,

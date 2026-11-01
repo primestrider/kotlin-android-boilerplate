@@ -126,8 +126,10 @@
     <string name="components_sort_oldest">Terlama</string>
     <string name="components_sort_price_low">Harga: rendah ke tinggi</string>
     <string name="components_sort_price_high">Harga: tinggi ke rendah</string>
-    <string name="components_slider_value">Volume: %1$d</string>
-    <string name="components_range_value">Harga: %1$d – %2$d</string>
+    <string name="components_slider_label">Volume</string>
+    <string name="components_slider_value">%1$d</string>
+    <string name="components_range_label">Harga</string>
+    <string name="components_range_value">%1$d – %2$d</string>
     <string name="components_segment_day">Hari</string>
     <string name="components_segment_week">Minggu</string>
     <string name="components_segment_month">Bulan</string>
