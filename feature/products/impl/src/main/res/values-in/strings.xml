@@ -5,6 +5,8 @@
     <string name="products_search_placeholder">Cari produk</string>
     <string name="products_empty_title">Produk tidak ditemukan</string>
     <string name="products_empty_description">Coba kata kunci lain.</string>
+    <string name="products_pick_title">Pilih produk</string>
+    <string name="products_pick_description">Detailnya tampil di sini.</string>
     <string name="products_error_title">Gagal memuat produk</string>
     <string name="products_stock">Stok %1$d</string>
     <string name="products_out_of_stock">Stok habis</string>

@@ -1,6 +1,5 @@
 package com.primestrider.kotlinstarter.feature.example.products.ui
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.component.MessageVariant
@@ -52,7 +51,7 @@ class ProductDetailViewModelTest {
     private fun viewModel(
         id: Long,
         repository: FakeProductsRepository,
-    ) = ProductDetailViewModel(SavedStateHandle(mapOf("id" to id)), repository, Json, messenger).also { created += it }
+    ) = ProductDetailViewModel(id, repository, Json, messenger).also { created += it }
 
     @Test
     fun non_positive_id_is_not_found_without_a_request() {

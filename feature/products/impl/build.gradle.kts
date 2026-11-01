@@ -11,6 +11,8 @@ dependencies {
     implementation(projects.feature.catalog.api)
     implementation(projects.core.network)
     implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.compose.adaptive.layout)
+    implementation(libs.androidx.compose.adaptive.navigation)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     testImplementation(libs.okhttp.mockwebserver3)

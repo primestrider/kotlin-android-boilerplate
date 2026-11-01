@@ -5,6 +5,8 @@
     <string name="products_search_placeholder">Search products</string>
     <string name="products_empty_title">No products found</string>
     <string name="products_empty_description">Try a different search term.</string>
+    <string name="products_pick_title">Pick a product</string>
+    <string name="products_pick_description">Its details show here.</string>
     <string name="products_error_title">Could not load products</string>
     <string name="products_stock">%1$d in stock</string>
     <string name="products_out_of_stock">Out of stock</string>
