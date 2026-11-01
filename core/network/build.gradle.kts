@@ -19,5 +19,6 @@ dependencies {
     implementation(libs.retrofit.converter.kotlinx.serialization)
     implementation(libs.okhttp.logging.interceptor)
     testImplementation(libs.okhttp.mockwebserver3)
+    testImplementation(libs.okhttp.tls)
     testImplementation(projects.core.testing)
 }

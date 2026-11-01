@@ -22,6 +22,9 @@ plugins {
  */
 fun apiUrl(default: String): String = localOrEnv("api.url", "API_URL", default)
 
+// Certificate pins of the API host (comma-separated sha256/...); empty = no pinning. See docs/architecture/networking.md.
+val apiPins: String = localOrEnv("api.pins", "API_PINS", "")
+
 /** Release signing from env (CI) or `local.properties` (never committed); absent values fall back to debug signing. */
 val releaseKeystore: String? = localOrEnv("android.keystore.path", "ANDROID_KEYSTORE_PATH", "").takeIf { it.isNotBlank() }
 
@@ -48,12 +51,14 @@ android {
             manifestPlaceholders["appScheme"] = "$appScheme-dev"
             buildConfigField("String", "APP_SCHEME", javaString("$appScheme-dev"))
             buildConfigField("String", "API_URL", javaString(apiUrl("https://dummyjson.com/")))
+            buildConfigField("String", "API_PINS", javaString(apiPins))
         }
         create("prod") {
             dimension = "environment"
             manifestPlaceholders["appScheme"] = appScheme
             buildConfigField("String", "APP_SCHEME", javaString(appScheme))
             buildConfigField("String", "API_URL", javaString(apiUrl("https://dummyjson.com/")))
+            buildConfigField("String", "API_PINS", javaString(apiPins))
         }
     }
 

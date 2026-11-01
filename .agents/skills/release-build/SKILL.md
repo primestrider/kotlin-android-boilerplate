@@ -52,3 +52,4 @@ profile, and compare with `./gradlew :baselineprofile:connectedProdBenchmarkRele
 - [ ] `assembleProdRelease verifyReleaseKeeps` green and the APK signed with the release key.
 - [ ] Device smoke test done on the minified prod build.
 - [ ] Mapping file kept with the release.
+- [ ] If `API_PINS` is set: it includes a backup pin and matches the live certificate chain (`docs/architecture/networking.md`).

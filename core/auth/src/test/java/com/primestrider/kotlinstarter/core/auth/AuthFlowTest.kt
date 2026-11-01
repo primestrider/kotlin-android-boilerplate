@@ -94,6 +94,8 @@ class AuthFlowTest {
             NetworkModule.okHttpClient(
                 setOf(AuthInterceptor(repository, apiUrl)),
                 Optional.of(TokenAuthenticator(Provider { refresher }, apiUrl)),
+                apiUrl,
+                emptySet(),
             )
         return retrofitApi(client, TestApi::class.java)
     }
@@ -265,7 +267,7 @@ class AuthFlowTest {
     @Test
     fun refreshOverTheRefreshClientDoesNotDeadlockTheAppClient() =
         runTest(timeout = 20.seconds) {
-            val refreshApi = retrofitApi(NetworkModule.refreshOkHttpClient(), RefreshApi::class.java)
+            val refreshApi = retrofitApi(NetworkModule.refreshOkHttpClient(server.url("/"), emptySet()), RefreshApi::class.java)
             val adapter = HttpRefreshAdapter(refreshApi) { awaitRequests(DEFAULT_MAX_REQUESTS_PER_HOST) }
             val api = signedInApi(adapter)
             answerOnlyRefreshedToken()

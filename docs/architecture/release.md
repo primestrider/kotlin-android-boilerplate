@@ -27,7 +27,8 @@ One dimension, `environment`:
 There is no real backend yet, so both point at DummyJSON; a real app changes the `prod` default in `apiUrl(...)` in
 `app/build.gradle.kts`. `local.properties` `api.url` or the env var `API_URL` overrides either. `:app` provides the URL to
 the rest of the app as `@ApiBaseUrl` (`app/src/main/java/com/primestrider/kotlinstarter/app/di/EnvironmentModule.kt`),
-and only that host receives the bearer token.
+and only that host receives the bearer token. `api.pins` / `API_PINS` (comma-separated `sha256/…`, empty by default)
+turns on certificate pinning for that host; see `networking.md`, "Certificate pinning".
 
 ## Signing
 

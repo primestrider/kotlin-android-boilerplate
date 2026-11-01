@@ -9,6 +9,7 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.Multibinds
 import kotlinx.serialization.json.Json
 import okhttp3.Authenticator
+import okhttp3.CertificatePinner
 import okhttp3.Dispatcher
 import okhttp3.HttpUrl
 import okhttp3.Interceptor
@@ -63,8 +64,10 @@ object NetworkModule {
     fun okHttpClient(
         @AppInterceptors interceptors: Set<@JvmSuppressWildcards Interceptor>,
         authenticator: Optional<Authenticator>,
+        @ApiBaseUrl baseUrl: HttpUrl,
+        @CertificatePins pins: Set<@JvmSuppressWildcards String>,
     ): OkHttpClient =
-        baseClient()
+        baseClient(baseUrl, pins)
             .apply { interceptors.forEach(::addInterceptor) }
             .apply { authenticator.ifPresent(::authenticator) }
             .build()
@@ -73,7 +76,10 @@ object NetworkModule {
     @Provides
     @Singleton
     @RefreshClient
-    fun refreshOkHttpClient(): OkHttpClient = baseClient().dispatcher(Dispatcher()).build()
+    fun refreshOkHttpClient(
+        @ApiBaseUrl baseUrl: HttpUrl,
+        @CertificatePins pins: Set<@JvmSuppressWildcards String>,
+    ): OkHttpClient = baseClient(baseUrl, pins).dispatcher(Dispatcher()).build()
 
     @Provides
     @Singleton
@@ -92,10 +98,16 @@ object NetworkModule {
         @ApiBaseUrl baseUrl: HttpUrl,
     ): Retrofit = retrofitOn(client, json, baseUrl)
 
-    private fun baseClient(): OkHttpClient.Builder =
+    /** Both clients talk to the API host, so both get its pins (when there are any). */
+    private fun baseClient(
+        baseUrl: HttpUrl,
+        pins: Set<String>,
+    ): OkHttpClient.Builder =
         OkHttpClient
             .Builder()
-            .connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            .apply {
+                if (pins.isNotEmpty()) certificatePinner(CertificatePinner.Builder().add(baseUrl.host, *pins.toTypedArray()).build())
+            }.connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
             .callTimeout(CALL_TIMEOUT_SECONDS, TimeUnit.SECONDS)
