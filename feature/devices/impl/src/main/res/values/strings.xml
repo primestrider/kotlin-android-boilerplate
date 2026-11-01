@@ -461,4 +461,20 @@
     <string name="sdk_music_background_title">Keeps playing in the background</string>
     <string name="sdk_music_background_description">Start playback, then leave the app or lock the screen: the notification and lock screen keep the controls</string>
     <string name="sdk_music_notification_note">On Android 13 and newer the media notification shows only after you allow notifications (Notifications demo).</string>
+    <string name="sdk_share_target_title">Share Target</string>
+    <string name="sdk_share_target_subtitle">Receive text and images shared from other apps</string>
+    <string name="sdk_share_target_label">Kotlin Starter</string>
+    <string name="sdk_share_target_received">Shared with Kotlin Starter</string>
+    <string name="sdk_share_target_how_title">How to try it</string>
+    <string name="sdk_share_target_how_description">In any app (Chrome, Photos, Notes) tap Share and pick Kotlin Starter. Text and up to 10 images open on their own page; back returns to that app.</string>
+    <string name="sdk_share_target_try">Share a sample text</string>
+    <string name="sdk_share_target_sample_subject">Kotlin Starter</string>
+    <string name="sdk_share_target_sample_text">Shared through the Android share sheet</string>
+    <string name="sdk_share_target_text">Text</string>
+    <string name="sdk_share_target_text_description">EXTRA_TEXT, with EXTRA_SUBJECT when the sender sets one</string>
+    <string name="sdk_share_target_subject">Subject</string>
+    <string name="sdk_share_target_images">Images</string>
+    <string name="sdk_share_target_images_description">EXTRA_STREAM content URIs, readable while this page is open</string>
+    <string name="sdk_share_target_empty_title">Nothing to show</string>
+    <string name="sdk_share_target_empty_description">The share had no text or images this page understands.</string>
 </resources>

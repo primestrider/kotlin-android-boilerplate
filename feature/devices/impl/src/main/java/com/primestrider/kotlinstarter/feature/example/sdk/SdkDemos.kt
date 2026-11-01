@@ -26,6 +26,7 @@ import com.primestrider.kotlinstarter.feature.example.sdk.notifications.Notifica
 import com.primestrider.kotlinstarter.feature.example.sdk.payment.PaymentCodeScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.picker.ImagePickerScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.share.ShareScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.sharetarget.ShareTargetScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.sqlite.TransactionsScreen
 import com.primestrider.kotlinstarter.feature.example.sdk.statusbar.StatusBarScreen
 
@@ -65,6 +66,7 @@ val sdkDemos: List<SdkDemo> =
         SdkDemo("blob", R.string.sdk_blob_title, R.string.sdk_blob_subtitle) { BlobScreen(it) },
         SdkDemo("status-bar", R.string.sdk_status_bar_title, R.string.sdk_status_bar_subtitle) { StatusBarScreen(it) },
         SdkDemo("music", R.string.sdk_music_title, R.string.sdk_music_subtitle) { MusicScreen(it) },
+        SdkDemo("share-target", R.string.sdk_share_target_title, R.string.sdk_share_target_subtitle) { ShareTargetScreen(it) },
     )
 
 /** Home entries for the "Device APIs" section, built from [sdkDemos]. */

@@ -57,6 +57,7 @@ class SdkDemosTest {
                 "blob",
                 "status-bar",
                 "music",
+                "share-target",
             ),
             sdkDemos.map {
                 it.id

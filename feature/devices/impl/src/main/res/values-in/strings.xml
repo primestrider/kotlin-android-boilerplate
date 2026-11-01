@@ -461,4 +461,20 @@
     <string name="sdk_music_background_title">Tetap berputar di latar belakang</string>
     <string name="sdk_music_background_description">Mulai putar, lalu tinggalkan aplikasi atau kunci layar: notifikasi dan layar kunci tetap menampilkan kontrol</string>
     <string name="sdk_music_notification_note">Di Android 13 ke atas, notifikasi media baru tampil setelah Anda mengizinkan notifikasi (demo Notifikasi).</string>
+    <string name="sdk_share_target_title">Target Berbagi</string>
+    <string name="sdk_share_target_subtitle">Menerima teks dan gambar yang dibagikan dari aplikasi lain</string>
+    <string name="sdk_share_target_label">Kotlin Starter</string>
+    <string name="sdk_share_target_received">Dibagikan ke Kotlin Starter</string>
+    <string name="sdk_share_target_how_title">Cara mencobanya</string>
+    <string name="sdk_share_target_how_description">Di aplikasi apa pun (Chrome, Foto, Catatan) ketuk Bagikan lalu pilih Kotlin Starter. Teks dan hingga 10 gambar terbuka di halamannya sendiri; kembali akan membuka aplikasi tadi.</string>
+    <string name="sdk_share_target_try">Bagikan contoh teks</string>
+    <string name="sdk_share_target_sample_subject">Kotlin Starter</string>
+    <string name="sdk_share_target_sample_text">Dibagikan lewat lembar berbagi Android</string>
+    <string name="sdk_share_target_text">Teks</string>
+    <string name="sdk_share_target_text_description">EXTRA_TEXT, dengan EXTRA_SUBJECT bila pengirim mengisinya</string>
+    <string name="sdk_share_target_subject">Subjek</string>
+    <string name="sdk_share_target_images">Gambar</string>
+    <string name="sdk_share_target_images_description">URI konten EXTRA_STREAM, bisa dibaca selama halaman ini terbuka</string>
+    <string name="sdk_share_target_empty_title">Tidak ada yang bisa ditampilkan</string>
+    <string name="sdk_share_target_empty_description">Data yang dibagikan tidak berisi teks atau gambar yang dipahami halaman ini.</string>
 </resources>

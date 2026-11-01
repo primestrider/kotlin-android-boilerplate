@@ -128,6 +128,15 @@ Tests go with the demos: they live in `feature/devices/impl/src/test/`. Three `:
 - **API-level fallback:** none needed (Media3 covers API 24+); the service type is declared in the manifest for Android 14+.
 - **Files:** `sdk/music/MusicService.kt`, `sdk/music/MusicController.kt` (controller + `MusicState`), `sdk/music/MusicScreen.kt`, `res/raw/sdk_music_sample.wav` (generated, no licence).
 
+### Share Target (`share-target`)
+
+- **Purpose:** appear in other apps' share sheets and show what they share: text (with its subject) and up to 10 images. The Device APIs page explains it and shares a sample text through the chooser so you can pick Kotlin Starter yourself.
+- **Android API:** intent filters on `ShareReceiverActivity` for `ACTION_SEND` (`text/plain`, `image/*`) and `ACTION_SEND_MULTIPLE` (`image/*`); `SharedContent.from(intent)` reads `EXTRA_TEXT`, `EXTRA_SUBJECT` and `EXTRA_STREAM` (`IntentCompat` for the typed parcelable reads). Images are content URIs the sender grants for as long as the receiving activity lives; Coil loads them.
+- **Why its own activity:** sharing opens one small page on top of the sending app (back returns there) instead of the whole app and its back stack. It is `exported` because other apps start it, so its input is untrusted: unknown actions or types and missing extras give an empty state.
+- **Permissions:** none.
+- **API-level fallback:** none needed.
+- **Files:** `sdk/sharetarget/SharedContent.kt`, `sdk/sharetarget/ShareReceiverActivity.kt`, `sdk/sharetarget/SharedContentScreen.kt`; filters in `feature/devices/impl/src/main/AndroidManifest.xml`.
+
 ### Blur & Gradients (`effects`)
 
 - **Purpose:** a wallet card with a linear gradient at any angle (three palettes), a balance hidden behind a blur with an intensity slider, and a 3×3 mesh gradient whose middle point and smoothing you can change.
@@ -287,6 +296,7 @@ Robolectric covers the logic; these need real hardware (or a well-equipped emula
 - **Clipboard & Haptics:** paste from another app and feel each haptic.
 - **System Bars:** dark theme with Inverted, and the style after a rotation.
 - **Todos widget:** add it to the home screen, add and complete todos in the app (the widget follows), tap it (Todos opens), and resize it.
+- **Share Target:** share a link from Chrome, one photo and several photos from the gallery: each opens the page, back returns to the sender.
 - **Background Music:** play, lock the screen (lock-screen controls work), leave the app (keeps playing), pause and swipe the app away from Recents (the service stops), and on Android 13+ with notifications denied (plays without a notification).
 - **Payment Code:** brightness goes to full and returns; the screenshot banner on Android 14+.
 - **Web Browser & Linking:** Custom Tabs and each external app (phone, mail, maps).

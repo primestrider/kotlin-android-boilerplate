@@ -66,4 +66,17 @@ class DevicesManifestTest {
             )
         assertTrue(sessionServices.any { it.serviceInfo.name.endsWith(".MusicService") })
     }
+
+    @Test
+    fun share_target_receives_text_and_images() {
+        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        listOf(
+            Intent(Intent.ACTION_SEND).setType("text/plain"),
+            Intent(Intent.ACTION_SEND).setType("image/png"),
+            Intent(Intent.ACTION_SEND_MULTIPLE).setType("image/jpeg"),
+        ).forEach { intent ->
+            val handlers = context.packageManager.queryIntentActivities(intent.setPackage(context.packageName), 0)
+            assertTrue("$intent", handlers.any { it.activityInfo.name.endsWith(".ShareReceiverActivity") })
+        }
+    }
 }
