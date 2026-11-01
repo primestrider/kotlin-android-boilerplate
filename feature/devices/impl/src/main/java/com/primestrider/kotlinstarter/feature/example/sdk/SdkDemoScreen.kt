@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 
@@ -47,5 +49,13 @@ internal fun SdkSection(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.s3)) { content() }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun SdkDemoScreenPreview() {
+    PreviewTheme {
+        SdkDemoScreen(id = "unknown", onBack = {})
     }
 }

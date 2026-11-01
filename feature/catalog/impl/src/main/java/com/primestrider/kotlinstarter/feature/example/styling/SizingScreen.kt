@@ -18,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -72,5 +74,13 @@ fun SizingScreen(onBack: () -> Unit) {
             DemoBox("widthIn(min = s48)", Modifier.widthIn(min = Spacing.s48).height(Spacing.s10))
             DemoBox("heightIn(min = s16)", Modifier.fillMaxWidth().heightIn(min = Spacing.s16))
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun SizingScreenPreview() {
+    PreviewTheme {
+        SizingScreen(onBack = {})
     }
 }

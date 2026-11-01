@@ -26,7 +26,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
 import com.primestrider.kotlinstarter.core.designsystem.component.LabeledSlider
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -157,3 +159,20 @@ private fun quality(
     value: Float,
     locale: Locale,
 ): String = String.format(locale, "%.1f", value)
+
+@ThemePreviews
+@Composable
+private fun FilesScreenPreview() {
+    PreviewTheme {
+        FilesContent(
+            state = FilesUiState(),
+            onMaxWidth = {},
+            onQuality = {},
+            onPick = {},
+            onCompress = {},
+            onDownload = {},
+            onClearDownloads = {},
+            onBack = {},
+        )
+    }
+}

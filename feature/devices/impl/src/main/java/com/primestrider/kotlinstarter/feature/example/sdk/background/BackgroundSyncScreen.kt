@@ -16,7 +16,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.feature.devices.impl.BuildConfig
 import com.primestrider.kotlinstarter.feature.devices.impl.R
@@ -107,3 +109,20 @@ private fun statusLabel(state: WorkInfo.State): Int =
         WorkInfo.State.BLOCKED -> R.string.sdk_background_state_blocked
         WorkInfo.State.CANCELLED -> R.string.sdk_background_state_cancelled
     }
+
+@ThemePreviews
+@Composable
+private fun BackgroundSyncScreenPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_background_title, subtitle = R.string.sdk_background_subtitle, onBack = {}) {
+            BackgroundSyncContent(
+                state = BackgroundSyncUiState(registered = true, status = WorkInfo.State.ENQUEUED, lastRun = 1_700_000_000_000L, runs = 3),
+                showRunNow = true,
+                onEnabled = {},
+                onInterval = {},
+                onRefresh = {},
+                onRunNow = {},
+            )
+        }
+    }
+}

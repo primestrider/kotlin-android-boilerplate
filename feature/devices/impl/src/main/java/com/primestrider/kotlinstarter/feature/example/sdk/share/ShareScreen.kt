@@ -25,7 +25,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -166,4 +168,12 @@ private fun shareChooser(
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
     return Intent.createChooser(send, title)
+}
+
+@ThemePreviews
+@Composable
+private fun ShareScreenPreview() {
+    PreviewTheme {
+        ShareScreen(onBack = {})
+    }
 }

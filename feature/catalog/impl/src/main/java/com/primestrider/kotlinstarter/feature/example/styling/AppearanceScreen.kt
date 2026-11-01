@@ -22,8 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -114,5 +116,13 @@ fun AppearanceScreen(onBack: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun AppearanceScreenPreview() {
+    PreviewTheme {
+        AppearanceScreen(onBack = {})
     }
 }

@@ -24,7 +24,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.PasswordTextField
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.network.userMessage
 import com.primestrider.kotlinstarter.feature.account.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -109,5 +111,21 @@ private fun DemoCard(onFillDemo: () -> Unit) {
                 variant = ButtonVariant.OUTLINED,
             )
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun SignInScreenPreview() {
+    PreviewTheme {
+        SignInScreen(
+            state = SignInUiState(username = "em", errors = mapOf(SignInField.USERNAME to R.string.auth_validation_username_min)),
+            onUsernameChange = {},
+            onPasswordChange = {},
+            onShortLivedChange = {},
+            onFillDemo = {},
+            onSubmit = {},
+            onBack = {},
+        )
     }
 }

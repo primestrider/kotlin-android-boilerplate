@@ -2,6 +2,7 @@ package com.primestrider.kotlinstarter.core.designsystem.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -41,8 +42,10 @@ import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.ControlShapes
 import com.primestrider.kotlinstarter.core.designsystem.theme.LocalAppColors
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.designsystem.theme.controlErrorFill
 import com.primestrider.kotlinstarter.core.designsystem.theme.controlFill
 import com.primestrider.kotlinstarter.core.designsystem.theme.controlFocusFill
@@ -278,5 +281,19 @@ private fun imeActions(
         ImeAction.Search -> KeyboardActions(onSearch = run)
         ImeAction.Send -> KeyboardActions(onSend = run)
         else -> KeyboardActions.Default
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun TextFieldsPreview() {
+    PreviewTheme {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            AppTextField(value = "", onValueChange = {}, label = "Name", placeholder = "Your name")
+            AppTextField(value = "Ada", onValueChange = {}, label = "Filled", supportingText = "Helper text")
+            AppTextField(value = "x", onValueChange = {}, label = "Error", errorText = "Too short")
+            PasswordTextField(value = "secret", onValueChange = {}, label = "Password")
+            SearchField(query = "", onQueryChange = {})
+        }
     }
 }

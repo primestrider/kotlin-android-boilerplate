@@ -20,8 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -166,5 +168,13 @@ fun SpacingScreen(onBack: () -> Unit) {
                 )
             }
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun SpacingScreenPreview() {
+    PreviewTheme {
+        SpacingScreen(onBack = {})
     }
 }

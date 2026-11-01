@@ -4,7 +4,9 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -31,6 +33,8 @@ import com.primestrider.kotlinstarter.core.designsystem.theme.CONTROL_ANIMATION_
 import com.primestrider.kotlinstarter.core.designsystem.theme.ControlShapes
 import com.primestrider.kotlinstarter.core.designsystem.theme.LocalAppColors
 import com.primestrider.kotlinstarter.core.designsystem.theme.Palette
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.designsystem.theme.controlFill
 
 /*
@@ -173,6 +177,21 @@ fun AppSwitch(
                     .shadow(2.dp, CircleShape)
                     .background(Palette.white, CircleShape),
             )
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun TogglesPreview() {
+    PreviewTheme {
+        Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            AppCheckbox(checked = true, onCheckedChange = {})
+            AppCheckbox(checked = false, onCheckedChange = {})
+            AppRadioButton(selected = true, onClick = {})
+            AppRadioButton(selected = false, onClick = {})
+            AppSwitch(checked = true, onCheckedChange = {})
+            AppSwitch(checked = false, onCheckedChange = {}, enabled = false)
         }
     }
 }

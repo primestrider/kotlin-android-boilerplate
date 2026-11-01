@@ -44,7 +44,9 @@ import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.theme.CONTROL_ANIMATION_MS
 import com.primestrider.kotlinstarter.core.designsystem.theme.LocalAppColors
 import com.primestrider.kotlinstarter.core.designsystem.theme.Palette
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.designsystem.theme.controlFill
 import com.primestrider.kotlinstarter.core.designsystem.theme.controlRaised
 
@@ -301,5 +303,19 @@ fun LabeledRangeSlider(
                 )
             },
         )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ChoiceControlsPreview() {
+    PreviewTheme {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            SegmentedChoice(options = listOf("Day", "Week", "Month"), selected = "Week", onSelect = {}, label = { it })
+            MultiSegmentedChoice(options = listOf("Mon", "Tue", "Wed"), selected = setOf("Mon", "Wed"), onToggle = {}, label = { it })
+            SwitchRow(label = "Notifications", checked = true, onCheckedChange = {})
+            LabeledSlider(label = "Volume", value = 0.4f, onValueChange = {}, valueRange = 0f..1f, valueText = "40%")
+            LabeledRangeSlider(label = "Price", value = 20f..60f, onValueChange = {}, valueRange = 0f..100f, valueText = "20 - 60")
+        }
     }
 }

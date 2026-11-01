@@ -43,8 +43,10 @@ import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
 import com.primestrider.kotlinstarter.core.designsystem.component.LabeledSlider
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.permission.PermissionStatus
 import com.primestrider.kotlinstarter.core.permission.openAppSettings
 import com.primestrider.kotlinstarter.core.permission.rememberPermissionRequest
@@ -283,3 +285,25 @@ private fun errorText(error: PickerError): Int =
         PickerError.NO_APP -> R.string.sdk_picker_no_app
         PickerError.READ_FAILED -> R.string.sdk_picker_read_failed
     }
+
+@ThemePreviews
+@Composable
+private fun ImagePickerScreenPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_picker_title, subtitle = R.string.sdk_picker_subtitle, onBack = {}) {
+            ImagePickerContent(
+                state = PickerState(),
+                options = PickerOptions(),
+                documentType = DocumentType.ANY,
+                onSource = {},
+                onCrop = {},
+                onMultiple = {},
+                onQuality = {},
+                onDocumentType = {},
+                onLibrary = {},
+                onCamera = {},
+                onChooseFiles = {},
+            )
+        }
+    }
+}

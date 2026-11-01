@@ -54,7 +54,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.component.Skeleton
 import com.primestrider.kotlinstarter.core.designsystem.component.SkeletonText
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.animation.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.animation.AnimExample
@@ -289,5 +291,13 @@ private fun HeroHeader(
             style = MaterialTheme.typography.titleMedium,
             color = colors.onPrimary,
         )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ListsScreenPreview() {
+    PreviewTheme {
+        ListsScreen(onBack = {})
     }
 }

@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,7 +31,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -163,3 +166,12 @@ private fun MessageVariant.style(): Pair<ImageVector, Color> =
         MessageVariant.WARNING -> Icons.Filled.Warning to AppThemeTokens.colors.warning
         MessageVariant.ERROR -> Icons.Filled.Warning to MaterialTheme.colorScheme.error
     }
+
+@ThemePreviews
+@Composable
+private fun MessengerHostPreview() {
+    PreviewTheme {
+        val messenger = remember { Messenger().apply { error(UiText.Plain("Could not save changes")) } }
+        MessengerHost(messenger = messenger, hostState = remember { SnackbarHostState() })
+    }
+}

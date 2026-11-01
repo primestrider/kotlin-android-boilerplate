@@ -18,6 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import com.primestrider.kotlinstarter.core.auth.AuthTokens
+import com.primestrider.kotlinstarter.core.auth.AuthUser
 import com.primestrider.kotlinstarter.core.auth.Session
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
@@ -29,7 +31,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.ConfirmDialog
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoRow
 import com.primestrider.kotlinstarter.core.designsystem.component.SectionHeader
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.network.userMessage
 import com.primestrider.kotlinstarter.feature.account.impl.R
 
@@ -117,5 +121,23 @@ private fun ProfileResult(profile: ProfileLoad) {
                 variant = BannerVariant.ERROR,
             )
         ProfileLoad.Idle, ProfileLoad.Loading -> Unit
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun AccountScreenPreview() {
+    PreviewTheme {
+        AccountScreen(
+            session =
+                Session(
+                    user = AuthUser(1, "emilys", "emily.johnson@example.com", "Emily", "Johnson"),
+                    tokens = AuthTokens("access", "refresh"),
+                ),
+            profile = ProfileLoad.Loaded(UserResponse(1, "emilys", "emily.johnson@example.com", "Emily", "Johnson")),
+            onLoadProfile = {},
+            onSignOut = {},
+            onBack = {},
+        )
     }
 }

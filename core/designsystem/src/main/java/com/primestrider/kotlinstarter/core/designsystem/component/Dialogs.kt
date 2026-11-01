@@ -11,6 +11,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
 import com.primestrider.kotlinstarter.core.designsystem.R
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 
 /**
  * Confirmation modal. [destructive] colors the confirm action as an error; [dismissible] = false
@@ -44,4 +46,19 @@ fun ConfirmDialog(
         dismissButton = dismissLabel?.let { { TextButton(onClick = onDismiss) { Text(it) } } },
         properties = DialogProperties(dismissOnBackPress = dismissible, dismissOnClickOutside = dismissible),
     )
+}
+
+@ThemePreviews
+@Composable
+private fun ConfirmDialogPreview() {
+    PreviewTheme {
+        ConfirmDialog(
+            title = "Delete item?",
+            message = "This cannot be undone.",
+            confirmLabel = "Delete",
+            onConfirm = {},
+            onDismiss = {},
+            destructive = true,
+        )
+    }
 }

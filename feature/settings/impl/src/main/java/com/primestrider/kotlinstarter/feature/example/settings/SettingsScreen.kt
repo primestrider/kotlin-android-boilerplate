@@ -25,7 +25,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.SectionHeader
 import com.primestrider.kotlinstarter.core.designsystem.component.ThemeModeSelector
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.i18n.AppLanguage
 import com.primestrider.kotlinstarter.core.model.ThemeMode
 import com.primestrider.kotlinstarter.feature.settings.impl.BuildConfig
@@ -89,5 +91,18 @@ private fun SettingsContent(
                 variant = ButtonVariant.DESTRUCTIVE,
             )
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun SettingsScreenPreview() {
+    PreviewTheme {
+        SettingsScreen(
+            state = SettingsUiState(themeMode = ThemeMode.SYSTEM, language = AppLanguage.EN),
+            onThemeModeChange = {},
+            onLanguageChange = {},
+            onBack = {},
+        )
     }
 }

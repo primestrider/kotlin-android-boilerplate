@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 
@@ -20,5 +22,13 @@ fun LivePhotoScreen(onBack: () -> Unit) {
             message = stringResource(R.string.sdk_live_photo_banner_message),
             variant = BannerVariant.INFO,
         )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun LivePhotoScreenPreview() {
+    PreviewTheme {
+        LivePhotoScreen(onBack = {})
     }
 }

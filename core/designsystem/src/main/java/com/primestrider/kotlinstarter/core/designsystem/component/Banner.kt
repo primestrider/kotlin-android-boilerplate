@@ -26,8 +26,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 
 enum class BannerVariant { INFO, SUCCESS, WARNING, ERROR }
 
@@ -72,3 +74,15 @@ private fun BannerVariant.style(): Pair<ImageVector, Color> =
         BannerVariant.WARNING -> Icons.Filled.Warning to AppThemeTokens.colors.warning
         BannerVariant.ERROR -> Icons.Filled.Warning to MaterialTheme.colorScheme.error
     }
+
+@ThemePreviews
+@Composable
+private fun BannerPreview() {
+    PreviewTheme {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            BannerVariant.entries.forEach { variant ->
+                Banner(title = variant.name, message = "Something worth knowing.", variant = variant, onDismiss = {})
+            }
+        }
+    }
+}

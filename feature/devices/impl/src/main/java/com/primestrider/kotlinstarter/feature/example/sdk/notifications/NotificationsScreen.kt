@@ -34,7 +34,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.permission.PermissionGate
 import com.primestrider.kotlinstarter.core.permission.permissionRequested
 import com.primestrider.kotlinstarter.core.util.currentLocale
@@ -227,3 +229,23 @@ internal fun NotificationsContent(
 /** POST_NOTIFICATIONS is a runtime permission from Android 13; before that there is nothing to ask for. */
 private fun notificationPermissions(): List<String> =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(Manifest.permission.POST_NOTIFICATIONS) else emptyList()
+
+@ThemePreviews
+@Composable
+private fun NotificationsScreenPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_notifications_title, subtitle = R.string.sdk_notifications_subtitle, onBack = {}) {
+            NotificationsContent(
+                state = NotificationsUiState(),
+                status = NotificationStatus.NOT_REQUESTED,
+                pending = 0,
+                showInForeground = true,
+                onTitle = {},
+                onDelay = {},
+                onShowInForeground = {},
+                onSchedule = {},
+                onCancelAll = {},
+            )
+        }
+    }
+}

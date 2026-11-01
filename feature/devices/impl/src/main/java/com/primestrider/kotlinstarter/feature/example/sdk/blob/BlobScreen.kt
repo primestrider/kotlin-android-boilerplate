@@ -13,7 +13,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppTextField
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkSection
@@ -94,3 +96,11 @@ fun BlobScreen(onBack: () -> Unit) {
 
 /** `[payload, "\n", payload]` as plain text: twice the payload plus the newline. */
 internal fun combined(payload: BinaryPayload): BinaryPayload = BinaryPayload.combine(listOf(payload, "\n", payload), TEXT_TYPE)
+
+@ThemePreviews
+@Composable
+private fun BlobScreenPreview() {
+    PreviewTheme {
+        BlobScreen(onBack = {})
+    }
+}

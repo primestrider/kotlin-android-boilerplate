@@ -14,7 +14,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import com.primestrider.kotlinstarter.core.designsystem.theme.FontSize
 import com.primestrider.kotlinstarter.core.designsystem.theme.LetterSpacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -154,4 +156,12 @@ private fun TextDecorationSamples() {
     // Compose has no text-transform style; transform the string itself.
     SampleLine("uppercase", TextStyle(), sample.uppercase())
     SampleLine("lowercase", TextStyle(), sample.lowercase())
+}
+
+@ThemePreviews
+@Composable
+private fun TypographyScreenPreview() {
+    PreviewTheme {
+        TypographyScreen(onBack = {})
+    }
 }

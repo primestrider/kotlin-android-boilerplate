@@ -59,7 +59,9 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.animation.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.animation.AnimExample
@@ -248,5 +250,13 @@ private fun ContentChangeExample() {
                 modifier = Modifier.semantics { contentDescription = next },
             ) { Text(stringResource(R.string.anim_micro_next), Modifier.clearAndSetSemantics {}) }
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun MicroInteractionsScreenPreview() {
+    PreviewTheme {
+        MicroInteractionsScreen(onBack = {})
     }
 }

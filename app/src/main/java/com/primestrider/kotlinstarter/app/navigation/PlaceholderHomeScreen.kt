@@ -10,6 +10,8 @@ import androidx.compose.ui.res.stringResource
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 
 /** Home when no feature provides one (e.g. after removing the examples): replace it with your app's Home. */
 @Composable
@@ -21,5 +23,13 @@ fun PlaceholderHomeScreen() {
             icon = Icons.Filled.Home,
             modifier = Modifier.fillMaxSize().padding(padding),
         )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun PlaceholderHomeScreenPreview() {
+    PreviewTheme {
+        PlaceholderHomeScreen()
     }
 }

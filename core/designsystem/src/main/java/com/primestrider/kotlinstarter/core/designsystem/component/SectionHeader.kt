@@ -11,6 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 
 /** Section title (a11y heading) with an optional trailing action such as "See all". */
 @Composable
@@ -29,5 +31,13 @@ fun SectionHeader(
             modifier = Modifier.weight(1f).semantics { heading() },
         )
         if (actionLabel != null && onAction != null) TextButton(onClick = onAction) { Text(actionLabel) }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun SectionHeaderPreview() {
+    PreviewTheme {
+        SectionHeader(title = "Recent", actionLabel = "See all", onAction = {})
     }
 }

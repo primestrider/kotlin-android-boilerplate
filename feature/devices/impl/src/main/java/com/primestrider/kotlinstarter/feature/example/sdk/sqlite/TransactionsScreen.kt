@@ -17,7 +17,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.core.util.formatCurrency
 import com.primestrider.kotlinstarter.feature.devices.impl.R
@@ -129,3 +131,27 @@ private fun TransactionKind.label(): Int =
         TransactionKind.PAYMENT -> R.string.sdk_sqlite_kind_payment
         TransactionKind.TRANSFER -> R.string.sdk_sqlite_kind_transfer
     }
+
+@ThemePreviews
+@Composable
+private fun TransactionsScreenPreview() {
+    PreviewTheme {
+        TransactionsContent(
+            state =
+                TransactionsUiState(
+                    items =
+                        listOf(
+                            TransactionEntity(1, "TOP_UP", 50_000, 1_700_000_000_000L),
+                            TransactionEntity(2, "PAYMENT", -12_000, 1_700_000_100_000L),
+                        ),
+                    balance = 38_000,
+                    loaded = true,
+                ),
+            onKind = {},
+            onAmount = {},
+            onAdd = {},
+            onClear = {},
+            onBack = {},
+        )
+    }
+}

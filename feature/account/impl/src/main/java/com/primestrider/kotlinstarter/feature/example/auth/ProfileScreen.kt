@@ -14,13 +14,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import com.primestrider.kotlinstarter.core.auth.AuthTokens
+import com.primestrider.kotlinstarter.core.auth.AuthUser
 import com.primestrider.kotlinstarter.core.auth.Session
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
 import com.primestrider.kotlinstarter.core.designsystem.component.Avatar
 import com.primestrider.kotlinstarter.core.designsystem.component.AvatarSize
 import com.primestrider.kotlinstarter.core.designsystem.component.AvatarStatus
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.account.impl.R
 
 /** Profile tab root: the signed-in user (or a sign-in prompt) and a way into Settings. */
@@ -62,5 +66,30 @@ fun ProfileScreen(
                 headlineContent = { Text(stringResource(R.string.account_settings_link)) },
             )
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ProfileScreenPreview() {
+    PreviewTheme {
+        ProfileScreen(
+            session =
+                Session(
+                    user = AuthUser(1, "emilys", "emily.johnson@example.com", "Emily", "Johnson"),
+                    tokens = AuthTokens("access", "refresh"),
+                ),
+            onSignIn = {},
+            onOpenAccount = {},
+            onOpenSettings = {},
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ProfileScreenSignedOutPreview() {
+    PreviewTheme {
+        ProfileScreen(session = null, onSignIn = {}, onOpenAccount = {}, onOpenSettings = {})
     }
 }

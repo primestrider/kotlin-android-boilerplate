@@ -18,6 +18,8 @@ import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkSection
@@ -88,5 +90,13 @@ fun WebBrowserScreen(onBack: () -> Unit) {
         SdkSection(R.string.sdk_browser_link_title, R.string.sdk_browser_link_description) {
             InfoCard(listOf(stringResource(R.string.sdk_browser_url) to paymentDeepLink(AppConfig.appScheme(context))))
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun WebBrowserScreenPreview() {
+    PreviewTheme {
+        WebBrowserScreen(onBack = {})
     }
 }

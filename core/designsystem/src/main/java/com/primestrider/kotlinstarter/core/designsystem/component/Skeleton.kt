@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -32,9 +33,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.R
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 
 private const val PULSE_MS = 800
 private const val SHIMMER_MS = 1_200
@@ -144,6 +148,17 @@ fun SkeletonText(
             } else {
                 SkeletonBar(barModifier, RoundedCornerShape(Radii.sm), alpha)
             }
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun SkeletonPreview() {
+    PreviewTheme {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Skeleton(Modifier.height(24.dp))
+            SkeletonText(lines = 3)
         }
     }
 }

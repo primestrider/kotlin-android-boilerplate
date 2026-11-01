@@ -55,8 +55,10 @@ import com.primestrider.kotlinstarter.core.designsystem.component.InfoRow
 import com.primestrider.kotlinstarter.core.designsystem.component.SectionHeader
 import com.primestrider.kotlinstarter.core.designsystem.component.Skeleton
 import com.primestrider.kotlinstarter.core.designsystem.component.SkeletonText
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -290,5 +292,13 @@ private fun BannersSection() {
                 )
             }
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun DisplayScreenPreview() {
+    PreviewTheme {
+        DisplayScreen(onBack = {})
     }
 }

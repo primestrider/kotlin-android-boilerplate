@@ -21,6 +21,8 @@ import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.permission.PermissionGate
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.feature.devices.impl.R
@@ -160,5 +162,13 @@ private fun CalendarContent() {
         } else {
             InfoCard(upcoming.map { it.title to format.format(Date(it.start)) })
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun CalendarScreenPreview() {
+    PreviewTheme {
+        CalendarScreen(onBack = {})
     }
 }

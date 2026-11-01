@@ -20,8 +20,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.component.ThemeModeSelector
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.model.ThemeMode
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
@@ -71,5 +73,13 @@ private fun RowScope.SurfaceTile(
         contentAlignment = Alignment.Center,
     ) {
         Text(stringResource(label), style = MaterialTheme.typography.labelMedium, color = foreground)
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ThemeScreenPreview() {
+    PreviewTheme {
+        ThemeScreen(themeMode = ThemeMode.SYSTEM, onThemeModeChange = {}, onBack = {})
     }
 }

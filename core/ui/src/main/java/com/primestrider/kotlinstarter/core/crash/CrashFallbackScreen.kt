@@ -22,7 +22,9 @@ import androidx.compose.ui.text.style.TextAlign
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoRow
 import com.primestrider.kotlinstarter.core.designsystem.component.SectionHeader
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.ui.R
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import java.text.DateFormat
@@ -67,5 +69,16 @@ fun CrashFallbackScreen(
             }
             AppButton(stringResource(R.string.crash_continue), onClick = onContinue, fullWidth = true)
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun CrashFallbackScreenPreview() {
+    PreviewTheme {
+        CrashFallbackScreen(
+            report = CrashReport(exceptionClass = "java.lang.IllegalStateException", message = "Boom", timestamp = 1_700_000_000_000L),
+            onContinue = {},
+        )
     }
 }

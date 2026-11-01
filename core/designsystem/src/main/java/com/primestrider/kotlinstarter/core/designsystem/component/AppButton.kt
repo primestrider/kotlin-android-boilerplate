@@ -1,9 +1,14 @@
 package com.primestrider.kotlinstarter.core.designsystem.component
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 
 /** Visual style of [AppButton], mapped to Material 3 button types. */
 enum class ButtonVariant { PRIMARY, SECONDARY, OUTLINED, TEXT, DESTRUCTIVE }
@@ -88,4 +95,20 @@ private fun ButtonContent(
         }
     }
     Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+}
+
+@ThemePreviews
+@Composable
+private fun AppButtonPreview() {
+    PreviewTheme {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            ButtonVariant.entries.forEach { variant ->
+                AppButton(text = variant.name, onClick = {}, variant = variant)
+            }
+            AppButton(text = "With icon", onClick = {}, leadingIcon = Icons.Filled.Add)
+            AppButton(text = "Loading", onClick = {}, loading = true)
+            AppButton(text = "Disabled", onClick = {}, enabled = false)
+            AppButton(text = "Full width", onClick = {}, fullWidth = true)
+        }
+    }
 }

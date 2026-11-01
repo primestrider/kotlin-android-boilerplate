@@ -25,7 +25,9 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.animation.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.animation.AnimExample
@@ -84,5 +86,13 @@ private fun PatternPicker(pattern: MutableState<TransitionPattern>) {
                 modifier = Modifier.semantics { role = Role.RadioButton },
             )
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun TransitionsScreenPreview() {
+    PreviewTheme {
+        TransitionsScreen(onBack = {})
     }
 }

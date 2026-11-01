@@ -50,7 +50,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -208,5 +210,13 @@ private fun ChipsSection() {
                 )
             }
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ActionsScreenPreview() {
+    PreviewTheme {
+        ActionsScreen(onBack = {})
     }
 }

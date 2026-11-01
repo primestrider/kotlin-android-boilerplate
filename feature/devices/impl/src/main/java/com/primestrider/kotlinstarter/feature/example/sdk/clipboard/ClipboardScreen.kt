@@ -26,6 +26,8 @@ import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkSection
@@ -181,4 +183,21 @@ private fun View.hapticError() {
             HapticFeedbackConstants.LONG_PRESS
         },
     )
+}
+
+@ThemePreviews
+@Composable
+private fun ClipboardScreenPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_clipboard_title, subtitle = R.string.sdk_clipboard_subtitle, onBack = {}) {
+            SdkSection(R.string.sdk_clipboard_copy_title, R.string.sdk_clipboard_copy_description) {
+                Text(REFERRAL_CODE, style = MaterialTheme.typography.titleLarge)
+                AppButton(stringResource(R.string.sdk_clipboard_copy), onClick = {})
+            }
+            SdkSection(R.string.sdk_clipboard_paste_title, R.string.sdk_clipboard_paste_description) {
+                AppTextField(value = "", onValueChange = {}, label = stringResource(R.string.sdk_clipboard_field))
+                AppButton(stringResource(R.string.sdk_clipboard_paste), onClick = {})
+            }
+        }
+    }
 }

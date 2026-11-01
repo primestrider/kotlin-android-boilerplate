@@ -23,8 +23,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.R
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 
 /** Spinner with an optional message, filling and centered in the space it is given. */
 @Composable
@@ -114,4 +117,16 @@ private fun CenteredColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Spacing.s3, Alignment.CenterVertically),
     ) { content() }
+}
+
+@ThemePreviews
+@Composable
+private fun StateViewsPreview() {
+    PreviewTheme {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            LoadingState(message = "Loading")
+            EmptyState(title = "Nothing here", description = "Add your first item.", actionLabel = "Add", onAction = {})
+            ErrorState(message = "Could not load", onRetry = {})
+        }
+    }
 }

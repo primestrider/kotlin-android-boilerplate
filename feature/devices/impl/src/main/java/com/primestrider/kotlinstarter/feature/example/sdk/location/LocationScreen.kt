@@ -37,6 +37,8 @@ import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.permission.PermissionGate
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.feature.devices.impl.R
@@ -296,3 +298,11 @@ private suspend fun Geocoder.firstAddress(location: Location): Address? =
             },
         )
     }
+
+@ThemePreviews
+@Composable
+private fun LocationScreenPreview() {
+    PreviewTheme {
+        LocationScreen(onBack = {})
+    }
+}

@@ -20,6 +20,8 @@ import androidx.core.view.WindowInsetsCompat
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.util.findActivity
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -87,5 +89,13 @@ internal fun ApplyStatusBar(
     LaunchedEffect(controller, appearanceLight, hidden, darkTheme) {
         controller.isAppearanceLightStatusBars = appearanceLight
         if (hidden) controller.hide(WindowInsetsCompat.Type.statusBars()) else controller.show(WindowInsetsCompat.Type.statusBars())
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun StatusBarScreenPreview() {
+    PreviewTheme {
+        StatusBarScreen(onBack = {})
     }
 }

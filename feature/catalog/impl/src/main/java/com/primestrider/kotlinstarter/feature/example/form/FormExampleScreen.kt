@@ -24,7 +24,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.AppTextField
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.PasswordTextField
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
@@ -136,5 +138,24 @@ private fun SubmittedCard(values: FormValues) {
                 )
             }
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun FormExampleScreenPreview() {
+    PreviewTheme {
+        FormExampleScreen(
+            state =
+                FormUiState(
+                    values = FormValues(name = "Ada Lovelace", email = "ada@", phone = "5551234567"),
+                    errors = mapOf(FormField.EMAIL to R.string.form_error_email_invalid),
+                    submitAttempted = true,
+                ),
+            onChange = { _, _ -> },
+            onSubmit = {},
+            onClear = {},
+            onBack = {},
+        )
     }
 }

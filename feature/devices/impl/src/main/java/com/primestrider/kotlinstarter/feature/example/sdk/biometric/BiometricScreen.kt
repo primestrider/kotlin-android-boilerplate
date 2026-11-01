@@ -36,7 +36,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.util.findActivity
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -271,5 +273,29 @@ private fun SecureWindowEffect(secure: Boolean) {
         val owned = secure && window != null && window.attributes.flags and WindowManager.LayoutParams.FLAG_SECURE == 0
         if (owned) window?.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         onDispose { if (owned) window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE) }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun BiometricScreenPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_biometric_title, subtitle = R.string.sdk_biometric_subtitle, onBack = {}) {
+            BiometricContent(
+                support = BiometricSupport(hardware = true, enrolled = true, strength = BiometricStrength.STRONG, secureStorage = true),
+                fallbackSupported = true,
+                allowFallback = true,
+                pin = "",
+                hasPin = false,
+                status = null,
+                onAllowFallback = {},
+                onVerify = {},
+                onPin = {},
+                onSave = {},
+                onReveal = {},
+                onDelete = {},
+                onDismissStatus = {},
+            )
+        }
     }
 }

@@ -48,8 +48,10 @@ import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
 import com.primestrider.kotlinstarter.core.designsystem.component.ErrorState
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoRow
 import com.primestrider.kotlinstarter.core.designsystem.component.LoadingState
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.network.userMessage
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.core.util.formatCurrency
@@ -233,3 +235,40 @@ private val MinusIcon: ImageVector =
             horizontalLineToRelative(14f)
             close()
         }.build()
+
+@ThemePreviews
+@Composable
+private fun ProductDetailScreenPreview() {
+    PreviewTheme {
+        ProductDetailScreen(
+            state =
+                ProductDetailState.Loaded(
+                    Product(
+                        id = 1,
+                        title = "Essence Mascara Lash Princess",
+                        description = "A popular mascara known for volumizing and lengthening effects.",
+                        category = "beauty",
+                        price = 9.99,
+                        discountPercentage = 7.17,
+                        rating = 4.9,
+                        stock = 5,
+                        brand = "Essence",
+                        thumbnail = "",
+                        images = emptyList(),
+                        reviews = listOf(Review(5, "Great product", "Eleanor Collins", "2025-04-30")),
+                    ),
+                ),
+            onRetry = {},
+            onAddToCart = {},
+            onBack = {},
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ProductDetailScreenLoadingPreview() {
+    PreviewTheme {
+        ProductDetailScreen(state = ProductDetailState.Loading, onRetry = {}, onAddToCart = {}, onBack = {})
+    }
+}

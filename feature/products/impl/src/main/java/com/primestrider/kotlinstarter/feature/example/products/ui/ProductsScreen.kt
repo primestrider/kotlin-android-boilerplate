@@ -26,7 +26,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
@@ -36,14 +38,18 @@ import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
 import com.primestrider.kotlinstarter.core.designsystem.component.ErrorState
 import com.primestrider.kotlinstarter.core.designsystem.component.SearchField
 import com.primestrider.kotlinstarter.core.designsystem.component.Skeleton
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.network.asApiError
 import com.primestrider.kotlinstarter.core.network.userMessage
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.core.util.formatCurrency
 import com.primestrider.kotlinstarter.feature.example.products.model.Product
+import com.primestrider.kotlinstarter.feature.example.products.model.Review
 import com.primestrider.kotlinstarter.feature.products.impl.R
+import kotlinx.coroutines.flow.flowOf
 import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
 
 private const val SKELETON_ROWS = 6
@@ -229,5 +235,50 @@ private fun SkeletonList() {
                 }
             }
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ProductsScreenPreview() {
+    val products =
+        listOf(
+            Product(
+                id = 1,
+                title = "Essence Mascara Lash Princess",
+                description = "A popular mascara known for volumizing and lengthening effects.",
+                category = "beauty",
+                price = 9.99,
+                discountPercentage = 7.17,
+                rating = 4.9,
+                stock = 5,
+                brand = "Essence",
+                thumbnail = "",
+                images = emptyList(),
+                reviews = listOf(Review(5, "Great product", "Eleanor Collins", "2025-04-30")),
+            ),
+            Product(
+                id = 2,
+                title = "Eyeshadow Palette with Mirror",
+                description = "A versatile palette with a range of shades.",
+                category = "beauty",
+                price = 19.99,
+                discountPercentage = 5.5,
+                rating = 3.8,
+                stock = 44,
+                brand = "Glamour Beauty",
+                thumbnail = "",
+                images = emptyList(),
+                reviews = emptyList(),
+            ),
+        )
+    PreviewTheme {
+        ProductsScreen(
+            query = "",
+            onQueryChange = {},
+            products = flowOf(PagingData.from(products)).collectAsLazyPagingItems(),
+            onOpen = {},
+            onBack = {},
+        )
     }
 }

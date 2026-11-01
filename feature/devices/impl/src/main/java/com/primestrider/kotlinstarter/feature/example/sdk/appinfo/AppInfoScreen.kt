@@ -24,6 +24,8 @@ import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.util.findActivity
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -138,6 +140,25 @@ private fun openStorePage(context: Context): Boolean {
             true
         } catch (_: ActivityNotFoundException) {
             false
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun AppInfoScreenPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_app_info_title, subtitle = R.string.sdk_app_info_subtitle, onBack = {}) {
+            SdkSection(R.string.sdk_app_info_application_title, R.string.sdk_app_info_application_description) {
+                InfoCard(
+                    listOf(
+                        stringResource(R.string.sdk_app_info_name) to "Kotlin Starter",
+                        stringResource(R.string.sdk_app_info_package) to "com.primestrider.kotlinstarter",
+                        stringResource(R.string.sdk_app_info_version) to "1.0.0",
+                        stringResource(R.string.sdk_app_info_build) to "1",
+                    ),
+                )
+            }
         }
     }
 }

@@ -29,7 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import kotlinx.coroutines.launch
 
 /**
@@ -125,5 +127,29 @@ fun <T> OptionsBottomSheet(
                 }
             }
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun AppBottomSheetPreview() {
+    PreviewTheme {
+        AppBottomSheet(onDismiss = {}, title = "Sheet title") {
+            Text("Sheet content")
+        }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun OptionsBottomSheetPreview() {
+    PreviewTheme {
+        OptionsBottomSheet(
+            title = "Pick one",
+            options = listOf(SelectOption("a", "Option A"), SelectOption("b", "Option B"), SelectOption("c", "Disabled", enabled = false)),
+            selected = "a",
+            onSelect = {},
+            onDismiss = {},
+        )
     }
 }

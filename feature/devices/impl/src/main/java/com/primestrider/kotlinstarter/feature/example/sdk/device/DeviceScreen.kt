@@ -19,6 +19,8 @@ import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -150,4 +152,22 @@ private fun android.net.ConnectivityManager.ipAddress(): String? {
                 it.address
             }.filter { !it.isLoopbackAddress }
     return (addresses.firstOrNull { it is Inet4Address } ?: addresses.firstOrNull())?.hostAddress
+}
+
+@ThemePreviews
+@Composable
+private fun DeviceScreenPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_device_title, subtitle = R.string.sdk_device_subtitle, onBack = {}) {
+            SdkSection(R.string.sdk_device_info_title, R.string.sdk_device_info_description) {
+                InfoCard(
+                    listOf(
+                        stringResource(R.string.sdk_device_brand) to "Google",
+                        stringResource(R.string.sdk_device_model) to "Pixel 8",
+                        stringResource(R.string.sdk_device_memory) to "8.0 GB",
+                    ),
+                )
+            }
+        }
+    }
 }

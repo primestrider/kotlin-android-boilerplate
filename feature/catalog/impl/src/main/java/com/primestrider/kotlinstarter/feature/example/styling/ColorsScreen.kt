@@ -16,7 +16,9 @@ import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppColors
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 import com.primestrider.kotlinstarter.core.designsystem.theme.Palette
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -97,5 +99,13 @@ private fun TextColorSamples() {
             color = color,
             style = MaterialTheme.typography.bodyMedium,
         )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ColorsScreenPreview() {
+    PreviewTheme {
+        ColorsScreen(onBack = {})
     }
 }

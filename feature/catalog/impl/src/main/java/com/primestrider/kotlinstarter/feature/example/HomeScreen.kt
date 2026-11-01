@@ -20,6 +20,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -52,7 +53,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
 import com.primestrider.kotlinstarter.core.designsystem.component.SearchField
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
 
@@ -276,6 +279,25 @@ private fun EntryRow(
             Icons.AutoMirrored.Filled.KeyboardArrowRight,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun HomeScreenPreview() {
+    PreviewTheme {
+        HomeScreen(
+            sections =
+                listOf(
+                    ExampleSection(
+                        title = R.string.example_home_components_title,
+                        description = R.string.example_home_components_description,
+                        entries = componentEntries,
+                        icon = Icons.Filled.Build,
+                    ),
+                ),
+            onOpen = {},
         )
     }
 }

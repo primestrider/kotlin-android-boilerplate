@@ -34,7 +34,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.core.util.findActivity
 import com.primestrider.kotlinstarter.core.util.formatCurrency
@@ -131,5 +133,31 @@ private fun ScreenshotDetection(
         val callback = Activity.ScreenCaptureCallback { latest() }
         activity.registerScreenCaptureCallback(ContextCompat.getMainExecutor(activity), callback)
         onDispose { activity.unregisterScreenCaptureCallback(callback) }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun PaymentCodeScreenPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_payment_title, subtitle = R.string.sdk_payment_subtitle, onBack = {}) {
+            OutlinedCard(Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.sdk_payment_cashier), style = MaterialTheme.typography.titleMedium)
+                    Image(
+                        bitmap = paymentQrBitmap(paymentQrMatrix("482913")),
+                        contentDescription = null,
+                        modifier = Modifier.size(PAYMENT_QR_SIZE.dp).align(Alignment.CenterHorizontally),
+                    )
+                    Text(
+                        "482913",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontFamily = FontFamily.Monospace,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+        }
     }
 }

@@ -43,8 +43,10 @@ import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.LabeledSlider
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.permission.PermissionGate
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.feature.devices.impl.R
@@ -217,5 +219,18 @@ internal fun QrResultHost(gate: QrResultGate) {
             variant = ButtonVariant.OUTLINED,
             modifier = Modifier.padding(horizontal = Spacing.s4, vertical = Spacing.s2),
         )
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun CameraScreenPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_camera_title, subtitle = R.string.sdk_camera_subtitle, onBack = {}) {
+            PermissionGate(
+                permissions = listOf(Manifest.permission.CAMERA),
+                reason = stringResource(R.string.sdk_camera_reason),
+            ) {}
+        }
     }
 }

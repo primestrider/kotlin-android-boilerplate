@@ -2,6 +2,7 @@ package com.primestrider.kotlinstarter.core.designsystem.component
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -15,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.primestrider.kotlinstarter.core.designsystem.R
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 
 /** Top app bar: single-line title, a back arrow only when [onBack] is given, trailing [actions]. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -57,4 +60,14 @@ fun AppScaffold(
         floatingActionButton = floatingActionButton,
         content = content,
     )
+}
+
+@ThemePreviews
+@Composable
+private fun AppScaffoldPreview() {
+    PreviewTheme {
+        AppScaffold(title = "Scaffold", onBack = {}) { padding ->
+            Text("Content", Modifier.padding(padding))
+        }
+    }
 }

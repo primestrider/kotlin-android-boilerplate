@@ -34,7 +34,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.ConfirmDialog
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.example.todos.model.Todo
 import com.primestrider.kotlinstarter.feature.todos.impl.R
 
@@ -149,5 +151,34 @@ private fun TodoRow(
         IconButton(onClick = onDelete) {
             Icon(Icons.Filled.Delete, contentDescription = stringResource(R.string.todos_cd_delete, todo.title))
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun TodosScreenPreview() {
+    PreviewTheme {
+        TodosScreen(
+            state =
+                TodosUiState(
+                    input = "",
+                    inputError = null,
+                    filter = TodoFilter.ALL,
+                    todos =
+                        listOf(
+                            Todo("1", "Buy milk", done = false, createdAt = 1L),
+                            Todo("2", "Write the report", done = true, createdAt = 2L),
+                        ),
+                    done = 1,
+                    total = 2,
+                ),
+            onInputChange = {},
+            onAdd = {},
+            onToggle = {},
+            onRemove = {},
+            onClearCompleted = {},
+            onFilterChange = {},
+            onBack = {},
+        )
     }
 }

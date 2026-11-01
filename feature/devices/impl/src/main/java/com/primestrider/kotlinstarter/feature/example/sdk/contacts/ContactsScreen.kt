@@ -30,7 +30,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.AppTextField
 import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.permission.PermissionGate
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
@@ -154,5 +156,24 @@ private fun ContactItem(row: ContactRow) {
             overflow = TextOverflow.Ellipsis,
         )
         Text(row.phone ?: "—", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun ContactsSearchContentPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_contacts_title, subtitle = R.string.sdk_contacts_subtitle, onBack = {}) {
+            ContactsSearchContent(
+                state =
+                    ContactsUiState(
+                        query = "an",
+                        count = 128,
+                        rows = listOf(ContactRow("Ana Silva", "+62 812 3456 7890"), ContactRow("Andi Pratama", null)),
+                        loaded = true,
+                    ),
+                onQueryChange = {},
+            )
+        }
     }
 }

@@ -32,8 +32,10 @@ import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.core.designsystem.component.LabeledSlider
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.component.SwitchRow
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.core.util.formatCurrency
 import com.primestrider.kotlinstarter.feature.devices.impl.R
@@ -181,4 +183,12 @@ private fun Caption(
         style = MaterialTheme.typography.bodySmall,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
+}
+
+@ThemePreviews
+@Composable
+private fun EffectsScreenPreview() {
+    PreviewTheme {
+        EffectsScreen(onBack = {})
+    }
 }

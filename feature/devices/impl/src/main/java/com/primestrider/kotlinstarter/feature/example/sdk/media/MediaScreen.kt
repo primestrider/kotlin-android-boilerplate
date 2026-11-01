@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,8 +43,10 @@ import com.primestrider.kotlinstarter.core.designsystem.component.Banner
 import com.primestrider.kotlinstarter.core.designsystem.component.BannerVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.InfoCard
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.core.permission.PermissionGate
 import com.primestrider.kotlinstarter.core.pip.LocalPictureInPictureHost
 import com.primestrider.kotlinstarter.core.pip.enterPictureInPicture
@@ -326,4 +329,23 @@ private fun VoiceNote(
 @Composable
 private fun Caption(text: String) {
     Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
+@ThemePreviews
+@Composable
+private fun MediaScreenPreview() {
+    PreviewTheme {
+        ExamplePageScaffold(title = R.string.sdk_media_title, subtitle = R.string.sdk_media_subtitle, onBack = {}) {
+            MediaContent(
+                voice = VoiceNoteState(hasNote = true, durationMillis = 4_000),
+                videoPlaying = false,
+                pip = PipAvailability.AVAILABLE,
+                onRecord = {},
+                onPlay = {},
+                onVideo = {},
+                onPictureInPicture = {},
+                videoSurface = { modifier -> Box(modifier) },
+            )
+        }
+    }
 }

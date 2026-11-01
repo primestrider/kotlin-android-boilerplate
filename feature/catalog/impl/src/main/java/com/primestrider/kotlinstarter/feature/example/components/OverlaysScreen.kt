@@ -44,7 +44,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.ConfirmDialog
 import com.primestrider.kotlinstarter.core.designsystem.component.OptionsBottomSheet
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -212,5 +214,13 @@ private fun TooltipSection() {
                 }
             }
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun OverlaysScreenPreview() {
+    PreviewTheme {
+        OverlaysScreen(onBack = {})
     }
 }

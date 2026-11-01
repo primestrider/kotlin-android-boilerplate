@@ -45,7 +45,9 @@ import com.primestrider.kotlinstarter.core.designsystem.component.SearchField
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectField
 import com.primestrider.kotlinstarter.core.designsystem.component.SelectOption
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
@@ -345,5 +347,13 @@ private fun SegmentedAndTabsSection() {
             }
         }
         Text(stringResource(periodContent[secondaryTab]), Modifier.padding(vertical = Spacing.s2))
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun InputsScreenPreview() {
+    PreviewTheme {
+        InputsScreen(onBack = {})
     }
 }

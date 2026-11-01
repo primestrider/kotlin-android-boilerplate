@@ -63,7 +63,9 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 import com.primestrider.kotlinstarter.feature.animation.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.animation.AnimExample
@@ -382,5 +384,13 @@ private fun FlipExample() {
         FilledTonalButton(onClick = { flipped = !flipped }) {
             Text(stringResource(R.string.anim_cards_flip_button))
         }
+    }
+}
+
+@ThemePreviews
+@Composable
+private fun CardsScreenPreview() {
+    PreviewTheme {
+        CardsScreen(onBack = {})
     }
 }

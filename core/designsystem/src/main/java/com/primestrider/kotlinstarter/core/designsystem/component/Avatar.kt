@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
 import com.primestrider.kotlinstarter.core.designsystem.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
+import com.primestrider.kotlinstarter.core.designsystem.theme.PreviewTheme
+import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreviews
 
 enum class AvatarSize(
     val dp: Dp,
@@ -148,3 +152,19 @@ private fun AvatarSize.textStyle(): TextStyle =
         AvatarSize.LARGE -> MaterialTheme.typography.titleSmall
         AvatarSize.XLARGE -> MaterialTheme.typography.titleLarge
     }
+
+@ThemePreviews
+@Composable
+private fun AvatarPreview() {
+    PreviewTheme {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                AvatarSize.entries.forEach { Avatar(name = "Ada Lovelace", size = it) }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                AvatarStatus.entries.forEach { Avatar(name = "Grace Hopper", status = it) }
+            }
+            AvatarGroup(names = listOf("Ada Lovelace", "Grace Hopper", "Alan Turing", "Linus Torvalds", "Margaret Hamilton"))
+        }
+    }
+}
