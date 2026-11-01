@@ -58,7 +58,8 @@ class DeployWorkflowTest {
     fun signature_check_cannot_fail_open() {
         assertTrue("job steps must run bash with pipefail", Regex("""defaults:\s+run:\s+shell: bash""").containsMatchIn(workflow))
         val verify = step("Verify APK is signed with the release key")
-        assertTrue(verify.contains("Signer #1 certificate"))
+        // apksigner prints "Signer #1 certificate DN:" or, in newer build-tools, "V2 Signer: certificate DN:".
+        assertTrue(verify.contains("grep -q \"certificate DN: \""))
         assertTrue(verify.contains("-z \"\$APKSIGNER\""))
     }
 
