@@ -63,4 +63,14 @@ class DeepLinkTest {
             composeRule.onAllNodes(hasText("Jumlah", substring = true)).assertCountEquals(0)
         }
     }
+
+    @Test
+    fun todos_link_from_the_home_screen_widget_opens_todos() {
+        launch("${BuildConfig.APP_SCHEME}://example/todos").use {
+            // The input hint is only on the Todos page; the page reads Room first, so wait for it.
+            composeRule.waitUntil(5_000) {
+                composeRule.onAllNodes(hasText("Apa yang perlu dikerjakan?")).fetchSemanticsNodes().isNotEmpty()
+            }
+        }
+    }
 }

@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
 import com.primestrider.kotlinstarter.feature.example.TodosRoute
+import com.primestrider.kotlinstarter.feature.example.todos.widget.GlanceTodosWidgetUpdater
+import com.primestrider.kotlinstarter.feature.example.todos.widget.TodosWidgetUpdater
 import com.primestrider.kotlinstarter.feature.todos.impl.R
 import dagger.Binds
 import dagger.Module
@@ -20,6 +22,9 @@ import javax.inject.Singleton
 abstract class TodosModule {
     @Binds
     abstract fun bindRepository(impl: DefaultTodosRepository): TodosRepository
+
+    @Binds
+    abstract fun bindWidgetUpdater(impl: GlanceTodosWidgetUpdater): TodosWidgetUpdater
 
     companion object {
         @Provides

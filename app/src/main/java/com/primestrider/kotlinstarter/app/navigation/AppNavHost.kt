@@ -103,7 +103,7 @@ fun NavGraphBuilder.homeGraph(
         productsDestinations(navController)
         // endregion
         // region example:todos
-        todosDestinations(navController)
+        todosDestinations(navController, appScheme = BuildConfig.APP_SCHEME)
         // endregion
         // region example:devices
         devicesDestinations(navController, appScheme = BuildConfig.APP_SCHEME)

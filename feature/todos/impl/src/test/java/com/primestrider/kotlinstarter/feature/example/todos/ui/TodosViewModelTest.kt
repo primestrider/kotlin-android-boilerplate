@@ -53,7 +53,7 @@ class TodosViewModelTest {
                 .allowMainThreadQueries()
                 .setQueryCoroutineContext(main)
                 .build()
-        repository = DefaultTodosRepository(database.todoDao()) { ++now }
+        repository = DefaultTodosRepository(database.todoDao(), {}) { ++now }
     }
 
     @After
@@ -189,7 +189,11 @@ class TodosViewModelTest {
                 object : TodoDao by database.todoDao() {
                     override suspend fun insert(todo: TodoEntity) = throw android.database.sqlite.SQLiteFullException("disk full")
                 }
-            val viewModel = TodosViewModel(DefaultTodosRepository(failing) { ++now }, SavedStateHandle(), messenger).also { created += it }
+            val viewModel =
+                TodosViewModel(DefaultTodosRepository(failing, {}) { ++now }, SavedStateHandle(), messenger).also {
+                    created +=
+                        it
+                }
             messenger.messages.test {
                 viewModel.onInputChange("Buy milk")
                 viewModel.add()

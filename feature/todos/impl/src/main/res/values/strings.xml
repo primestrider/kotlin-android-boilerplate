@@ -21,4 +21,9 @@
     <string name="todos_cleared">Completed tasks cleared</string>
     <string name="todos_cd_delete">Delete %1$s</string>
     <string name="todos_save_failed">Could not save. Please try again.</string>
+    <string name="todos_widget_description">Your open todos at a glance</string>
+    <plurals name="todos_widget_open">
+        <item quantity="one">%d open</item>
+        <item quantity="other">%d open</item>
+    </plurals>
 </resources>

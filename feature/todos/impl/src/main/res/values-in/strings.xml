@@ -21,4 +21,8 @@
     <string name="todos_cleared">Tugas selesai dihapus</string>
     <string name="todos_cd_delete">Hapus %1$s</string>
     <string name="todos_save_failed">Gagal menyimpan. Silakan coba lagi.</string>
+    <string name="todos_widget_description">Tugas yang belum selesai, sekilas</string>
+    <plurals name="todos_widget_open">
+        <item quantity="other">%d belum selesai</item>
+    </plurals>
 </resources>

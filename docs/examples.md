@@ -236,6 +236,16 @@ Tests go with the demos: they live in `feature/devices/impl/src/test/`. Three `:
 
 The scheme is `appScheme`: `app.scheme` in `local.properties`, else the `APP_SCHEME` environment variable, else `kotlinstarter`. `app/build.gradle.kts` passes it to the manifest as the `${appScheme}` placeholder and to code as `BuildConfig.APP_SCHEME`. The deep link is `<scheme>://example/sdk/<demo id>` (Payment Code also takes `?amount=<IDR>`). Deep-link arguments come from outside the app (any app, web page or `adb` can fire the link), so validate them before use, as `PaymentCodeViewModel` does with a negative `amount`; see docs/architecture/navigation.md.
 
+## Todos home-screen widget
+
+`feature/todos/impl/src/main/java/com/primestrider/kotlinstarter/feature/example/todos/widget/TodosWidget.kt` is a **Glance** app widget: Compose-style code (`androidx.glance.*` composables only) that Glance turns into `RemoteViews` for the launcher. It shows the number of open todos and the three newest, and a tap opens Todos through `<scheme>://example/todos`.
+
+- **Data:** a widget is not created by Hilt, so `provideGlance` gets `TodosRepository` through a Hilt `@EntryPoint` (`TodosWidgetEntryPoint`).
+- **Updates:** no polling (`updatePeriodMillis="0"`); `DefaultTodosRepository` calls `TodosWidgetUpdater.update()` (`TodosWidget().updateAll(context)`) after every write, so the widget changes as soon as a todo does.
+- **Declared in** `feature/todos/impl/src/main/AndroidManifest.xml` (`TodosWidgetReceiver` + `res/xml/todos_widget_info.xml`); deleting the feature deletes the widget.
+- **Tests:** `TodosWidgetTest` (`runGlanceAppWidgetUnitTest`), `TodosRepositoryTest` (every write updates), `DeepLinkTest` (the link opens Todos).
+- **Try it:** long-press the home screen > Widgets > Kotlin Starter > Todos.
+
 ## The Animations section
 
 The section sits on the Home tab after Device APIs. It shows motion patterns well-known apps use, each as a live example with a title, one sentence on when to use it and the Compose API behind it (`AnimExample` in `feature/example/animation/`). Pages are listed in `animationPages` (`AnimationPages.kt`), in the order they appear on Home; each page has its own route (`AnimMicroRoute`, `AnimCardsRoute`, `AnimListsRoute`, `AnimTransitionsRoute`). Nothing here changes the app's own navigation transitions.
@@ -276,6 +286,7 @@ Robolectric covers the logic; these need real hardware (or a well-equipped emula
 - **Notifications:** on Android 12 or older (no runtime permission), notifications post and the status reads "granted (not needed before Android 13)".
 - **Clipboard & Haptics:** paste from another app and feel each haptic.
 - **System Bars:** dark theme with Inverted, and the style after a rotation.
+- **Todos widget:** add it to the home screen, add and complete todos in the app (the widget follows), tap it (Todos opens), and resize it.
 - **Background Music:** play, lock the screen (lock-screen controls work), leave the app (keeps playing), pause and swipe the app away from Recents (the service stops), and on Android 13+ with notifications denied (plays without a notification).
 - **Payment Code:** brightness goes to full and returns; the screenshot banner on Android 14+.
 - **Web Browser & Linking:** Custom Tabs and each external app (phone, mail, maps).

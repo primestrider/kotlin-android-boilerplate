@@ -97,4 +97,5 @@ The example feature opens screens from outside the app with `<scheme>://example/
   `.../sdk/payment-code?amount=50000` fills `SdkDemoRoute(id = "payment-code", amount = 50000)`. Fields with defaults (`amount: Long? = null`) are optional query parameters. The back stack under the target is built from its graph (Home, then the screen), so back returns to Home.
 - **Already running:** `MainActivity` creates the `NavHostController` and forwards `onNewIntent` to it with `addOnNewIntentListener { navController.handleDeepLink(it) }`. The first launch is handled by the NavHost itself.
 - **Reading the argument:** a ViewModel gets route fields from its `SavedStateHandle` (`savedStateHandle["amount"]` or `savedStateHandle.toRoute<SdkDemoRoute>()`), which survives rotation and process death.
+- **Plain URI patterns:** a route without fields can use `navDeepLink { uriPattern = "$appScheme://example/todos" }` (`todosDestinations`); the Todos home-screen widget opens the app with that link.
 - **Try it:** `adb shell am start -a android.intent.action.VIEW -d "kotlinstarter://example/sdk/payment-code?amount=50000"`.

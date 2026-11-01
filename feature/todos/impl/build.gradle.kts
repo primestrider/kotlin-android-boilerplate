@@ -24,6 +24,9 @@ dependencies {
     implementation(projects.feature.catalog.api)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.glance.appwidget)
+    implementation(libs.androidx.glance.material3)
     ksp(libs.androidx.room.compiler)
     testImplementation(libs.androidx.room.testing)
+    testImplementation(libs.androidx.glance.appwidget.testing)
 }
