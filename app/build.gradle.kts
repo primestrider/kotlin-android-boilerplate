@@ -59,16 +59,6 @@ android {
     buildFeatures {
         buildConfig = true
     }
-    sourceSets {
-        // MigrationTestHelper reads the exported schemas as assets. Robolectric unit tests only see the variant's merged
-        // assets, so they are added to debug (never release).
-        getByName("debug").assets.directories.add("$projectDir/schemas")
-    }
-}
-
-// Room writes each database version's schema here; commit it so migrations can be tested against it.
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
@@ -87,6 +77,10 @@ dependencies {
     // region example:catalog
     implementation(projects.feature.catalog.api)
     implementation(projects.feature.catalog.impl)
+    // endregion
+    // region example:devices
+    implementation(projects.feature.devices.api)
+    implementation(projects.feature.devices.impl)
     // endregion
     // region example:products
     implementation(projects.feature.products.api)
@@ -113,37 +107,13 @@ dependencies {
 
     implementation(libs.hilt.navigation.compose)
 
-    implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.serialization.json)
 
-    implementation(libs.retrofit)
-    implementation(libs.retrofit.converter.kotlinx.serialization)
-    implementation(libs.okhttp)
-    implementation(libs.okhttp.logging.interceptor)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
-    implementation(libs.androidx.paging.compose)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.play.review.ktx)
-    implementation(libs.androidx.exifinterface)
-    implementation(libs.androidx.browser)
     implementation(libs.androidx.lifecycle.process)
-    implementation(libs.play.services.location)
-    implementation(libs.androidx.camera.camera2)
-    implementation(libs.androidx.camera.lifecycle)
-    implementation(libs.androidx.camera.view)
-    implementation(libs.mlkit.barcode.scanning)
-    implementation(libs.androidx.media3.exoplayer)
-    implementation(libs.androidx.media3.ui)
-    implementation(libs.androidx.biometric)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidx.hilt.work)
     ksp(libs.androidx.hilt.compiler)
-    implementation(libs.zxing.core)
 
     testImplementation(libs.okhttp.mockwebserver3)
-    testImplementation(libs.androidx.room.testing)
     testImplementation(libs.androidx.work.testing)
 }

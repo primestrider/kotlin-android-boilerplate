@@ -5,9 +5,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
-import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimListsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
@@ -15,7 +12,6 @@ import com.primestrider.kotlinstarter.feature.example.AnimTransitionsRoute
 import com.primestrider.kotlinstarter.feature.example.CatalogHome
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
 import com.primestrider.kotlinstarter.feature.example.ProfileRoute
-import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
 import com.primestrider.kotlinstarter.feature.example.animation.cards.CardsScreen
 import com.primestrider.kotlinstarter.feature.example.animation.lists.ListsScreen
 import com.primestrider.kotlinstarter.feature.example.animation.micro.MicroInteractionsScreen
@@ -24,7 +20,7 @@ import com.primestrider.kotlinstarter.feature.example.auth.accountDestinations
 import com.primestrider.kotlinstarter.feature.example.catalogComponentsDestinations
 import com.primestrider.kotlinstarter.feature.example.catalogHomeDestinations
 import com.primestrider.kotlinstarter.feature.example.products.ui.productsDestinations
-import com.primestrider.kotlinstarter.feature.example.sdk.SdkDemoScreen
+import com.primestrider.kotlinstarter.feature.example.sdk.devicesDestinations
 import com.primestrider.kotlinstarter.feature.example.settings.settingsDestinations
 import com.primestrider.kotlinstarter.feature.example.todos.ui.todosDestinations
 import kotlinx.serialization.Serializable
@@ -59,9 +55,9 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
         // region example:todos
         todosDestinations(navController)
         // endregion
-        composable<SdkDemoRoute>(
-            deepLinks = listOf(navDeepLink<SdkDemoRoute>(basePath = "${BuildConfig.APP_SCHEME}://example/sdk")),
-        ) { entry -> SdkDemoScreen(id = entry.toRoute<SdkDemoRoute>().id, onBack = back) }
+        // region example:devices
+        devicesDestinations(navController)
+        // endregion
         composable<AnimTransitionsRoute> { TransitionsScreen(onBack = back) }
         composable<AnimCardsRoute> { CardsScreen(onBack = back) }
         composable<AnimListsRoute> { ListsScreen(onBack = back) }
