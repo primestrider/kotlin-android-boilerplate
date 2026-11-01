@@ -1,4 +1,9 @@
-import java.util.Properties
+import com.android.build.api.artifact.SingleArtifact
+import com.android.build.api.variant.HostTestBuilder
+import com.primestrider.kotlinstarter.buildlogic.VerifyKeptClassesTask
+import com.primestrider.kotlinstarter.buildlogic.appScheme
+import com.primestrider.kotlinstarter.buildlogic.javaString
+import com.primestrider.kotlinstarter.buildlogic.localOrEnv
 
 plugins {
     id("kotlinstarter.android.application")
@@ -7,30 +12,14 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-val localProperties: Properties =
-    Properties().apply {
-        rootProject
-            .file("local.properties")
-            .takeIf { it.exists() }
-            ?.reader()
-            ?.use { load(it) }
-    }
+/**
+ * API base URL per environment. There is no real backend, so both default to DummyJSON; a real app changes the
+ * `prod` default. `local.properties` `api.url` or env `API_URL` override either (keep the trailing slash).
+ */
+fun apiUrl(default: String): String = localOrEnv("api.url", "API_URL", default)
 
-// API base URL: local.properties `api.url`, else env API_URL, else DummyJSON (keep the trailing slash).
-val apiUrl: String =
-    localProperties
-        .getProperty("api.url")
-        ?.takeIf { it.isNotBlank() }
-        ?: System.getenv("API_URL")?.takeIf { it.isNotBlank() }
-        ?: "https://dummyjson.com/"
-
-// Deep link scheme (`<scheme>://example/...`): local.properties `app.scheme`, else env APP_SCHEME, else "kotlinstarter".
-val appScheme: String =
-    localProperties
-        .getProperty("app.scheme")
-        ?.takeIf { it.isNotBlank() }
-        ?: System.getenv("APP_SCHEME")?.takeIf { it.isNotBlank() }
-        ?: "kotlinstarter"
+/** Release signing from env (CI) or `local.properties` (never committed); absent values fall back to debug signing. */
+val releaseKeystore: String? = localOrEnv("android.keystore.path", "ANDROID_KEYSTORE_PATH", "").takeIf { it.isNotBlank() }
 
 android {
     namespace = "com.primestrider.kotlinstarter"
@@ -40,17 +29,46 @@ android {
         versionCode = 1
         versionName = "1.0"
         manifestPlaceholders["appScheme"] = appScheme
-        buildConfigField("String", "APP_SCHEME", "\"$appScheme\"")
-        buildConfigField("String", "API_URL", "\"${apiUrl.replace("\\", "\\\\").replace("\"", "\\\"")}\"")
+        buildConfigField("String", "APP_SCHEME", javaString(appScheme))
+    }
+
+    flavorDimensions += "environment"
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            // Installs next to prod.
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            buildConfigField("String", "API_URL", javaString(apiUrl("https://dummyjson.com/")))
+        }
+        create("prod") {
+            dimension = "environment"
+            buildConfigField("String", "API_URL", javaString(apiUrl("https://dummyjson.com/")))
+        }
+    }
+
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = file(releaseKeystore)
+                storePassword = localOrEnv("android.keystore.password", "ANDROID_KEYSTORE_PASSWORD", "")
+                keyAlias = localOrEnv("android.key.alias", "ANDROID_KEY_ALIAS", "")
+                keyPassword = localOrEnv("android.key.password", "ANDROID_KEY_PASSWORD", "")
+            }
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            // Without a release keystore (fresh clone, CI without secrets) the release build is debug-signed so it
+            // still installs; never ship that build.
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
         }
     }
     androidResources {
@@ -58,6 +76,23 @@ android {
     }
     buildFeatures {
         buildConfig = true
+    }
+}
+
+// R8 must keep every navigation route (`@Serializable` classes in the feature `:api` modules) under its own name.
+val verifyReleaseKeeps by tasks.registering(VerifyKeptClassesTask::class) {
+    apiSources.from(fileTree(rootProject.file("feature")) { include("*/api/src/main/java/**/*.kt") })
+}
+
+androidComponents {
+    // :app's unit tests do not depend on the environment: run them once, on dev.
+    beforeVariants(selector().withFlavor("environment" to "prod")) { variant ->
+        variant.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = false
+    }
+    onVariants(selector().withName("prodRelease")) { variant ->
+        variant.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE)?.let { mappingFile ->
+            verifyReleaseKeeps.configure { mapping.set(mappingFile) }
+        }
     }
 }
 

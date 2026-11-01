@@ -4,6 +4,9 @@ plugins {
 
 android {
     namespace = "com.primestrider.kotlinstarter.feature.devices.impl"
+    defaultConfig {
+        consumerProguardFiles("consumer-rules.pro")
+    }
     buildFeatures {
         buildConfig = true
     }
