@@ -53,7 +53,7 @@ internal const val SEGMENTED_PILL_TAG = "segmented_pill"
 private val TRACK_SHAPE = RoundedCornerShape(14.dp)
 private val SEGMENT_SHAPE = RoundedCornerShape(10.dp)
 private val TRACK_PADDING = 4.dp
-private val SEGMENT_MIN_HEIGHT = 40.dp
+private val SEGMENT_MIN_HEIGHT = 48.dp
 private const val DISABLED_ALPHA = 0.38f
 
 /** Neutral filled track that holds the segments of [SegmentedChoice] and [MultiSegmentedChoice]. */
@@ -64,7 +64,7 @@ private fun Modifier.segmentTrack(
     fillMaxWidth()
         .alpha(if (enabled) 1f else DISABLED_ALPHA)
         .background(fill, TRACK_SHAPE)
-        .padding(TRACK_PADDING)
+        .padding(horizontal = TRACK_PADDING)
 
 @Composable
 private fun SegmentLabel(
@@ -82,15 +82,24 @@ private fun SegmentLabel(
     )
 }
 
+/**
+ * One segment: the whole 48dp-tall cell is the touch target; the visible segment (and its raised fill when
+ * [raised]) is inset by the track padding, so the track reads 40dp tall inside a 48dp target.
+ */
 @Composable
 private fun RowScope.Segment(
-    modifier: Modifier,
+    clickable: Modifier,
+    raised: Boolean,
     content: @Composable () -> Unit,
 ) {
+    val c = LocalAppColors.current
     Box(
-        modifier
+        Modifier
             .weight(1f)
             .heightIn(min = SEGMENT_MIN_HEIGHT)
+            .then(clickable)
+            .padding(vertical = TRACK_PADDING)
+            .then(if (raised) Modifier.shadow(1.dp, SEGMENT_SHAPE).background(c.controlRaised, SEGMENT_SHAPE) else Modifier)
             .clip(SEGMENT_SHAPE)
             .padding(horizontal = Spacing.s2),
         contentAlignment = Alignment.Center,
@@ -123,6 +132,7 @@ fun <T> SegmentedChoice(
                         .offset(x = pillOffset)
                         .width(segmentWidth)
                         .fillMaxHeight()
+                        .padding(vertical = TRACK_PADDING)
                         .shadow(1.dp, SEGMENT_SHAPE)
                         .background(c.controlRaised, SEGMENT_SHAPE)
                         .testTag(SEGMENTED_PILL_TAG),
@@ -134,6 +144,7 @@ fun <T> SegmentedChoice(
                 val isSelected = option == selected
                 Segment(
                     Modifier.selectable(selected = isSelected, enabled = enabled, role = Role.RadioButton, onClick = { onSelect(option) }),
+                    raised = false,
                 ) { SegmentLabel(label(option), isSelected) }
             }
         }
@@ -154,9 +165,9 @@ fun <T> MultiSegmentedChoice(
     Row(modifier.segmentTrack(c.controlFill, enabled)) {
         options.forEach { option ->
             val isSelected = option in selected
-            val raised = if (isSelected) Modifier.shadow(1.dp, SEGMENT_SHAPE).background(c.controlRaised, SEGMENT_SHAPE) else Modifier
             Segment(
-                raised.toggleable(value = isSelected, enabled = enabled, role = Role.Checkbox, onValueChange = { onToggle(option) }),
+                Modifier.toggleable(value = isSelected, enabled = enabled, role = Role.Checkbox, onValueChange = { onToggle(option) }),
+                raised = isSelected,
             ) { SegmentLabel(label(option), isSelected) }
         }
     }
@@ -188,14 +199,15 @@ private val SLIDER_TRACK_HEIGHT = 6.dp
 private val SLIDER_THUMB_SIZE = 22.dp
 
 @Composable
-private fun appSliderColors(): SliderColors {
+internal fun appSliderColors(): SliderColors {
     val c = LocalAppColors.current
     return SliderDefaults.colors(
         thumbColor = Palette.white,
         activeTrackColor = c.primary,
         inactiveTrackColor = c.controlFill,
-        activeTickColor = c.primary,
-        inactiveTickColor = c.controlFill,
+        // Step marks must contrast with the track they sit on.
+        activeTickColor = Palette.white,
+        inactiveTickColor = c.muted,
     )
 }
 

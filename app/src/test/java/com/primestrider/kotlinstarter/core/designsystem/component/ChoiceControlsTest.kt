@@ -1,7 +1,9 @@
 package com.primestrider.kotlinstarter.core.designsystem.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.SliderColors
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -11,6 +13,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsNotSelected
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -82,6 +86,27 @@ class ChoiceControlsTest {
         rule.setContent { AppTheme(false) { SegmentedChoice(listOf("a", "b"), selected = "b", onSelect = {}, label = { "Option $it" }) } }
         rule.onNodeWithText("Option b").assertIsSelected().assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
         rule.onNodeWithText("Option a").assertIsNotSelected()
+    }
+
+    @Test
+    fun every_segment_is_a_48dp_target() {
+        rule.setContent {
+            AppTheme(false) {
+                Column {
+                    SegmentedChoice(listOf("a", "b"), selected = "a", onSelect = {}, label = { "One $it" })
+                    MultiSegmentedChoice(listOf("x"), selected = emptySet(), onToggle = {}, label = { "Many $it" })
+                }
+            }
+        }
+        listOf("One a", "One b", "Many x").forEach { rule.onNodeWithText(it).assertHeightIsAtLeast(48.dp) }
+    }
+
+    @Test
+    fun slider_step_ticks_contrast_with_their_track() {
+        lateinit var colors: SliderColors
+        rule.setContent { AppTheme(false) { colors = appSliderColors() } }
+        assertNotEquals(colors.activeTrackColor, colors.activeTickColor)
+        assertNotEquals(colors.inactiveTrackColor, colors.inactiveTickColor)
     }
 
     @Test

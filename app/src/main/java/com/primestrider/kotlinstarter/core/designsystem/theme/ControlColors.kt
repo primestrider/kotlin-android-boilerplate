@@ -15,11 +15,14 @@ import androidx.compose.ui.unit.dp
 /** Resting fill of a field or an unselected control. Differs from both `background` and `card`. */
 val AppColors.controlFill: Color get() = secondary
 
-/** Fill of the field being typed in: a light tint of `primary` (a deep one in dark theme). */
-val AppColors.controlFocusFill: Color get() = primary.copy(alpha = 0.12f).compositeOver(background)
+/**
+ * Fill of the field being typed in: `primary` over the resting fill, so a focused field still stands out from
+ * both `background` and `card` (a tint over `background` vanishes on a dark card).
+ */
+val AppColors.controlFocusFill: Color get() = primary.copy(alpha = 0.12f).compositeOver(controlFill)
 
-/** Fill of a field in error: a light tint of `destructive`. */
-val AppColors.controlErrorFill: Color get() = destructive.copy(alpha = 0.10f).compositeOver(background)
+/** Fill of a field in error: `destructive` over the resting fill, for the same reason as [controlFocusFill]. */
+val AppColors.controlErrorFill: Color get() = destructive.copy(alpha = 0.10f).compositeOver(controlFill)
 
 /** A selected segment: white in light theme, a lighter grey than the track in dark theme. */
 val AppColors.controlRaised: Color

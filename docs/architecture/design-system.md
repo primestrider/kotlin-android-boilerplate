@@ -22,9 +22,9 @@ Tokens and theme live in `app/src/main/java/com/primestrider/kotlinstarter/core/
 
 `theme/ControlColors.kt` derives the colours every form control uses from the semantic roles, so changing the brand colour restyles all of them:
 
-- `controlFill` (= `secondary`): resting fill of fields and unselected controls; it differs from both `background` and `card`, so a field stays visible on a card in dark theme.
-- `controlFocusFill`: `primary` at 12% over `background`, the fill of the field being typed in.
-- `controlErrorFill`: `destructive` at 10% over `background`, the fill of a field in error.
+- `controlFill` (= `secondary`): resting fill of fields and unselected controls; it differs from both `background` and `card`, so a field stays visible on a card in dark theme, at rest, focused and in error.
+- `controlFocusFill`: `primary` at 12% over `controlFill`, the fill of the field being typed in (over the resting fill, not `background`, so it also stands out on a dark card).
+- `controlErrorFill`: `destructive` at 10% over `controlFill`, the fill of a field in error.
 - `controlRaised`: the selected segment (white in light theme, a lighter grey in dark theme).
 - `ControlShapes` (field radius 16, checkbox 7dp, pill) and `CONTROL_ANIMATION_MS` (180).
 

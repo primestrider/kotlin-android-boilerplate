@@ -1,9 +1,12 @@
 package com.primestrider.kotlinstarter.core.designsystem.theme
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.math.abs
 
 class ControlColorsTest {
     @Test
@@ -13,7 +16,7 @@ class ControlColorsTest {
         assertEquals(
             Palette.Primary.c500
                 .copy(alpha = 0.12f)
-                .compositeOver(Palette.white),
+                .compositeOver(LightColors.controlFill),
             LightColors.controlFocusFill,
         )
     }
@@ -23,9 +26,25 @@ class ControlColorsTest {
         assertEquals(
             Palette.Error.c500
                 .copy(alpha = 0.10f)
-                .compositeOver(DarkColors.background),
+                .compositeOver(DarkColors.controlFill),
             DarkColors.controlErrorFill,
         )
+    }
+
+    /** Largest per-channel difference on a 0..255 scale. */
+    private fun distance(
+        a: Color,
+        b: Color,
+    ): Int = maxOf(abs(a.red - b.red), abs(a.green - b.green), abs(a.blue - b.blue)).times(255).toInt()
+
+    @Test
+    fun focus_and_error_fills_stand_out_from_card_and_background() {
+        listOf(LightColors, DarkColors).forEach { colors ->
+            listOf(colors.controlFocusFill, colors.controlErrorFill).forEach { fill ->
+                assertTrue("$fill too close to card ${colors.card}", distance(fill, colors.card) >= 12)
+                assertTrue("$fill too close to background ${colors.background}", distance(fill, colors.background) >= 12)
+            }
+        }
     }
 
     @Test
