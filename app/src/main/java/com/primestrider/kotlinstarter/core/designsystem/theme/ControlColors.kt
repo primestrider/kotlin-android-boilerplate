@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.unit.dp
 
 /*
@@ -19,6 +20,10 @@ val AppColors.controlFocusFill: Color get() = primary.copy(alpha = 0.12f).compos
 
 /** Fill of a field in error: a light tint of `destructive`. */
 val AppColors.controlErrorFill: Color get() = destructive.copy(alpha = 0.10f).compositeOver(background)
+
+/** A selected segment: white in light theme, a lighter grey than the track in dark theme. */
+val AppColors.controlRaised: Color
+    get() = if (background.luminance() >= 0.5f) card else foreground.copy(alpha = 0.14f).compositeOver(controlFill)
 
 /** Duration of control colour and position changes (focus tint, switch thumb, segment pill). */
 const val CONTROL_ANIMATION_MS = 180
