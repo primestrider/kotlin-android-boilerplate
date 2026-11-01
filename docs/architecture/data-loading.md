@@ -51,6 +51,25 @@ In `ProductsScreen`, collected with `collectAsLazyPagingItems()`:
 | `append` `Loading` | spinner row at the end |
 | `append` `Error` | message + "Try again" row at the end → `retry()`; loaded items stay |
 
+## Offline-first
+
+The full list (blank query) is cached in the feature's own Room database, `products.db`, so the last list loaded still shows without a connection:
+
+```mermaid
+flowchart LR
+    API[DummyJSON] -->|ProductsRemoteMediator| DB[(products.db)]
+    DB -->|ProductDao.pagingSource| Pager --> Screen[ProductsScreen]
+```
+
+- The screen pages **only from the database** (`Pager(config, remoteMediator = ProductsRemoteMediator(...)) { dao.pagingSource() }`). The mediator fetches pages from the network and writes them: `REFRESH` loads offset 0 and replaces the table in one transaction, `APPEND` continues from the offset stored in `remote_keys`, `PREPEND` has nothing to do.
+- The table is replaced only after the first page arrives, so a failed refresh keeps the cached rows on screen and the error shows beside them (`refresh` is `Error` with items present).
+- `ProductEntity.position` keeps the server's order; image URLs and reviews are stored as JSON text through `ProductConverters`.
+- Searches stay online (`ProductsPagingSource`): caching every query would grow the database without bound.
+- `product(id)` asks the network first and, on an `IOException` (no connection), answers from the cached row; other failures (a 404, a server error) are not hidden by stale data.
+- The database is only a cache, so its builder uses `fallbackToDestructiveMigration(dropAllTables = true)`: after a schema change it is rebuilt from the network instead of migrated. Data the user created (todos) needs real migrations instead (see `ExampleDatabase`).
+
+Tests: `ProductsRemoteMediatorTest` (in-memory Room + `FakeProductsApi`: refresh replaces, append continues and ends, offline refresh is an `Error` that keeps the cache) and `ProductsRepositoryTest` (cached rows offline, search stays online, detail falls back to the cache).
+
 ## Debounced search
 
 ```kotlin
@@ -74,7 +93,7 @@ The query lives in `SavedStateHandle`, so the search text and its results come b
 
 ## Single objects
 
-`ProductDetailViewModel` shows the shape for one item: a `sealed interface` state (`Loading`, `Loaded`, `NotFound`, `Failed(ApiError)`), the id read with `savedStateHandle.toRoute<ProductDetailRoute>()`, an invalid id answered as `NotFound` without a request, HTTP 404 mapped to `NotFound` (no Retry: retrying cannot help) and every other failure to `Failed` with Retry. ViewModel tests that use `toRoute()` need Robolectric (it decodes through an `android.os.Bundle`).
+`ProductDetailViewModel` shows the shape for one item: a `sealed interface` state (`Loading`, `Loaded`, `NotFound`, `Failed(ApiError)`), the id passed in through an `@AssistedFactory` (so the same ViewModel serves the detail page and the detail pane beside the list on wide screens), an invalid id answered as `NotFound` without a request, HTTP 404 mapped to `NotFound` (no Retry: retrying cannot help) and every other failure to `Failed` with Retry.
 
 ## Formatting
 
