@@ -220,7 +220,8 @@ jobs:
           "$APKSIGNER" verify --print-certs app/build/outputs/apk/prod/release/app-prod-release.apk \
             | tee "$RUNNER_TEMP/certs.txt"
           # Fail closed: no certificate printed means nothing was verified.
-          if ! grep -q "Signer #1 certificate" "$RUNNER_TEMP/certs.txt"; then
+          # Older build-tools print "Signer #1 certificate DN:", newer ones "V2 Signer: certificate DN:".
+          if ! grep -q "certificate DN: " "$RUNNER_TEMP/certs.txt"; then
             echo "::error::apksigner printed no signer certificate."
             exit 1
           fi
