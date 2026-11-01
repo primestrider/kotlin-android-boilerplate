@@ -11,6 +11,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.feature.example.CatalogHome
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
@@ -105,7 +106,7 @@ fun NavGraphBuilder.homeGraph(
         todosDestinations(navController)
         // endregion
         // region example:devices
-        devicesDestinations(navController)
+        devicesDestinations(navController, appScheme = BuildConfig.APP_SCHEME)
         // endregion
         // region example:animation
         animationDestinations(navController)

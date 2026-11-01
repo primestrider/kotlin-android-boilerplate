@@ -29,8 +29,6 @@ android {
         applicationId = "com.primestrider.kotlinstarter"
         versionCode = 1
         versionName = "1.0"
-        manifestPlaceholders["appScheme"] = appScheme
-        buildConfigField("String", "APP_SCHEME", javaString(appScheme))
     }
 
     flavorDimensions += "environment"
@@ -40,10 +38,15 @@ android {
             // Installs next to prod.
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
+            // Its own deep-link scheme too, or a link would open prod (or a chooser) when both are installed.
+            manifestPlaceholders["appScheme"] = "$appScheme-dev"
+            buildConfigField("String", "APP_SCHEME", javaString("$appScheme-dev"))
             buildConfigField("String", "API_URL", javaString(apiUrl("https://dummyjson.com/")))
         }
         create("prod") {
             dimension = "environment"
+            manifestPlaceholders["appScheme"] = appScheme
+            buildConfigField("String", "APP_SCHEME", javaString(appScheme))
             buildConfigField("String", "API_URL", javaString(apiUrl("https://dummyjson.com/")))
         }
     }

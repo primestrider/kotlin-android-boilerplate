@@ -7,7 +7,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import com.primestrider.kotlinstarter.core.common.AppConfig
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSection
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
@@ -20,10 +19,16 @@ import dagger.hilt.components.SingletonComponent
 import dagger.multibindings.ElementsIntoSet
 import dagger.multibindings.IntoSet
 
-/** Every Device APIs demo, reachable from Home and from `<appScheme>://example/sdk/...` deep links. */
-fun NavGraphBuilder.devicesDestinations(navController: NavController) {
+/**
+ * Every Device APIs demo, reachable from Home and from `<appScheme>://example/sdk/...` deep links. [appScheme] is the
+ * app's flavour scheme (`BuildConfig.APP_SCHEME` of `:app`).
+ */
+fun NavGraphBuilder.devicesDestinations(
+    navController: NavController,
+    appScheme: String,
+) {
     composable<SdkDemoRoute>(
-        deepLinks = listOf(navDeepLink<SdkDemoRoute>(basePath = "${AppConfig.appScheme}://example/sdk")),
+        deepLinks = listOf(navDeepLink<SdkDemoRoute>(basePath = "$appScheme://example/sdk")),
     ) { entry -> SdkDemoScreen(id = entry.toRoute<SdkDemoRoute>().id, onBack = { navController.popBackStack() }) }
 }
 

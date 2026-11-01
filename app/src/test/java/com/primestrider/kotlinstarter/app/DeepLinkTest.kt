@@ -14,6 +14,7 @@ import androidx.core.net.toUri
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.primestrider.kotlinstarter.BuildConfig
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
@@ -41,7 +42,7 @@ class DeepLinkTest {
 
     @Test
     fun payment_code_link_opens_the_screen_with_the_amount() {
-        launch("kotlinstarter://example/sdk/payment-code?amount=50000").use {
+        launch("${BuildConfig.APP_SCHEME}://example/sdk/payment-code?amount=50000").use {
             composeRule.onNodeWithText("Tunjukkan kode ini ke kasir").assertIsDisplayed()
             composeRule.onNodeWithText("Jumlah Rp50.000").performScrollTo().assertIsDisplayed()
         }
@@ -49,7 +50,7 @@ class DeepLinkTest {
 
     @Test
     fun a_link_without_amount_opens_the_screen_without_the_amount_row() {
-        launch("kotlinstarter://example/sdk/payment-code").use {
+        launch("${BuildConfig.APP_SCHEME}://example/sdk/payment-code").use {
             composeRule.onNodeWithText("Tunjukkan kode ini ke kasir").assertIsDisplayed()
             composeRule.onAllNodes(hasText("Jumlah", substring = true)).assertCountEquals(0)
         }
@@ -57,7 +58,7 @@ class DeepLinkTest {
 
     @Test
     fun a_negative_amount_in_the_link_is_ignored() {
-        launch("kotlinstarter://example/sdk/payment-code?amount=-50000").use {
+        launch("${BuildConfig.APP_SCHEME}://example/sdk/payment-code?amount=-50000").use {
             composeRule.onNodeWithText("Tunjukkan kode ini ke kasir").assertIsDisplayed()
             composeRule.onAllNodes(hasText("Jumlah", substring = true)).assertCountEquals(0)
         }

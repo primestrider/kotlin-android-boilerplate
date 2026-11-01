@@ -86,7 +86,7 @@ fun WebBrowserScreen(onBack: () -> Unit) {
             }
         }
         SdkSection(R.string.sdk_browser_link_title, R.string.sdk_browser_link_description) {
-            InfoCard(listOf(stringResource(R.string.sdk_browser_url) to paymentDeepLink(AppConfig.appScheme)))
+            InfoCard(listOf(stringResource(R.string.sdk_browser_url) to paymentDeepLink(AppConfig.appScheme(context))))
         }
     }
 }

@@ -118,7 +118,7 @@ class NotificationScheduler(
         if (!manager.areNotificationsEnabled()) return
         ensureChannel()
         val tap =
-            Intent(Intent.ACTION_VIEW, tapUri(id, title)).setPackage(context.packageName)
+            Intent(Intent.ACTION_VIEW, tapUri(AppConfig.appScheme(context), id, title)).setPackage(context.packageName)
         val content = PendingIntent.getActivity(context, id, tap, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
         val notification =
             NotificationCompat
@@ -163,11 +163,12 @@ class NotificationScheduler(
 
         // The tap travels in the deep link itself: NavController.handleDeepLink may rewrite the intent extras.
         internal fun tapUri(
+            scheme: String,
             id: Int,
             title: String,
         ): Uri =
             Uri
-                .parse("${AppConfig.appScheme}://example/sdk/notifications")
+                .parse("$scheme://example/sdk/notifications")
                 .buildUpon()
                 .appendQueryParameter(TAPPED_PARAM, id.toString())
                 .appendQueryParameter(TITLE_PARAM, title)

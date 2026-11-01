@@ -18,6 +18,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KotlinStarter">
 
+        <!-- The deep-link scheme of this flavour, for modules that build links (AppConfig.appScheme in core:common). -->
+        <meta-data
+            android:name="com.primestrider.kotlinstarter.DEEP_LINK_SCHEME"
+            android:value="${appScheme}" />
+
         <activity
             android:name=".app.MainActivity"
             android:exported="true"
@@ -29,7 +34,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- Deep link <appScheme>://example/... (scheme from local.properties app.scheme / env APP_SCHEME); used by the Device APIs demos. -->
+            <!-- Deep link <appScheme>://example/... (local.properties app.scheme / env APP_SCHEME; the dev flavour adds -dev); used by the Device APIs demos. -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

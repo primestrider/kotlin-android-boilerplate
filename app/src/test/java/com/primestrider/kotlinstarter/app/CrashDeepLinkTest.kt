@@ -8,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.core.net.toUri
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.core.crash.CrashRecorder
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -49,7 +50,7 @@ class CrashDeepLinkTest {
             val link =
                 Intent(
                     Intent.ACTION_VIEW,
-                    "kotlinstarter://example/sdk/payment-code?amount=50000".toUri(),
+                    "${BuildConfig.APP_SCHEME}://example/sdk/payment-code?amount=50000".toUri(),
                     context,
                     MainActivity::class.java,
                 )
