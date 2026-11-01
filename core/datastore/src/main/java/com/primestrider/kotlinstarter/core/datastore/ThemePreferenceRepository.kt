@@ -1,11 +1,11 @@
-package com.primestrider.kotlinstarter.core.designsystem.theme
+package com.primestrider.kotlinstarter.core.datastore
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import com.primestrider.kotlinstarter.core.datastore.StorageKeys
 import com.primestrider.kotlinstarter.core.model.ThemeMode
-import com.primestrider.kotlinstarter.core.storage.StorageKeys
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map

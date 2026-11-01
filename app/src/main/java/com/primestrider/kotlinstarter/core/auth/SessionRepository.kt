@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.primestrider.kotlinstarter.core.common.ApplicationScope
-import com.primestrider.kotlinstarter.core.storage.SessionStore
+import com.primestrider.kotlinstarter.core.datastore.SessionStore
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow

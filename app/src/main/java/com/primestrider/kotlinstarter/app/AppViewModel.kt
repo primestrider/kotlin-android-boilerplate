@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.primestrider.kotlinstarter.core.auth.SessionRepository
 import com.primestrider.kotlinstarter.core.crash.CrashRecorder
 import com.primestrider.kotlinstarter.core.crash.CrashReport
-import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreferenceRepository
+import com.primestrider.kotlinstarter.core.datastore.ThemePreferenceRepository
 import com.primestrider.kotlinstarter.core.model.ThemeMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

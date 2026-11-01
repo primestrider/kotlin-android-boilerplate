@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.core.storage
+package com.primestrider.kotlinstarter.core.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -33,6 +33,12 @@ fun createPreferencesDataStore(
         produceFile = produceFile,
     )
 
+/** DataStore file names. Never rename them: an app update would no longer find existing settings or the session. */
+object DataStoreFiles {
+    const val SETTINGS = "settings"
+    const val SESSION = "session"
+}
+
 /** Qualifier for the encrypted-session DataStore (file `session`), kept apart from settings. */
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
@@ -45,12 +51,12 @@ object DataStoreModule {
     @Singleton
     fun providePreferencesDataStore(
         @ApplicationContext context: Context,
-    ): DataStore<Preferences> = createPreferencesDataStore { context.preferencesDataStoreFile("settings") }
+    ): DataStore<Preferences> = createPreferencesDataStore { context.preferencesDataStoreFile(DataStoreFiles.SETTINGS) }
 
     @Provides
     @Singleton
     @SessionStore
     fun provideSessionDataStore(
         @ApplicationContext context: Context,
-    ): DataStore<Preferences> = createPreferencesDataStore { context.preferencesDataStoreFile("session") }
+    ): DataStore<Preferences> = createPreferencesDataStore { context.preferencesDataStoreFile(DataStoreFiles.SESSION) }
 }

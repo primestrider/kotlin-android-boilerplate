@@ -2,7 +2,7 @@ package com.primestrider.kotlinstarter.feature.example.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreferenceRepository
+import com.primestrider.kotlinstarter.core.datastore.ThemePreferenceRepository
 import com.primestrider.kotlinstarter.core.i18n.AppLanguage
 import com.primestrider.kotlinstarter.core.i18n.LanguageController
 import com.primestrider.kotlinstarter.core.model.ThemeMode

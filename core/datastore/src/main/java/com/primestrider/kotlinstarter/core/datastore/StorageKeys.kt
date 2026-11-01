@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.core.storage
+package com.primestrider.kotlinstarter.core.datastore
 
 import androidx.datastore.preferences.core.stringPreferencesKey
 

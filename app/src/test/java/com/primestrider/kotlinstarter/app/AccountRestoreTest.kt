@@ -18,11 +18,11 @@ import com.primestrider.kotlinstarter.core.auth.Session
 import com.primestrider.kotlinstarter.core.auth.SessionCipher
 import com.primestrider.kotlinstarter.core.auth.SessionModule
 import com.primestrider.kotlinstarter.core.auth.SessionRepository
+import com.primestrider.kotlinstarter.core.datastore.DataStoreModule
+import com.primestrider.kotlinstarter.core.datastore.SessionStore
 import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
-import com.primestrider.kotlinstarter.core.storage.DataStoreModule
-import com.primestrider.kotlinstarter.core.storage.SessionStore
 import com.primestrider.kotlinstarter.feature.example.AccountRoute
 import com.primestrider.kotlinstarter.feature.example.SignInRoute
 import com.primestrider.kotlinstarter.testing.GatedPreferencesDataStore

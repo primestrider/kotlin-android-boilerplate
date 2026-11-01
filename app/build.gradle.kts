@@ -74,6 +74,7 @@ ksp {
 dependencies {
     implementation(projects.core.common)
     implementation(projects.core.model)
+    implementation(projects.core.datastore)
     testImplementation(projects.core.testing)
 
     implementation(libs.androidx.core.ktx)
