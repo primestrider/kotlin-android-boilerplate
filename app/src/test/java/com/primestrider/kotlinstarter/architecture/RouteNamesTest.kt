@@ -1,5 +1,7 @@
 package com.primestrider.kotlinstarter.architecture
 
+// remove-examples: exercises the example features, so scripts/remove-examples.sh deletes it with them.
+
 import com.primestrider.kotlinstarter.feature.example.AccountRoute
 import com.primestrider.kotlinstarter.feature.example.ActionsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute

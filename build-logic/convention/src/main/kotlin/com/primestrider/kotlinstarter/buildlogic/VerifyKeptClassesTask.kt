@@ -35,7 +35,11 @@ abstract class VerifyKeptClassesTask : DefaultTask() {
                     val pkg = Regex("""^package\s+([\w.]+)""", RegexOption.MULTILINE).find(text)?.groupValues?.get(1) ?: return@flatMap emptyList()
                     Regex("""@Serializable\s+data\s+(?:object|class)\s+(\w+)""").findAll(text).map { "$pkg.${it.groupValues[1]}" }.toList()
                 }
-        if (routes.isEmpty()) throw GradleException("No @Serializable routes found in the :api sources")
+        if (routes.isEmpty()) {
+            // No feature modules (e.g. after scripts/remove-examples.sh): nothing to keep.
+            logger.lifecycle("verifyReleaseKeeps: no feature routes found, nothing to check")
+            return
+        }
         val classLines =
             mapping.get().asFile.readLines().filter { !it.startsWith(" ") && !it.startsWith("#") && it.endsWith(":") }
         val renamed = classLines.associate { line -> line.substringBefore(" -> ") to line.substringAfter(" -> ").removeSuffix(":") }

@@ -1,5 +1,7 @@
 package com.primestrider.kotlinstarter.app
 
+// remove-examples: exercises the example features, so scripts/remove-examples.sh deletes it with them.
+
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule

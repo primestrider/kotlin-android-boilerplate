@@ -63,7 +63,8 @@ jobs:
           bash scripts/remove-examples.sh "$RUNNER_TEMP/no-examples"
       - name: Build and test the copy
         working-directory: ${{ runner.temp }}/no-examples
-        run: ./gradlew test assembleDevDebug
+        # The same checks a project gets after applying the script: tests, lint and the minified release.
+        run: ./gradlew test ktlintCheck lint assembleDevDebug assembleProdRelease verifyReleaseKeeps
 
   record-screenshots:
     name: Record screenshot references
