@@ -1,5 +1,8 @@
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.HostTestBuilder
+import com.primestrider.kotlinstarter.buildlogic.AppVersion
+import com.primestrider.kotlinstarter.buildlogic.BumpVersionTask
+import com.primestrider.kotlinstarter.buildlogic.PrintVersionTask
 import com.primestrider.kotlinstarter.buildlogic.VerifyKeptClassesTask
 import com.primestrider.kotlinstarter.buildlogic.appScheme
 import com.primestrider.kotlinstarter.buildlogic.javaString
@@ -22,13 +25,16 @@ fun apiUrl(default: String): String = localOrEnv("api.url", "API_URL", default)
 /** Release signing from env (CI) or `local.properties` (never committed); absent values fall back to debug signing. */
 val releaseKeystore: String? = localOrEnv("android.keystore.path", "ANDROID_KEYSTORE_PATH", "").takeIf { it.isNotBlank() }
 
+/** One source: `version=` in gradle.properties. versionCode = major * 10000 + minor * 100 + patch. */
+val appVersion = AppVersion.parse(providers.gradleProperty("version").get())
+
 android {
     namespace = "com.primestrider.kotlinstarter"
 
     defaultConfig {
         applicationId = "com.primestrider.kotlinstarter"
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = appVersion.code
+        versionName = appVersion.toString()
     }
 
     flavorDimensions += "environment"
@@ -162,4 +168,15 @@ dependencies {
 
     testImplementation(libs.okhttp.mockwebserver3)
     testImplementation(libs.androidx.work.testing)
+}
+
+// ./gradlew bumpVersion -Pbump=patch|minor|major rewrites version= in gradle.properties (the release workflow uses it).
+tasks.register<BumpVersionTask>("bumpVersion") {
+    properties.set(rootProject.layout.projectDirectory.file("gradle.properties"))
+    bump.set(providers.gradleProperty("bump").orElse("patch"))
+}
+
+// ./gradlew -q printVersion
+tasks.register<PrintVersionTask>("printVersion") {
+    version.set(appVersion.toString())
 }

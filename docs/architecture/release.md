@@ -1,5 +1,20 @@
 # Release
 
+## Versioning
+
+The version is kept once, as `version=major.minor.patch` in `gradle.properties`. `:app` reads it through
+`AppVersion` (`build-logic/convention/src/main/kotlin/com/primestrider/kotlinstarter/buildlogic/AppVersion.kt`):
+`versionName` is the version (`-dev` added for the dev flavour) and `versionCode = major * 10000 + minor * 100 + patch`
+(`1.2.3` is 10203). Minor and patch therefore stay below 100: `1.2.99` cannot get a patch bump, raise the minor
+instead. A malformed value fails the build.
+
+```
+./gradlew -q printVersion               # 1.0.0
+./gradlew bumpVersion -Pbump=patch      # or minor / major; rewrites only the version= line
+```
+
+The distribution workflow bumps it for you (see "Distribution" below); bump by hand only for local releases.
+
 ## Flavours
 
 One dimension, `environment`:
