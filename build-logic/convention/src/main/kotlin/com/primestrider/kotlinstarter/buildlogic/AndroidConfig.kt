@@ -76,3 +76,24 @@ private fun Project.configureKotlinAndTests() {
         add("testImplementation", libs.lib("turbine"))
     }
 }
+
+/** `local.properties` [key], else environment variable [env], else [default]; blank values count as absent. */
+fun Project.localOrEnv(
+    key: String,
+    env: String,
+    default: String,
+): String {
+    val local =
+        java.util.Properties().apply {
+            rootProject.file("local.properties").takeIf { it.exists() }?.reader()?.use { load(it) }
+        }
+    return local.getProperty(key)?.takeIf { it.isNotBlank() }
+        ?: providers.environmentVariable(env).orNull?.takeIf { it.isNotBlank() }
+        ?: default
+}
+
+/** Deep link scheme (`<scheme>://example/...`): `app.scheme`, else APP_SCHEME, else "kotlinstarter". */
+val Project.appScheme: String get() = localOrEnv("app.scheme", "APP_SCHEME", "kotlinstarter")
+
+/** Escapes [value] as a Java string literal for `buildConfigField`. */
+fun javaString(value: String): String = "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\""

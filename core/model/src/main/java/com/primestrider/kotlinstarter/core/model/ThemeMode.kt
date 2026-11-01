@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.core.designsystem.theme
+package com.primestrider.kotlinstarter.core.model
 
 enum class ThemeMode {
     SYSTEM,

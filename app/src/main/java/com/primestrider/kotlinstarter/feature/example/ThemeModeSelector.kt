@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
-import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
+import com.primestrider.kotlinstarter.core.model.ThemeMode
 
 /** System / Light / Dark segmented control shared by Settings and the Theme showcase page. */
 @Composable

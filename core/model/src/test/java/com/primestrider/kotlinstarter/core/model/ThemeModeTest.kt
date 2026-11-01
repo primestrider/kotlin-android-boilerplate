@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.core.designsystem.theme
+package com.primestrider.kotlinstarter.core.model
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -11,7 +11,7 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.test.core.app.ApplicationProvider
 import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
-import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
+import com.primestrider.kotlinstarter.core.model.ThemeMode
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test

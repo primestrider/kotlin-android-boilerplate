@@ -2,10 +2,10 @@ package com.primestrider.kotlinstarter.feature.example.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreferenceRepository
 import com.primestrider.kotlinstarter.core.i18n.AppLanguage
 import com.primestrider.kotlinstarter.core.i18n.LanguageController
+import com.primestrider.kotlinstarter.core.model.ThemeMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

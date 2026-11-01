@@ -72,6 +72,10 @@ ksp {
 }
 
 dependencies {
+    implementation(projects.core.common)
+    implementation(projects.core.model)
+    testImplementation(projects.core.testing)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.splashscreen)

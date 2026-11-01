@@ -20,6 +20,11 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Kotlin Starter"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+rootProject.name = "kotlin-starter"
 include(":app")
  
+include(":core:common")
+include(":core:model")
+include(":core:testing")

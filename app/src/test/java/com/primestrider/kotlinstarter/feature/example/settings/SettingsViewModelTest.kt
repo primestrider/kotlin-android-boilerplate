@@ -5,10 +5,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.lifecycle.viewModelScope
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
 import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreferenceRepository
 import com.primestrider.kotlinstarter.core.i18n.AppLanguage
 import com.primestrider.kotlinstarter.core.i18n.LanguageController
+import com.primestrider.kotlinstarter.core.model.ThemeMode
 import com.primestrider.kotlinstarter.testing.InMemoryPreferencesDataStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

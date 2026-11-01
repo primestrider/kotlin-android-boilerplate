@@ -21,8 +21,8 @@ import com.primestrider.kotlinstarter.core.crash.CrashFallbackScreen
 import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
-import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
-import com.primestrider.kotlinstarter.core.designsystem.theme.resolveDarkTheme
+import com.primestrider.kotlinstarter.core.model.ThemeMode
+import com.primestrider.kotlinstarter.core.model.resolveDarkTheme
 import com.primestrider.kotlinstarter.core.pip.LocalPictureInPictureHost
 import com.primestrider.kotlinstarter.core.pip.PictureInPictureFrame
 import com.primestrider.kotlinstarter.core.pip.PictureInPictureHost
