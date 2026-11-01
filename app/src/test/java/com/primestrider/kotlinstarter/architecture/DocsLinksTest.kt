@@ -7,7 +7,8 @@ import org.junit.Test
 import java.io.File
 
 /**
- * Docs point at real files: every backticked path in README, AGENTS.md and docs/ (not plans/specs) is a file of the
+ * Docs point at real files: every backticked path in README, AGENTS.md, docs/ (not plans/specs) and the project skills
+ * (.agents/skills) is a file of the
  * repository, written in full or as its trailing part (docs often give package-relative paths such as
  * `sdk/share/ShareScreen.kt`). Placeholders (`<name>`, `xx`, `*`) are not checked.
  */
@@ -16,7 +17,8 @@ class DocsLinksTest {
 
     private fun docs(): List<File> =
         listOf(File(repoRoot, "README.md"), File(repoRoot, "AGENTS.md")) +
-            File(repoRoot, "docs").walkTopDown().filter { it.extension == "md" && !it.invariantSeparatorsPath.contains("/superpowers/") }
+            File(repoRoot, "docs").walkTopDown().filter { it.extension == "md" && !it.invariantSeparatorsPath.contains("/superpowers/") } +
+            File(repoRoot, ".agents/skills").walkTopDown().filter { it.extension == "md" }
 
     /** Every repository file as a `/`-separated path, without build outputs. */
     private val files: List<String> by lazy {

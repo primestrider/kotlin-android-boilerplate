@@ -31,7 +31,9 @@ They read the source tree, so they cannot pass by scanning nothing:
 - `NoRawMaterialControlsTest`: no module uses stock Material form controls.
 - `TranslationCompletenessTest`: each module's `values/` and `values-in/` have the same keys and placeholders, and no string name is defined in two modules.
 - `RouteNamesTest`: route serial names (stored in the saved back stack) never change.
-- `DocsLinksTest`: every path quoted in the docs exists.
+- `DocsLinksTest`: every path quoted in the docs and the project skills exists.
+- `SkillsTest`: every `.agents/skills/<name>/SKILL.md` has frontmatter matching its folder, and `AGENTS.md` lists it.
+- `DeployWorkflowTest`: the guards of the distribution workflow (bump only on main, no debug-signed release, `[skip ci]`, tag last).
 
 A test in `:app` that drives example screens without importing a feature package starts with the line
 `// remove-examples: ...`, so `scripts/remove-examples.sh` deletes it with the examples.

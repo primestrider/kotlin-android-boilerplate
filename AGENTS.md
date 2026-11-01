@@ -89,4 +89,15 @@ On Windows use `gradlew.bat`.
 
 ## Skills
 
-Added in plan 6.
+Step-by-step guides for the repeated tasks of this starter, one `SKILL.md` per folder in `.agents/skills/` (frontmatter
+`name` + `description`, so agents that support skills can load them; anyone can read them). Pick the one matching the
+task before starting; they link into `docs/architecture/` for the why.
+
+| Skill | Use it to |
+| --- | --- |
+| `add-feature` | add a feature module (`:api` + `:impl`, data/model/ui, Hilt, wiring in `:app`, tests) |
+| `add-screen-route` | add a screen and route, navigate between them, protect a page, add a deep link |
+| `add-api-endpoint` | call a backend endpoint (Retrofit, DTO, mapping, `safeApiCall`, MockWebServer tests) |
+| `add-translation` | add or change strings in English and Indonesian |
+
+`SkillsTest` checks the frontmatter and that this table lists every skill; `DocsLinksTest` checks the paths they quote.
