@@ -73,3 +73,10 @@ simply ship without one.
   screenshot verification once reference images exist; reports are uploaded when it fails.
 - `examples-removed`: runs `scripts/remove-examples.sh` on a copy and builds and tests it.
 - `record-screenshots`: manual (`workflow_dispatch` with `record_screenshots`), uploads new Roborazzi references.
+
+## Distribution
+
+`.github/workflows/deploy-android.yml` distributes the signed `prod` release to Firebase App Distribution on every merge
+to `main` (and on demand), raising the version from the branch prefix (`feat/` → minor, anything else → patch, major
+only by hand), committing it back with `[skip ci]` and tagging `vX.Y.Z` once testers have the build. It refuses to
+distribute a debug-signed APK. Setup: [firebase-app-distribution-setup.md](../firebase-app-distribution-setup.md).

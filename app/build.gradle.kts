@@ -180,3 +180,12 @@ tasks.register<BumpVersionTask>("bumpVersion") {
 tasks.register<PrintVersionTask>("printVersion") {
     version.set(appVersion.toString())
 }
+
+// The architecture tests (app/src/test/.../architecture) also read files outside this module. Declare them, so editing
+// only a doc, a workflow or a skill reruns the tests instead of taking them from the up-to-date check or the cache.
+tasks.withType<Test>().configureEach {
+    listOf("docs", ".github", ".agents", "scripts").forEach { dir ->
+        inputs.dir(rootProject.layout.projectDirectory.dir(dir)).withPathSensitivity(PathSensitivity.RELATIVE).optional()
+    }
+    inputs.files(rootProject.file("README.md"), rootProject.file("AGENTS.md")).withPathSensitivity(PathSensitivity.RELATIVE)
+}

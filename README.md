@@ -39,7 +39,7 @@ Module boundaries are Gradle dependencies, so a feature cannot reach into anothe
 
 ## Environments, release and CI
 
-`dev` and `prod` flavours with an API URL each, release signing from environment variables or `local.properties`, R8 with resource shrinking, a baseline profile module, and a GitHub Actions workflow: see [docs/architecture/release.md](docs/architecture/release.md). Testing conventions: [docs/architecture/testing.md](docs/architecture/testing.md).
+`dev` and `prod` flavours with an API URL each, release signing from environment variables or `local.properties`, R8 with resource shrinking, a baseline profile module, and a GitHub Actions workflow: see [docs/architecture/release.md](docs/architecture/release.md). Testing conventions: [docs/architecture/testing.md](docs/architecture/testing.md). Distribution to testers through Firebase App Distribution: [docs/firebase-app-distribution-setup.md](docs/firebase-app-distribution-setup.md).
 
 ## Styling and dark mode
 
