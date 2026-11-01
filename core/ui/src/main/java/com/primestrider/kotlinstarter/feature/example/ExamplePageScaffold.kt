@@ -53,7 +53,7 @@ fun ExamplePageScaffold(
 
 /** Titled group of demo content inside an example page. */
 @Composable
-internal fun DemoSection(
+fun DemoSection(
     @StringRes title: Int,
     content: @Composable ColumnScope.() -> Unit,
 ) {

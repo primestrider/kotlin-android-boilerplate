@@ -54,6 +54,7 @@ import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkSection
 import java.io.File
 import kotlin.math.roundToInt
+import com.primestrider.kotlinstarter.core.ui.R as UiR
 
 /** Photo Picker (images or videos), camera capture and the document picker, with their results. */
 @Composable
@@ -195,12 +196,12 @@ internal fun ImagePickerContent(
             val blocked = error == PickerError.CAMERA_DENIED && cameraBlocked
             Banner(
                 title = stringResource(errorText(error)),
-                message = if (blocked) stringResource(R.string.permission_blocked_suffix) else null,
+                message = if (blocked) stringResource(UiR.string.permission_blocked_suffix) else null,
                 variant = BannerVariant.ERROR,
             )
             if (blocked) {
                 AppButton(
-                    stringResource(R.string.permission_open_settings),
+                    stringResource(UiR.string.permission_open_settings),
                     onClick = onOpenSettings,
                     variant = ButtonVariant.OUTLINED,
                 )
