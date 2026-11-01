@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.unit.dp
 
 /*
  * Colours of form controls (text fields, checkbox, radio, switch, segmented, slider). They are derived
@@ -24,4 +25,6 @@ const val CONTROL_ANIMATION_MS = 180
 
 object ControlShapes {
     val field: Shape = RoundedCornerShape(Radii.xl)
+    val checkbox: Shape = RoundedCornerShape(7.dp)
+    val pill: Shape = RoundedCornerShape(Radii.full)
 }
