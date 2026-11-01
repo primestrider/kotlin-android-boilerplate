@@ -41,5 +41,6 @@ if [ -d app/src/test ]; then
         while IFS= read -r file; do rm -f "$file"; done
 fi
 
-./gradlew --quiet ktlintFormat
+# Never from the build cache: the cached result would not touch the edited sources.
+./gradlew --quiet --no-build-cache ktlintFormat --rerun-tasks
 echo "Examples removed from $(pwd). Build with: ./gradlew test assembleDebug"
