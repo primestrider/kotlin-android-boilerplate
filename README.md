@@ -20,7 +20,8 @@ A Kotlin Android starter kit built with Jetpack Compose, Material 3, and Hilt. I
 
 On Windows use `gradlew.bat`.
 
-See [AGENTS.md](AGENTS.md) for the project map, the module rules and conventions.
+See [AGENTS.md](AGENTS.md) for the project map, the module rules and conventions. New to the codebase (or to Android,
+coming from React or Vue)? Start with the [learning guide](docs/learning/README.md).
 
 ## Project structure
 

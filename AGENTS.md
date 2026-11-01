@@ -9,6 +9,11 @@ AGP 9.4.0 (built-in Kotlin), Gradle 9.6.0, Kotlin 2.4.21, compileSdk/targetSdk 3
 All dependencies and plugins are declared in `gradle/libs.versions.toml`. Parallel builds, the build cache and the
 configuration cache are on (`gradle.properties`).
 
+## Learning the codebase
+
+`docs/learning/README.md` is a guided tour (module map, app start, data and auth, navigation, build and release) with
+diagrams and quoted code, plus a chapter mapping every concept to React and Vue.
+
 ## Project map
 
 Classes keep the package they had before the split (root `com.primestrider.kotlinstarter`); each module's
