@@ -37,6 +37,12 @@ fun Project.configureAndroidApplication(extension: ApplicationExtension) {
             targetCompatibility = AndroidConfig.JAVA_VERSION
         }
         testOptions.unitTests.robolectric()
+        lint {
+            // New findings fail the build; existing ones are listed in each module's lint-baseline.xml.
+            abortOnError = true
+            warningsAsErrors = false
+            baseline = file("lint-baseline.xml")
+        }
     }
     configureKotlinAndTests()
 }
@@ -52,6 +58,12 @@ fun Project.configureAndroidLibrary(extension: LibraryExtension) {
             targetCompatibility = AndroidConfig.JAVA_VERSION
         }
         testOptions.unitTests.robolectric()
+        lint {
+            // New findings fail the build; existing ones are listed in each module's lint-baseline.xml.
+            abortOnError = true
+            warningsAsErrors = false
+            baseline = file("lint-baseline.xml")
+        }
     }
     configureKotlinAndTests()
 }
