@@ -24,11 +24,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -84,6 +86,12 @@ fun CameraScreen(
     }
 }
 
+/**
+ * Height of the camera preview: 380dp, but at most 55% of the window height. The preview view consumes touches, so
+ * in landscape a full-height preview left nowhere to start a scroll and the controls below were unreachable.
+ */
+internal fun cameraPreviewHeight(windowHeightDp: Int): Dp = minOf(380.dp, (windowHeightDp * 0.55f).dp)
+
 @Composable
 private fun CameraContent(gate: QrResultGate) {
     val context = LocalContext.current
@@ -111,13 +119,14 @@ private fun CameraContent(gate: QrResultGate) {
     LaunchedEffect(zoom) { controller.setZoom(zoom) }
 
     val previewLabel = stringResource(R.string.sdk_camera_preview_title)
+    val previewHeight = cameraPreviewHeight(LocalConfiguration.current.screenHeightDp)
     SdkSection(R.string.sdk_camera_preview_title, previewDescription(mode)) {
         AndroidView(
             factory = { previewView },
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(380.dp)
+                    .height(previewHeight)
                     .clip(RoundedCornerShape(Radii.lg))
                     .semantics { contentDescription = previewLabel },
         )

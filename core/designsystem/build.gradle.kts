@@ -13,6 +13,7 @@ dependencies {
     api(projects.core.model)
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
+    implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     testImplementation(projects.core.testing)
     testImplementation(libs.roborazzi)
     testImplementation(libs.roborazzi.compose)

@@ -19,7 +19,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.primestrider.kotlinstarter.core.designsystem.component.AppNavigationBar
+import com.primestrider.kotlinstarter.core.designsystem.component.AppNavigationSuite
 import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
 import com.primestrider.kotlinstarter.core.designsystem.component.MessengerHost
 import com.primestrider.kotlinstarter.core.designsystem.component.NavBarItem
@@ -30,7 +30,8 @@ import com.primestrider.kotlinstarter.core.designsystem.component.NavBarItem
  * - Switching tabs saves and restores each tab's back stack.
  * - Re-selecting the current tab pops it back to its root.
  * - Back at the root of a non-Home tab switches to Home, restoring Home's saved stack.
- * - With a single tab (no feature adds one) the bottom bar is hidden.
+ * - The navigation is a bottom bar on phones and a rail on wider windows (AppNavigationSuite); with a single tab
+ *   (no feature adds one) it is hidden.
  */
 @Composable
 fun MainShell(
@@ -60,25 +61,20 @@ fun MainShell(
     val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
         snackbarHost = { MessengerHost(LocalMessenger.current, snackbarHostState) },
-        // Only the bottom bar is the shell's; screens handle the status bar with their own AppScaffold.
+        // The shell only owns the navigation; screens handle the system bars with their own AppScaffold.
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        bottomBar = {
-            if (tabs.size > 1) {
-                AppNavigationBar(
-                    items = tabs.map { NavBarItem(stringResource(it.label), it.icon) },
-                    selectedIndex = tabs.indexOf(current),
-                    onSelect = { open(tabs[it]) },
-                )
-            }
-        },
     ) { inner ->
-        NavHost(
-            navController = navController,
-            startDestination = HomeGraph,
-            modifier = Modifier.padding(bottom = inner.calculateBottomPadding()).consumeWindowInsets(inner),
+        // Bottom bar on phones, navigation rail on wider windows; hidden with a single tab.
+        AppNavigationSuite(
+            items = tabs.map { NavBarItem(stringResource(it.label), it.icon) },
+            selectedIndex = tabs.indexOf(current),
+            onSelect = { open(tabs[it]) },
+            modifier = Modifier.padding(inner).consumeWindowInsets(inner),
         ) {
-            homeGraph(navController, homeScreens)
-            featureGraphs(navController)
+            NavHost(navController = navController, startDestination = HomeGraph) {
+                homeGraph(navController, homeScreens)
+                featureGraphs(navController)
+            }
         }
         // Composed after the NavHost so this callback wins over the NavHost's own back handling: back at
         // another tab's root switches to Home with Home's saved stack, instead of a plain pop that would

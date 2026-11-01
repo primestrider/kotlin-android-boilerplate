@@ -42,19 +42,23 @@ fun AppNavigationBar(
             NavigationBarItem(
                 selected = index == selectedIndex,
                 onClick = { onSelect(index) },
-                icon = {
-                    val count = item.badgeCount
-                    if (count != null && count > 0) {
-                        BadgedBox(badge = { Badge { Text(if (count > BADGE_MAX) "$BADGE_MAX+" else "$count") } }) {
-                            Icon(item.icon, contentDescription = null)
-                        }
-                    } else {
-                        Icon(item.icon, contentDescription = null)
-                    }
-                },
+                icon = { NavBarIcon(item) },
                 label = { Text(item.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
             )
         }
+    }
+}
+
+/** The item's icon with its count badge ("99+" above [BADGE_MAX]); shared by the bar and the rail. */
+@Composable
+internal fun NavBarIcon(item: NavBarItem) {
+    val count = item.badgeCount
+    if (count != null && count > 0) {
+        BadgedBox(badge = { Badge { Text(if (count > BADGE_MAX) "$BADGE_MAX+" else "$count") } }) {
+            Icon(item.icon, contentDescription = null)
+        }
+    } else {
+        Icon(item.icon, contentDescription = null)
     }
 }
 
