@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.auth.Session
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
 import com.primestrider.kotlinstarter.core.designsystem.component.Avatar
@@ -22,7 +21,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.AvatarSize
 import com.primestrider.kotlinstarter.core.designsystem.component.AvatarStatus
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
-import com.primestrider.kotlinstarter.feature.settings.impl.R as SettingsR
+import com.primestrider.kotlinstarter.feature.account.impl.R
 
 /** Profile tab root: the signed-in user (or a sign-in prompt) and a way into Settings. */
 @Composable
@@ -32,7 +31,7 @@ fun ProfileScreen(
     onOpenAccount: () -> Unit,
     onOpenSettings: () -> Unit,
 ) {
-    AppScaffold(title = stringResource(R.string.nav_profile)) { padding ->
+    AppScaffold(title = stringResource(R.string.account_profile_title)) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState())) {
             if (session == null) {
                 EmptyState(
@@ -60,7 +59,7 @@ fun ProfileScreen(
             HorizontalDivider()
             ListItem(
                 modifier = Modifier.clickable(role = Role.Button, onClick = onOpenSettings),
-                headlineContent = { Text(stringResource(SettingsR.string.settings_title)) },
+                headlineContent = { Text(stringResource(R.string.account_settings_link)) },
             )
         }
     }

@@ -18,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.auth.Session
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
@@ -32,6 +31,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.InfoRow
 import com.primestrider.kotlinstarter.core.designsystem.component.SectionHeader
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.network.userMessage
+import com.primestrider.kotlinstarter.feature.account.impl.R
 
 /** Page only a signed-in session can reach. [profile] is the result of the authenticated `auth/me` call. */
 @Composable

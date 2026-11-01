@@ -80,6 +80,10 @@ dependencies {
     implementation(projects.core.auth)
     implementation(projects.core.ui)
 
+    // region example:account
+    implementation(projects.feature.account.api)
+    implementation(projects.feature.account.impl)
+    // endregion
     // region example:catalog
     implementation(projects.feature.catalog.api)
     implementation(projects.feature.catalog.impl)

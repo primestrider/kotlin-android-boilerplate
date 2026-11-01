@@ -2,7 +2,6 @@ package com.primestrider.kotlinstarter.feature.example.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.auth.AuthAdapter
 import com.primestrider.kotlinstarter.core.auth.Session
 import com.primestrider.kotlinstarter.core.auth.SessionRepository
@@ -12,6 +11,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.UiText
 import com.primestrider.kotlinstarter.core.network.ApiError
 import com.primestrider.kotlinstarter.core.network.ApiResult
 import com.primestrider.kotlinstarter.core.network.safeApiCall
+import com.primestrider.kotlinstarter.feature.account.impl.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.NonCancellable

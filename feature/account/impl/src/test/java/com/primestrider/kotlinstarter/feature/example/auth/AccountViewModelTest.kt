@@ -3,7 +3,6 @@ package com.primestrider.kotlinstarter.feature.example.auth
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.viewModelScope
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.auth.AuthTokens
 import com.primestrider.kotlinstarter.core.auth.AuthUser
 import com.primestrider.kotlinstarter.core.auth.FakeSessionCipher
@@ -12,6 +11,7 @@ import com.primestrider.kotlinstarter.core.auth.SessionRepository
 import com.primestrider.kotlinstarter.core.designsystem.component.MessageVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
+import com.primestrider.kotlinstarter.feature.account.impl.R
 import com.primestrider.kotlinstarter.testing.InMemoryPreferencesDataStore
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers

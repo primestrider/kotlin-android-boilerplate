@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppCheckbox
 import com.primestrider.kotlinstarter.core.designsystem.component.AppTextField
@@ -27,6 +26,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.PasswordTextField
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.network.userMessage
+import com.primestrider.kotlinstarter.feature.account.impl.R
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 
 internal const val SIGN_IN_BUTTON_TAG = "sign_in_submit"
