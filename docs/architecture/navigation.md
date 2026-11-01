@@ -24,14 +24,14 @@ Behavior:
 Each destination is a `@Serializable` object or data class:
 
 - `HomeRoute` and the graph objects live in `app/navigation/AppNavHost.kt`.
-- Example-feature routes live in `feature/example/ExampleRoutes.kt`, so deleting `feature/example` removes them.
+- Feature routes live in the feature's `:api` module (e.g. `feature/products/api/src/main/java/com/primestrider/kotlinstarter/feature/example/ProductsRoutes.kt`). They keep the package `com.primestrider.kotlinstarter.feature.example`, because a route's serial name is its qualified class name and the saved back stack and deep links store it (`RouteNamesTest`); R8 keeps the names too (`verifyReleaseKeeps`).
 
 ## Registering a destination
 
-1. Add a `@Serializable` route object.
-2. Add `composable<MyRoute> { ... }` to the graph of the tab it belongs to (`homeGraph`, `componentsGraph`, `profileGraph` in `AppNavHost.kt`). Navigate only to destinations of the current tab (or switch tabs first): navigating into another tab's graph pushes the page onto the current stack and the selected tab flips to the declaring tab.
-3. To list it on an index, add an `ExampleEntry(title, subtitle, route)` to `exampleSections` (Home) or `componentEntries` (Components) in `feature/example/ExampleCatalog.kt`.
-4. A new top-level tab means a new `TopLevelTab` entry, a graph object and a `NavGraphBuilder` extension.
+1. Add a `@Serializable` route object to the feature's `:api` module.
+2. Register `composable<MyRoute> { ... }` in the feature's `NavGraphBuilder.<feature>Destinations(navController)` function. `:app` calls that function inside the graph of the tab the feature belongs to (`homeGraph` or `featureGraphs` in `AppNavHost.kt`, inside a `// region example:<feature>` block for the examples). Navigate only to destinations of the current tab (or switch tabs first): navigating into another tab's graph pushes the page onto the current stack and the selected tab flips to the declaring tab.
+3. To list it on Home, contribute a `CatalogEntry(title, subtitle, route, sectionId, order)` with `@Provides @IntoSet` from the feature's Hilt module; a feature that owns a Home section also contributes its `CatalogSection`. `catalog:impl` renders whatever the wired features contribute, so removing a feature removes its rows.
+4. A new top-level tab means a `TopLevelTab` added to `topLevelTabs`, a graph object and its nested graph in `featureGraphs`. With only one tab the bottom bar hides; without a feature providing Home, `PlaceholderHomeScreen` shows.
 
 ## Screen / Route split
 
@@ -78,7 +78,7 @@ Navigation Compose animates every navigation with four lambdas, each an `Animate
 - **Predictive back:** the system turns it on by default for apps targeting Android 16 (targetSdk 36) or higher; apps targeting 33 to 35 opt in with `android:enableOnBackInvokedCallback="true"` on `<application>`, and the gesture animations show on Android 14+. This app targets 37, so it needs no flag. `NavHost` then drives the pop transitions from the back gesture: the outgoing page follows the finger and a cancelled gesture restores it. A `BackHandler` that is enabled above a `NavHost` takes the press instead and replaces that seek with a plain pop, so enable one only while it has something of its own to close.
 - **Shared elements:** wrap the `NavHost` in `SharedTransitionLayout` and give the matching composables `Modifier.sharedBounds` or `Modifier.sharedElement` with the same key, passing each destination's `AnimatedVisibilityScope` (`this` inside `composable { }`).
 
-Animations > Page transitions (`feature/example/animation/transitions/`) shows all of this on a nested `NavHost` with six Material patterns, container transform through `sharedBounds`, and back that pops the nested page before leaving; the app's `NavHost` transitions are left unchanged.
+Animations > Page transitions (`animation/transitions/` in `feature/animation/impl`) shows all of this on a nested `NavHost` with six Material patterns, container transform through `sharedBounds`, and back that pops the nested page before leaving; the app's `NavHost` transitions are left unchanged.
 
 ## Deep links: scheme config and `navDeepLink`
 

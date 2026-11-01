@@ -1,6 +1,6 @@
 # Examples
 
-Everything under `feature/example/` is demo code and can be deleted without touching `core/*`. This page covers the "Device APIs" Home section (`feature/example/sdk/`): small, real Android screens that exercise one platform API each.
+The example features (`feature/*`) are demo code and can be removed without touching `core/*` (`scripts/remove-examples.sh`). This page covers the "Device APIs" Home section, the `devices` feature (`feature/devices/impl`, package `com.primestrider.kotlinstarter.feature.example.sdk`; paths below are relative to that package): small, real Android screens that exercise one platform API each.
 
 ## The Home list
 
@@ -8,7 +8,7 @@ Everything under `feature/example/` is demo code and can be deleted without touc
 
 ## The Device APIs section
 
-The section sits on the Home tab between Features and Styling. Its entries come from one registry, `sdkDemos` in `feature/example/sdk/SdkDemos.kt`:
+The section sits on the Home tab between Features and Styling. Its entries come from one registry, `sdkDemos` in `sdk/SdkDemos.kt`; `DevicesCatalogModule` contributes them to Home:
 
 ```kotlin
 SdkDemo("clipboard", R.string.sdk_clipboard_title, R.string.sdk_clipboard_subtitle) { ClipboardScreen(it) }
@@ -18,7 +18,7 @@ All demos share one navigation destination, `SdkDemoRoute(id)`. `SdkDemoScreen` 
 
 ### Adding a demo
 
-1. Write a stateless `XxxScreen(onBack: () -> Unit)` in `feature/example/sdk/<name>/` on top of `ExamplePageScaffold`; use `SdkSection` (a `DemoSection` plus a muted description) and `InfoCard` for label/value data.
+1. Write a stateless `XxxScreen(onBack: () -> Unit)` in `sdk/<name>/` on top of `ExamplePageScaffold`; use `SdkSection` (a `DemoSection` plus a muted description) and `InfoCard` for label/value data.
 2. Add `sdk_<name>_` strings to `values/strings.xml` and `values-in/strings.xml` (`TranslationCompletenessTest` enforces both).
 3. Append a `SdkDemo("kebab-id", title, subtitle) { XxxScreen(it) }` entry to `sdkDemos`. The order of the list is the order on Home.
 4. Declare any permission or `<queries>` entry in `AndroidManifest.xml`, and test the demo's logic (pure functions or a ViewModel); add a Robolectric test where the UI has logic-driven states.
@@ -40,11 +40,11 @@ For a permission asked for when a button is pressed (no gate card), use `remembe
 
 ### Deleting the section
 
-Delete `feature/example/sdk/` and `SdkDemoRoute` in `ExampleRoutes.kt`; remove the "Device APIs" `ExampleSection` from `ExampleCatalog.kt` together with its icon import (`filled.Phone`; ktlint fails on the unused import), the `composable<SdkDemoRoute>` line in `AppNavHost.kt`, the `sdk_*` and `example_home_sdk_*` strings, and what the demos added to the manifest and `libs.versions.toml` (`ACCESS_NETWORK_STATE`, the `review-ktx` and `exifinterface` dependencies, `room-testing`). The Share & Print demo also added the `<provider>` for `androidx.core.content.FileProvider` (authority `${applicationId}.files`) to `AndroidManifest.xml` and `res/xml/file_paths.xml`: delete both, and any `cache-path` entries later demos added to that file. The Room transactions demo put its table in `ExampleDatabase`: drop `TransactionEntity` and `transactionDao()` from it and the `transactionDao` provider in `TodosModule`, but do not set `version = 1` again: Room cannot downgrade, so every install already on version 2 would crash on open. Bump to `version = 3` instead and add a `MIGRATION_2_3` that runs `DROP TABLE IF EXISTS transactions`, keeping `MIGRATION_1_2` in `.addMigrations(...)` so version 1 installs still upgrade (or keep `TransactionEntity` in the database and delete only the screen). The debug-only `app/schemas` asset directory in `app/build.gradle.kts` exists for the migration test and can go with it. The Web Browser and Payment Code demos added more outside `feature/example`: remove from `AndroidManifest.xml` the whole `<queries>` block, the `DETECT_SCREEN_CAPTURE` permission, the `android:launchMode="singleTop"` attribute and the `<intent-filter>` with `${appScheme}` on `MainActivity`; from `app/build.gradle.kts` the `appScheme` value, `manifestPlaceholders["appScheme"]`, the `APP_SCHEME` `buildConfigField` and the `androidx.browser` dependency (and `browser` / `androidx-browser` in `libs.versions.toml`); in `AppNavHost.kt` the `deepLinks = ...` argument of `composable<SdkDemoRoute>` (with the `navDeepLink` and `BuildConfig` imports). `MainActivity` keeps its `addOnNewIntentListener` hook, which is harmless without deep links, or you can drop it together with the hoisted `rememberNavController()` and let `MainShell` create the controller again. The Notifications, Calendar, Contacts and Location demos added more outside `feature/example`: remove from `AndroidManifest.xml` the `POST_NOTIFICATIONS`, `READ_CALENDAR`, `WRITE_CALENDAR`, `READ_CONTACTS`, `ACCESS_COARSE_LOCATION` and `ACCESS_FINE_LOCATION` permissions and the `<receiver>` for `NotificationReceiver`; delete `res/drawable/sdk_ic_notification.xml`; from `app/build.gradle.kts` the `play.services.location` and `androidx.lifecycle.process` dependencies (and `playServicesLocation`, `play-services-location`, `androidx-lifecycle-process` in `libs.versions.toml`). The Camera and Image Picker demos added more outside `feature/example`: remove from `AndroidManifest.xml` the `CAMERA` permission and the two `<uses-feature>` lines (`android.hardware.camera` and `android.hardware.camera.autofocus`); delete the `<cache-path name="camera" .../>` entry from `res/xml/file_paths.xml` (delete the file with the provider if nothing else uses it); from `app/build.gradle.kts` the `androidx.camera.camera2`, `androidx.camera.lifecycle`, `androidx.camera.view` and `mlkit.barcode.scanning` dependencies (and `cameraX`, `mlkitBarcode`, `androidx-camera-*`, `mlkit-barcode-scanning` in `libs.versions.toml`). The Payment Code QR added the `zxing.core` dependency (`zxing` / `zxing-core` in `libs.versions.toml`). `core/permission/` and the shared controls in `core/designsystem/component/` can stay: they do not depend on the demos.
+The whole section is the `:feature:devices:api` and `:feature:devices:impl` modules: its manifest (permissions, `<queries>`, the `FileProvider`, the notification receiver), resources, strings, `DevicesDatabase` and dependencies all live there. To remove only this section, delete `feature/devices/`, its two `include` lines in `settings.gradle.kts` and the `// region example:devices` blocks in `app/build.gradle.kts` and `AppNavHost.kt`, then run `./gradlew ktlintFormat` (it drops the now unused imports). Run `bash scripts/remove-examples.sh` (on a copy first, see AGENTS.md) to remove every example feature at once. The deep-link `<intent-filter>` with `${appScheme}` on `MainActivity` stays in `:app`: it is app infrastructure, harmless without demos.
 
-The Audio & Video, Biometric & Secure Store and Background Task demos added more outside `feature/example`. Before deleting, cancel the demo's periodic work on installed builds (`WorkManager.getInstance(context).cancelUniqueWork("example-background-sync")`, once, for example in an app-update migration), or WorkManager keeps trying to start a `SyncWorker` class that no longer exists (it fails and is dropped, but it is noise). Then remove from `AndroidManifest.xml` the `RECORD_AUDIO` and `USE_BIOMETRIC` permissions; and from `app/build.gradle.kts` the `androidx.media3.exoplayer`, `androidx.media3.ui` and `androidx.biometric` dependencies (and `media3`, `biometric`, `androidx-media3-*`, `androidx-biometric` in `libs.versions.toml`). The `work-runtime-ktx`, `hilt-work`, `androidx.hilt.compiler` (ksp) and `work-testing` dependencies (`work`, `hiltWork`, `androidx-work-*`, `androidx-hilt-work`, `androidx-hilt-compiler`) can go too if no other worker uses WorkManager; then also drop `Configuration.Provider` and the `HiltWorkerFactory` injection from `KotlinStarterApp` and the `androidx.startup.InitializationProvider` block that removes `androidx.work.WorkManagerInitializer` from the manifest. If you keep WorkManager, keep all three: they are app infrastructure (on-demand initialisation with Hilt-injected workers), not demo code. The picture-in-picture plumbing also stays: `core/pip/` (`PictureInPictureHost`, `PictureInPictureFrame`), the host injected and provided in `MainActivity`, and `android:supportsPictureInPicture="true"` and `android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"` on `MainActivity`. With no screen setting the host it never shows anything; drop it only if no screen will use PiP (removing `configChanges` brings back activity recreation on rotation).
+Before deleting, cancel the Background Task demo's periodic work on installed builds (`WorkManager.getInstance(context).cancelUniqueWork("example-background-sync")`, once, for example in an app-update migration), or WorkManager keeps trying to start a `SyncWorker` class that no longer exists (it fails and is dropped, but it is noise). WorkManager itself stays in `:app` (`Configuration.Provider` with the `HiltWorkerFactory` in `KotlinStarterApp`, and the manifest block that removes `androidx.work.WorkManagerInitializer`): it is app infrastructure for on-demand initialisation with Hilt-injected workers. Drop `work-runtime-ktx`, `hilt-work` and the `androidx.hilt.compiler` ksp dependency from `app/build.gradle.kts` together with that code only if no worker is left. The picture-in-picture plumbing also stays: `core/pip/` in `core:ui` (`PictureInPictureHost`, `PictureInPictureFrame`), the host injected in `MainActivity`, and `android:supportsPictureInPicture="true"` and `android:configChanges` on `MainActivity`.
 
-Tests go with the demos: delete `app/src/test/.../feature/example/sdk/`. Three app-level tests also depend on demo code: `app/DeepLinkTest` and `app/CrashDeepLinkTest` open Payment Code through `<scheme>://example/sdk/payment-code`, so delete them or point them at a deep link of your own; `app/PictureInPictureModeTest` drives the `core/pip` host from the example Home list and the Colors page, so it survives deleting only this section but must be rewritten against your own screens (or deleted with the PiP plumbing) when the whole `feature/example` goes.
+Tests go with the demos: they live in `feature/devices/impl/src/test/`. Three `:app` tests also depend on demo code and carry the `// remove-examples:` marker: `DeepLinkTest` opens Payment Code through `<scheme>://example/sdk/payment-code` and `DevicesManifestTest` checks the merged permissions, so delete them with the section or point them at your own deep link and permissions; `CrashDeepLinkTest` and `PictureInPictureModeTest` exercise `:app` and `core:ui` plumbing and stay.
 
 ## Demos
 
@@ -78,7 +78,7 @@ Tests go with the demos: delete `app/src/test/.../feature/example/sdk/`. Three a
 - **Android API:** Room (`@Entity`, `@Dao` with `Flow`, a `Migration`).
 - **Permissions:** none.
 - **API-level fallback:** not applicable.
-- **Files:** `sdk/sqlite/` (`TransactionEntity`, `TransactionDao`, `TransactionsViewModel`, `TransactionsScreen`). The table lives in `ExampleDatabase` (`todos/ExampleDatabase.kt`, version 2, with `MIGRATION_1_2`) and the DAO is provided by `TodosModule`. The upgrade is covered by `ExampleDatabaseMigrationTest`; see "Adding a table" in [storage-database.md](architecture/storage-database.md).
+- **Files:** `sdk/sqlite/` (`TransactionEntity`, `TransactionDao`, `DevicesDatabase`, `TransactionsViewModel`, `TransactionsScreen`). The table lives in the devices feature's own `DevicesDatabase` (`devices.db`, version 1); until the modular split it lived in `ExampleDatabase`, whose `MIGRATION_2_3` drops it there. See "Where a database lives" in [storage-database.md](architecture/storage-database.md).
 
 ### Image Compression & Files (`files`)
 
@@ -239,17 +239,17 @@ The section sits on the Home tab after Device APIs. It shows motion patterns wel
 
 ### Adding an animation page
 
-1. Add a `@Serializable data object` route to `ExampleRoutes.kt`.
+1. Add a `@Serializable data object` route to `feature/animation/api/src/main/java/com/primestrider/kotlinstarter/feature/example/AnimationRoutes.kt`.
 2. Write `XxxScreen(onBack)` on top of `ExamplePageScaffold`, composed of `AnimExample(title, usage, api) { ... }` cards. Keep user-chosen state in `rememberSaveable`.
 3. Add an `AnimationPage(route, title, subtitle)` entry to `animationPages` in its place in the order.
-4. Add `composable<XxxRoute> { XxxScreen(onBack = back) }` to `homeGraph` in `AppNavHost.kt`.
-5. Add `anim_<page>_` strings to `values/strings.xml` and `values-in/strings.xml`.
+4. Add `composable<XxxRoute> { XxxScreen(onBack = back) }` to `animationDestinations` in `animation/AnimationNavigation.kt`.
+5. Add `anim_<page>_` strings to the module's `values/strings.xml` and `values-in/strings.xml`.
 
 Examples respect "Remove animations": Compose scales every animation by the system animator duration scale, so each example still reaches its end state, and no state is shown by motion alone.
 
 ### Deleting the Animations section
 
-Delete `feature/example/animation/` and the four `Anim*Route` objects in `ExampleRoutes.kt`; remove the "Animations" `ExampleSection` with its `animationEntries` and icon (`filled.PlayArrow`) imports from `ExampleCatalog.kt`, the `composable<Anim*Route>` lines and their imports in `AppNavHost.kt`, and the `anim_*` and `example_home_anim_*` strings. Drop the last paragraph of "Page transitions" in `docs/architecture/navigation.md` (the pointer to `feature/example/animation/transitions/`). Delete `app/src/test/.../feature/example/animation/` and update the Home section order in `SdkDemosTest`.
+The section is the `:feature:animation:api` and `:feature:animation:impl` modules. Delete `feature/animation/`, its `include` lines and the `// region example:animation` blocks in `app/build.gradle.kts` and `AppNavHost.kt`, run `./gradlew ktlintFormat`, drop the last paragraph of "Page transitions" in `docs/architecture/navigation.md`, and update the section order in `HomeSectionsOrderTest` and the `exampleSections` helper in `:app`'s tests. Run `bash scripts/remove-examples.sh` (on a copy first, see AGENTS.md) to remove every example feature at once.
 
 ## Physical-device checklist
 

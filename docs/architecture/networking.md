@@ -4,12 +4,14 @@ HTTP lives in `core/network`. Features never build their own client.
 
 ## Client
 
-`NetworkModule` provides a singleton `Json` (`ignoreUnknownKeys`, `explicitNulls = false`) and two
-clients, both bound to `BuildConfig.API_URL` (`@ApiBaseUrl HttpUrl`) with the kotlinx-serialization
-converter:
+`NetworkModule` (`core:network`) provides a singleton `Json` (`ignoreUnknownKeys`, `explicitNulls = false`) and two
+clients, both bound to `@ApiBaseUrl HttpUrl` with the kotlinx-serialization converter. `:app` provides the URL from
+its flavour's `BuildConfig.API_URL` (`EnvironmentModule`), so `core:network` has no environment of its own:
 
-- **App client** (`OkHttpClient`, `Retrofit`): what features use. `AuthInterceptor` adds the bearer
-  token and `TokenAuthenticator` refreshes on 401 (see `auth-session.md`). Both act only on requests
+- **App client** (`OkHttpClient`, `Retrofit`): what features use. It adds every interceptor contributed to the
+  `@AppInterceptors` set and the optional `Authenticator`; `core:auth` contributes `AuthInterceptor` (the bearer
+  token) and binds `TokenAuthenticator` (refresh on 401, see `auth-session.md`), so `core:network` never depends on
+  `core:auth`. Both act only on requests
   whose host is the `API_URL` host, so a call to any other host (an image CDN, a third-party API)
   never carries the token.
 - **Refresh client** (`@RefreshClient OkHttpClient`, `@RefreshRetrofit Retrofit`): its own
@@ -22,11 +24,11 @@ authenticator retries. `Authorization`, `Cookie` and `Set-Cookie` are redacted.
 
 ## Base URL
 
-`BuildConfig.API_URL` is resolved at build time, first match wins:
+`BuildConfig.API_URL` is resolved at build time per flavour, first match wins:
 
 1. `api.url` in `local.properties`
 2. environment variable `API_URL`
-3. `https://dummyjson.com/`
+3. the flavour's default in `app/build.gradle.kts` (both `dev` and `prod` default to `https://dummyjson.com/`; see `release.md`)
 
 Keep the trailing slash; Retrofit requires it. A blank value counts as unset.
 

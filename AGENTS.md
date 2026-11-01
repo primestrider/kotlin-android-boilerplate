@@ -1,75 +1,90 @@
 # AGENTS.md
 
-Kotlin Android starter kit (Compose + Hilt), a port of a React Native boilerplate.
+Kotlin Android starter kit (Compose + Hilt), a port of a React Native boilerplate. Modular, in the style of Google's
+Now in Android: `:app`, `:core:*`, and one `:api` + `:impl` pair per feature, with shared build setup in `build-logic/`.
 
 ## Toolchain
 
 AGP 9.4.0 (built-in Kotlin), Gradle 9.6.0, Kotlin 2.4.21, compileSdk/targetSdk 37, minSdk 24, JVM target 17.
-All dependencies and plugins are declared in `gradle/libs.versions.toml`.
+All dependencies and plugins are declared in `gradle/libs.versions.toml`. Parallel builds, the build cache and the
+configuration cache are on (`gradle.properties`).
 
 ## Project map
 
-Single module `:app`, root package `com.primestrider.kotlinstarter`.
+Classes keep the package they had before the split (root `com.primestrider.kotlinstarter`); each module's
+namespace follows its path (e.g. `…core.network`, `…feature.products.impl`).
 
 ```
-KotlinStarterApp.kt          # @HiltAndroidApp; WorkManager Configuration.Provider (HiltWorkerFactory, on-demand init)
-app/                         # MainActivity, AppViewModel, navigation (MainShell tabs + per-tab graphs in AppNavHost.kt)
-core/storage/                # DataStore module and preference keys (Room vs DataStore: docs/architecture/storage-database.md)
-core/network/                # Retrofit/OkHttp clients (app + refresh), ApiError, safeApiCall, toApiError, @Anonymous (docs/architecture/networking.md, data-loading.md)
-core/auth/                   # encrypted SessionRepository, AuthAdapter seam, bearer + single-flight 401 refresh, expiry message (docs/architecture/auth-session.md)
-core/designsystem/theme/     # palette, semantic colors, spacing, radii, typography, AppTheme
-core/designsystem/component/ # reusable components (see docs/architecture/components.md)
-core/i18n/                   # AppLanguage, LanguageController
-core/util/                   # formatCurrency, formatPercent, currentLocale
-core/crash/                  # CrashRecorder (last uncaught exception) + CrashFallbackScreen (docs/architecture/overview.md, Error handling)
-core/permission/             # PermissionGate + permissionStatus: one shared runtime-permission card (docs/examples.md)
-core/pip/                    # PictureInPictureHost + PictureInPictureFrame: what MainActivity shows in picture-in-picture (docs/architecture/overview.md)
-feature/example/             # example catalog, Home, Profile hub, sign-in, protected Account, Settings, component + styling pages, form example (deletable)
-feature/example/todos/       # Todos in Room: ExampleDatabase (example.db), DAO, repository; schemas in app/schemas
-feature/example/products/    # Products list + detail: Retrofit API, Paging 3 source, debounced search, tabs, add-to-cart sheet (docs/architecture/data-loading.md)
-feature/example/auth/        # DummyJSON AuthAdapter and its Hilt binding (ExampleAuthModule): swap the backend here
-feature/example/sdk/         # "Device APIs" Home section: sdkDemos registry, SdkDemoRoute(id), one package per demo (docs/examples.md)
+build-logic/                 convention plugins: kotlinstarter.android.{application,library,test,compose}, kotlinstarter.hilt,
+                             kotlinstarter.feature.{api,impl}; AndroidConfig (SDK levels), localOrEnv, verifyReleaseKeeps
+app/                         MainActivity, AppViewModel, MainShell (tabs) and AppNavHost.kt: the only place that wires features;
+                             EnvironmentModule provides @ApiBaseUrl from the flavour's BuildConfig.API_URL; PlaceholderHomeScreen
+core/common                  @ApplicationScope, formatters (core.util), AppLanguage/LanguageController (core.i18n), CrashRecorder, AppConfig
+core/model                   ThemeMode (shared domain types)
+core/datastore               DataStore module, StorageKeys, DataStoreFiles, ThemePreferenceRepository
+core/designsystem            theme, tokens, ControlColors, reusable components incl. form controls (docs/architecture/components.md)
+core/network                 Retrofit/OkHttp, ApiError, safeApiCall, @Anonymous, @AppInterceptors extension point (docs/architecture/networking.md)
+core/auth                    SessionRepository, AuthAdapter seam (@AuthBackend, NotConfiguredAuthAdapter), bearer + 401 refresh (docs/architecture/auth-session.md)
+core/ui                      CrashFallbackScreen, PermissionGate, PiP host/frame, ExamplePageScaffold/DemoSection
+core/testing                 shared test doubles: in-memory DataStore, FakeSessionCipher, TestApi, resetAndroidUiDispatcher
+feature/<name>/api           @Serializable routes other modules may navigate to
+feature/<name>/impl          screens, ViewModels, data/ (api, dto, entity, dao, repository, mappers), Hilt modules, strings, tests
+baselineprofile/             startup baseline profile generator and startup benchmark (needs a device)
+scripts/remove-examples.sh   removes every example feature (see below)
 ```
 
-Tests mirror the main source tree under `app/src/test/`.
+Example features (all deletable): `catalog` (Home, Components tab, component and styling pages, form), `products`,
+`todos`, `account` (Profile hub, sign-in, protected Account, DummyJSON `AuthAdapter`), `settings`, `devices` (the 21
+Device APIs demos, docs/examples.md), `animation`.
 
-## Layer rules
+## Layer rules (enforced by Gradle dependencies)
 
-- `core/*` must never import `feature/*`.
-- `feature/example` must stay deletable.
-- Before writing a new composable, check `docs/architecture/components.md`; reuse or extend a component from `core/designsystem/component/`.
-- Screens are split into a stateless `XxxScreen(state, callbacks)` and a thin `XxxRoute` that obtains the ViewModel via `hiltViewModel()`.
-- State lives in ViewModels exposing `StateFlow`; preferences live in DataStore; Hilt wires singletons.
-- Supported languages: `en` (fallback) and `id` (`res/values-in/`).
-- Docs, comments, README, and AGENTS.md are written in English.
+- `core:*` never depends on `feature:*`.
+- `feature:X:impl` depends on `core:*` and on other features' `:api` only, never on another `:impl`.
+- `feature:X:api` holds routes only (kotlinx serialization; `catalog:api` also the Home entry types).
+- `:app` is the only module that depends on `:impl` modules; it wires them inside `// region example:<feature>` blocks.
+- Before writing a new composable, check `docs/architecture/components.md`; form controls always come from `core/designsystem` (`NoRawMaterialControlsTest`).
+- Screens are split into a stateless `XxxScreen(state, callbacks)` and a thin route that obtains the ViewModel via `hiltViewModel()`. One `StateFlow` UI state per ViewModel (MVVM + UDF); no use-case layer by default.
+- DTOs and Room entities stay in a feature's `data/` package and are mapped to models before a ViewModel sees them; repositories are an `interface` + `Default…` implementation bound with `@Binds`.
+- Every module carries its own strings in `values/` (en, fallback) and `values-in/` (id); string names are unique across modules (`TranslationCompletenessTest`). Docs, comments and README are written in English.
 
-## Example routes and adding a page
+## Adding a page to a feature
 
-Routes in `feature/example/ExampleRoutes.kt`: `ProfileRoute`, `AccountRoute` (protected), `SignInRoute`, `SettingsRoute`, `FormExampleRoute`, `ProductsRoute`, `ProductDetailRoute(id)`, `TodosRoute`, `SdkDemoRoute(id, amount?)` (all Device APIs demos; add one in `sdkDemos`, see docs/examples.md); the component pages `ActionsRoute`, `InputsRoute`, `DisplayRoute`, `OverlaysRoute`; and the styling pages `ColorsRoute`, `TypographyRoute`, `SpacingRoute`, `SizingRoute`, `LayoutRoute`, `AppearanceRoute`, `ThemeRoute`. `HomeRoute` is in `app/navigation/AppNavHost.kt`.
+1. Add a `@Serializable` route to the feature's `:api` module (package `com.primestrider.kotlinstarter.feature.example` for the examples, so serial names stay stable; `RouteNamesTest`).
+2. Write a stateless screen and register `composable<YourRoute> { … }` in the feature's `NavGraphBuilder.<feature>Destinations(navController)` function.
+3. To list it on Home, contribute a `CatalogEntry` with `@Provides @IntoSet` from the feature's Hilt module (and a `CatalogSection` if the feature owns a section).
+4. Cover it with a Robolectric test in the feature module.
 
-To add an example page:
+## Adding a feature module
 
-1. Add a `@Serializable` route object to `ExampleRoutes.kt`.
-2. Write a stateless `XxxScreen(..., onBack)` on top of `ExamplePageScaffold`.
-3. Register `composable<XxxRoute>` in the right tab graph in `app/navigation/AppNavHost.kt` (`homeGraph`, `componentsGraph`, `profileGraph`).
-4. Add an `ExampleEntry` to `exampleSections` (Home tab) or `componentEntries` (Components tab) in `ExampleCatalog.kt`, with title/subtitle strings in both `values/` and `values-in/`.
-5. Cover it in a Robolectric test.
+1. Create `feature/<name>/api` (plugin `kotlinstarter.feature.api`) and `feature/<name>/impl` (plugin `kotlinstarter.feature.impl`, `api(projects.feature.<name>.api)`), and `include` both in `settings.gradle.kts`.
+2. In `:app`: add both as dependencies and call `<name>Destinations(navController)` in the right tab graph of `AppNavHost.kt` (or add a `TopLevelTab` to `topLevelTabs` for a new tab).
+3. Put the feature's manifest entries (permissions, providers, receivers) in its own `src/main/AndroidManifest.xml`.
+
+## Removing the examples
+
+`bash scripts/remove-examples.sh <dir>` deletes `feature/`, every `// region example:` block and the `:app` tests that
+drive examples, then runs `ktlintFormat`. Run it on a copy (`git worktree add`), check `./gradlew test assembleDevDebug`,
+then apply it to your project. Without examples the app shows `PlaceholderHomeScreen` with one tab, and sign-in reports
+"not configured" until a feature binds an `@AuthBackend AuthAdapter`. CI runs this check on every push.
 
 ## Testing conventions
 
 Robolectric tests use `@RunWith(AndroidJUnit4::class)` and `@Config(sdk = [36])` (Robolectric 4.17 does not yet support SDK 37).
 Hilt-injected components use `@HiltAndroidTest` with `HiltAndroidRule` ordered before the Compose rule and `@Config(application = HiltTestApplication::class)`.
+Screenshot references (Roborazzi, `core/designsystem`) are recorded only by the manual CI job on Linux. See docs/architecture/testing.md.
 
 ## Commands
 
 ```
-./gradlew testDebugUnitTest   # unit and Robolectric tests
-./gradlew ktlintCheck         # lint
-./gradlew ktlintFormat        # auto-format
-./gradlew assembleDebug       # build debug APK
+./gradlew test                 # unit + Robolectric tests of every module (:app runs on the dev flavour)
+./gradlew ktlintCheck          # ktlint; ktlintFormat fixes formatting
+./gradlew lint                 # Android Lint against each module's lint-baseline.xml
+./gradlew assembleDevDebug     # debug APK of the dev flavour
+./gradlew assembleProdRelease verifyReleaseKeeps   # minified release + check that R8 kept the routes
 ```
 
-Proof command for every change: `./gradlew testDebugUnitTest ktlintCheck assembleDebug`.
+Proof command for every change: `./gradlew test ktlintCheck lint assembleDevDebug`.
 On Windows use `gradlew.bat`.
 
 ## Skills
