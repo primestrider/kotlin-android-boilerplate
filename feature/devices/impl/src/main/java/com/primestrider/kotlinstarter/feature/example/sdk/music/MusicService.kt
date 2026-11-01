@@ -3,14 +3,18 @@ package com.primestrider.kotlinstarter.feature.example.sdk.music
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
 import com.primestrider.kotlinstarter.feature.devices.impl.R
 
 /**
@@ -53,7 +57,7 @@ class MusicService : MediaSessionService() {
                 }
             },
         )
-        val builder = MediaSession.Builder(this, player)
+        val builder = MediaSession.Builder(this, player).setCallback(SessionPolicy())
         // Tapping the notification opens the app.
         packageManager.getLaunchIntentForPackage(packageName)?.let { launch ->
             builder.setSessionActivity(
@@ -61,6 +65,32 @@ class MusicService : MediaSessionService() {
             )
         }
         session = builder.build()
+    }
+
+    /**
+     * The service is exported so system media controls, Bluetooth and Android Auto can reach it, which means any installed
+     * app can connect too. Other apps may control playback but not swap in their own media (which this process would
+     * then fetch with its own identity and file access).
+     */
+    @OptIn(UnstableApi::class) // Media3 marks the connection-result builder unstable; it is the documented way to limit commands.
+    private inner class SessionPolicy : MediaSession.Callback {
+        override fun onConnect(
+            session: MediaSession,
+            controller: MediaSession.ControllerInfo,
+        ): MediaSession.ConnectionResult {
+            val fromThisApp = controller.packageName == packageName
+            return MediaSession.ConnectionResult
+                .AcceptedResultBuilder(session)
+                .setAvailablePlayerCommands(
+                    allowedPlayerCommands(MediaSession.ConnectionResult.DEFAULT_PLAYER_COMMANDS, fromThisApp),
+                ).build()
+        }
+
+        override fun onAddMediaItems(
+            mediaSession: MediaSession,
+            controller: MediaSession.ControllerInfo,
+            mediaItems: MutableList<MediaItem>,
+        ): ListenableFuture<MutableList<MediaItem>> = Futures.immediateFailedFuture(UnsupportedOperationException())
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? = session
@@ -80,6 +110,21 @@ class MusicService : MediaSessionService() {
         super.onDestroy()
     }
 }
+
+/** [available] minus the commands that replace the media, unless the controller is this app. */
+@OptIn(UnstableApi::class)
+fun allowedPlayerCommands(
+    available: Player.Commands,
+    fromThisApp: Boolean,
+): Player.Commands =
+    if (fromThisApp) {
+        available
+    } else {
+        available
+            .buildUpon()
+            .removeAll(Player.COMMAND_SET_MEDIA_ITEM, Player.COMMAND_CHANGE_MEDIA_ITEMS)
+            .build()
+    }
 
 /** The bundled 10-second track (`res/raw/sdk_music_sample.wav`): works offline and has no licence to check. */
 private fun sampleTrack(context: Context): MediaItem =

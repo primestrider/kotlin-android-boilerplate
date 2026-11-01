@@ -1,5 +1,6 @@
 package com.primestrider.kotlinstarter.feature.example.sdk.appupdate
 
+import android.app.Activity
 import android.content.Context
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
@@ -101,8 +102,15 @@ class AppUpdateViewModel
 
         /** Shows Play's confirmation dialog; the download then reports through the install listener. */
         fun startUpdate(launcher: ActivityResultLauncher<IntentSenderRequest>) {
+            // Play starts a flow only once per AppUpdateInfo: a second try needs a fresh check (onUpdateFlowResult).
             val latest = info ?: return
+            info = null
             manager.startUpdateFlowForResult(latest, launcher, AppUpdateOptions.newBuilder(AppUpdateType.FLEXIBLE).build())
+        }
+
+        /** Play's dialog closed: unless the user accepted, check again so Update can be offered and started anew. */
+        fun onUpdateFlowResult(resultCode: Int) {
+            if (resultCode != Activity.RESULT_OK) check()
         }
 
         /** Installs the downloaded update; Play restarts the app. */

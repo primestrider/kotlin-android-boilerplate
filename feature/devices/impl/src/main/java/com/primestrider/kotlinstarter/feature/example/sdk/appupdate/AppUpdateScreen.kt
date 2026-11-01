@@ -28,7 +28,10 @@ fun AppUpdateScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     // Play's confirmation dialog is started for a result; the outcome arrives through the install listener.
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {}
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+            viewModel.onUpdateFlowResult(it.resultCode)
+        }
     AppUpdateContent(
         state = state,
         onCheck = viewModel::check,

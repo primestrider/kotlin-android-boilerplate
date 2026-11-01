@@ -42,19 +42,31 @@ fun AppNavigationSuite(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
+    val type = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(currentWindowAdaptiveInfo())
+    AppNavigationSuiteLayout(items, selectedIndex, onSelect, rail = type != NavigationSuiteType.NavigationBar, modifier, content)
+}
+
+/**
+ * [AppNavigationSuite] with the layout given. Kept internal: its type (and Material's `NavigationSuiteType`, an inline
+ * class from a dependency `:app` does not see) stays out of the public API.
+ */
+@Composable
+internal fun AppNavigationSuiteLayout(
+    items: List<NavBarItem>,
+    selectedIndex: Int,
+    onSelect: (Int) -> Unit,
+    rail: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
     if (items.size <= 1) {
         Box(modifier.fillMaxSize()) { content() }
         return
     }
-    val type = NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(currentWindowAdaptiveInfo())
-    if (type == NavigationSuiteType.NavigationBar) {
-        Column(modifier.fillMaxSize()) {
-            // The bar pads itself for the system navigation bar, so the screens above must not pad for it again.
-            Box(Modifier.weight(1f).consumeWindowInsets(WindowInsets.navigationBars)) { content() }
-            AppNavigationBar(items = items, selectedIndex = selectedIndex, onSelect = onSelect)
-        }
-    } else {
-        Row(modifier.fillMaxSize()) {
+    // One fixed tree for both layouts: [content] (the NavHost) stays at the same place in the composition, so folding,
+    // unfolding or resizing the window does not rebuild it and lose the screens' remembered state.
+    Row(modifier.fillMaxSize()) {
+        if (rail) {
             NavigationRail(Modifier.fillMaxHeight().testTag(APP_NAVIGATION_RAIL_TAG)) {
                 items.forEachIndexed { index, item ->
                     NavigationRailItem(
@@ -65,8 +77,13 @@ fun AppNavigationSuite(
                     )
                 }
             }
-            // The rail takes the start-side insets (cutout, landscape navigation bar); the screens keep the rest.
-            Box(Modifier.weight(1f).consumeWindowInsets(WindowInsets.safeDrawing.only(WindowInsetsSides.Start))) { content() }
+        }
+        Column(Modifier.weight(1f)) {
+            // The bar pads itself for the system navigation bar; the rail takes the start-side insets (cutout,
+            // landscape navigation bar). Either way the screens must not pad for those again.
+            val consumed = if (rail) WindowInsets.safeDrawing.only(WindowInsetsSides.Start) else WindowInsets.navigationBars
+            Box(Modifier.weight(1f).consumeWindowInsets(consumed)) { content() }
+            if (!rail) AppNavigationBar(items = items, selectedIndex = selectedIndex, onSelect = onSelect)
         }
     }
 }

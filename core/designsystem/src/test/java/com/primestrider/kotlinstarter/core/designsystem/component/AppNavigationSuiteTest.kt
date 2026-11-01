@@ -4,6 +4,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -59,5 +63,24 @@ class AppNavigationSuiteTest {
         rule.onNodeWithTag(APP_NAVIGATION_RAIL_TAG).assertDoesNotExist()
         rule.onNodeWithTag(APP_NAVIGATION_BAR_TAG).assertDoesNotExist()
         rule.onNodeWithText("Content").assertExists()
+    }
+
+    @Test
+    fun switching_between_bar_and_rail_keeps_the_content() {
+        var rail by mutableStateOf(false)
+        var created = 0
+        rule.setContent {
+            AppTheme(false) {
+                AppNavigationSuiteLayout(items, selectedIndex = 0, onSelect = {}, rail = rail) {
+                    remember { created++ }
+                    Text("Content")
+                }
+            }
+        }
+        rule.runOnIdle { rail = true }
+        rule.onNodeWithTag(APP_NAVIGATION_RAIL_TAG).assertExists()
+        rule.runOnIdle { rail = false }
+        rule.onNodeWithTag(APP_NAVIGATION_BAR_TAG).assertExists()
+        assertEquals(1, created)
     }
 }

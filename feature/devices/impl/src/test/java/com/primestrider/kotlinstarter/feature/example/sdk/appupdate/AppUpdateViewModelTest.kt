@@ -119,4 +119,19 @@ class AppUpdateViewModelTest {
         idle()
         assertTrue("${viewModel.state.value}", viewModel.state.value is AppUpdateState.Failed)
     }
+
+    @Test
+    fun cancelled_dialog_checks_again_so_update_can_restart() {
+        fake.setUpdateAvailable(42, AppUpdateType.FLEXIBLE)
+        val viewModel = viewModel()
+        viewModel.startUpdate(launcher)
+        idle()
+        fake.userRejectsUpdate()
+        viewModel.onUpdateFlowResult(android.app.Activity.RESULT_CANCELED)
+        idle()
+        assertEquals(AppUpdateState.Available(versionCode = 42), viewModel.state.value)
+        viewModel.startUpdate(launcher)
+        idle()
+        assertTrue(fake.isConfirmationDialogVisible)
+    }
 }

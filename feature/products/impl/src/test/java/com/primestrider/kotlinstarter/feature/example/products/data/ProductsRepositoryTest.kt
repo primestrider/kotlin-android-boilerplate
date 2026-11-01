@@ -40,14 +40,9 @@ class ProductsRepositoryTest {
     @Test
     fun cached_products_show_when_offline() =
         runTest {
-            assertEquals(
-                "Phone 1",
-                repository
-                    .pager("")
-                    .asSnapshot()
-                    .first()
-                    .title,
-            )
+            // Online: the mediator fills the cache before the snapshot settles. The snapshot itself can return before
+            // Room emits the page, so the assertions below read the cache the list pages from.
+            repository.pager("").asSnapshot()
             api.offline = true
             // Offline the refresh fails (ProductsRemoteMediatorTest), and the list keeps paging the rows cached above.
             val page =

@@ -1,6 +1,11 @@
 package com.primestrider.kotlinstarter.feature.example.products.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -29,7 +34,7 @@ class ProductsListDetailTest {
     @Before
     fun setUp() = resetAndroidUiDispatcher()
 
-    private fun show() =
+    private fun show(twoPanes: () -> Boolean? = { null }) =
         rule.setContent {
             val items = flowOf(PagingData.from(listOf(product(id = 7), product(id = 8)))).collectAsLazyPagingItems()
             AppTheme(false) {
@@ -39,7 +44,8 @@ class ProductsListDetailTest {
                     products = items,
                     onOpenFullScreen = { opened += it },
                     onBack = {},
-                    detail = { id, _ -> Text("Detail of $id") },
+                    detail = { id, close -> Text("Detail of $id", Modifier.clickable(onClick = close)) },
+                    twoPanes = twoPanes(),
                 )
             }
         }
@@ -76,5 +82,44 @@ class ProductsListDetailTest {
         }
         rule.onNodeWithText("Phone 7").performClick()
         assertEquals(listOf(7L), opened)
+    }
+
+    @Test
+    @Config(qualifiers = "w1000dp-h800dp")
+    fun closing_the_pane_shows_the_placeholder() {
+        show()
+        rule.waitUntil(5_000) {
+            rule
+                .onAllNodes(
+                    androidx.compose.ui.test
+                        .hasText("Phone 7"),
+                ).fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+        rule.onNodeWithText("Phone 7").performClick()
+        rule.onNodeWithText("Detail of 7").performClick()
+        rule.onNodeWithText("Detail of 7").assertDoesNotExist()
+        rule.onNodeWithText("Pick a product").assertExists()
+    }
+
+    @Test
+    @Config(qualifiers = "w1000dp-h800dp")
+    fun shrinking_to_one_pane_opens_the_selected_product() {
+        var wide by mutableStateOf(true)
+        show(twoPanes = { wide })
+        rule.waitUntil(5_000) {
+            rule
+                .onAllNodes(
+                    androidx.compose.ui.test
+                        .hasText("Phone 7"),
+                ).fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+        rule.onNodeWithText("Phone 7").performClick()
+        rule.runOnIdle { wide = false }
+        rule.waitForIdle()
+        assertEquals(listOf(7L), opened)
+        rule.runOnIdle { wide = true }
+        rule.onNodeWithText("Pick a product").assertExists()
     }
 }

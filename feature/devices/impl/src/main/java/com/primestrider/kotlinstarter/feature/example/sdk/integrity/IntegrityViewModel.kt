@@ -98,31 +98,52 @@ class IntegrityViewModel
     }
 
 /**
- * Standard requests: prepare a token provider once (it warms up Play's checks in the background), then request a
- * token per protected action. Without Play services or outside Play the calls fail with an `IntegrityServiceException`.
+ * Prepares a token provider once and reuses it. Play documents that a provider can expire or become invalid
+ * (`INTEGRITY_TOKEN_PROVIDER_INVALID`), so a failed request drops it, prepares a new one and retries once.
+ */
+class ReusableTokenProvider<P : Any>(
+    private val prepare: suspend () -> P,
+    private val request: suspend (provider: P, requestHash: String) -> String,
+) : IntegrityTokens {
+    private val mutex = Mutex()
+    private var provider: P? = null
+
+    private suspend fun provider(): P = mutex.withLock { provider ?: prepare().also { provider = it } }
+
+    override suspend fun token(requestHash: String): String {
+        val first = provider()
+        return try {
+            request(first, requestHash)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            mutex.withLock { if (provider === first) provider = null }
+            request(provider(), requestHash)
+        }
+    }
+}
+
+/**
+ * Standard requests: prepare a token provider (it warms up Play's checks in the background), then request a token per
+ * protected action. Without Play services or outside Play the calls fail with an `IntegrityServiceException`.
  */
 @Singleton
 class PlayIntegrityTokens
     @Inject
     constructor(
-        @ApplicationContext private val context: Context,
-        @PlayIntegrityProject private val projectNumber: Long,
-    ) : IntegrityTokens {
-        private val mutex = Mutex()
-        private var provider: StandardIntegrityTokenProvider? = null
-
-        override suspend fun token(requestHash: String): String {
-            val ready =
-                mutex.withLock {
-                    provider ?: IntegrityManagerFactory
-                        .createStandard(context)
-                        .prepareIntegrityToken(PrepareIntegrityTokenRequest.builder().setCloudProjectNumber(projectNumber).build())
-                        .await()
-                        .also { provider = it }
-                }
-            return ready.request(StandardIntegrityTokenRequest.builder().setRequestHash(requestHash).build()).await().token()
-        }
-    }
+        @ApplicationContext context: Context,
+        @PlayIntegrityProject projectNumber: Long,
+    ) : IntegrityTokens by ReusableTokenProvider<StandardIntegrityTokenProvider>(
+            prepare = {
+                IntegrityManagerFactory
+                    .createStandard(context)
+                    .prepareIntegrityToken(PrepareIntegrityTokenRequest.builder().setCloudProjectNumber(projectNumber).build())
+                    .await()
+            },
+            request = { provider, requestHash ->
+                provider.request(StandardIntegrityTokenRequest.builder().setRequestHash(requestHash).build()).await().token()
+            },
+        )
 
 @Module
 @InstallIn(SingletonComponent::class)
