@@ -1,15 +1,17 @@
-package com.primestrider.kotlinstarter.feature.example.products
+package com.primestrider.kotlinstarter.feature.example.products.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
 import com.primestrider.kotlinstarter.core.network.ApiError
 import com.primestrider.kotlinstarter.core.network.toApiError
 import com.primestrider.kotlinstarter.feature.example.ProductDetailRoute
+import com.primestrider.kotlinstarter.feature.example.products.data.ProductsRepository
+import com.primestrider.kotlinstarter.feature.example.products.model.Product
+import com.primestrider.kotlinstarter.feature.products.impl.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -26,7 +28,7 @@ sealed interface ProductDetailState {
     data object Loading : ProductDetailState
 
     data class Loaded(
-        val product: ProductDto,
+        val product: Product,
     ) : ProductDetailState
 
     /** The id is invalid or the server answered 404: nothing to retry. */

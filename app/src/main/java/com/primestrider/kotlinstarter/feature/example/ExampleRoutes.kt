@@ -17,14 +17,6 @@ data object ProfileRoute
 data object AccountRoute
 
 @Serializable
-data object ProductsRoute
-
-@Serializable
-data class ProductDetailRoute(
-    val id: Long,
-)
-
-@Serializable
 data object TodosRoute
 
 /** Every "Device APIs" demo shares this one destination; [id] picks the demo from `sdkDemos`. */

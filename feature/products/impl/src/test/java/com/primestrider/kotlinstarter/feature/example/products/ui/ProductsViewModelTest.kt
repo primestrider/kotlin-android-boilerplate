@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.feature.example.products
+package com.primestrider.kotlinstarter.feature.example.products.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

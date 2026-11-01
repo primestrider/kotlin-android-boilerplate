@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.feature.example.products
+package com.primestrider.kotlinstarter.feature.example.products.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +29,6 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
@@ -43,6 +42,8 @@ import com.primestrider.kotlinstarter.core.network.asApiError
 import com.primestrider.kotlinstarter.core.network.userMessage
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.core.util.formatCurrency
+import com.primestrider.kotlinstarter.feature.example.products.model.Product
+import com.primestrider.kotlinstarter.feature.products.impl.R
 import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
 
 private const val SKELETON_ROWS = 6
@@ -52,7 +53,7 @@ private const val SKELETON_ROWS = 6
 fun ProductsScreen(
     query: String,
     onQueryChange: (String) -> Unit,
-    products: LazyPagingItems<ProductDto>,
+    products: LazyPagingItems<Product>,
     onOpen: (Long) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -125,7 +126,7 @@ private fun RetryRow(
 
 @Composable
 private fun ProductList(
-    products: LazyPagingItems<ProductDto>,
+    products: LazyPagingItems<Product>,
     onOpen: (Long) -> Unit,
 ) {
     // A failed refresh (e.g. a new search while offline) keeps the previous items: say so above them. It sits outside
@@ -144,7 +145,7 @@ private fun ProductList(
 
 @Composable
 private fun ColumnScope.ProductItems(
-    products: LazyPagingItems<ProductDto>,
+    products: LazyPagingItems<Product>,
     onOpen: (Long) -> Unit,
 ) {
     LazyColumn(Modifier.weight(1f)) {
@@ -167,7 +168,7 @@ private fun ColumnScope.ProductItems(
 
 @Composable
 private fun ProductRow(
-    product: ProductDto,
+    product: Product,
     onOpen: (Long) -> Unit,
 ) {
     Row(

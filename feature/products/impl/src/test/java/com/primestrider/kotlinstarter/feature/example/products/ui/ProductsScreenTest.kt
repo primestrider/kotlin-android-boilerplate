@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.feature.example.products
+package com.primestrider.kotlinstarter.feature.example.products.ui
 
 import androidx.compose.material3.Surface
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -11,6 +11,7 @@ import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
+import com.primestrider.kotlinstarter.feature.example.products.model.Product
 import com.primestrider.kotlinstarter.testing.resetAndroidUiDispatcher
 import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert.assertEquals
@@ -33,7 +34,7 @@ class ProductsScreenTest {
     private val done = LoadState.NotLoading(endOfPaginationReached = false)
 
     private fun show(
-        items: List<ProductDto>,
+        items: List<Product>,
         states: LoadStates,
         onOpen: (Long) -> Unit = {},
     ) = rule.setContent {

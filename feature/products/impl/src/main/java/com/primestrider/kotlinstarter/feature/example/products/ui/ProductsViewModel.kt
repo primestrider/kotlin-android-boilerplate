@@ -1,10 +1,12 @@
-package com.primestrider.kotlinstarter.feature.example.products
+package com.primestrider.kotlinstarter.feature.example.products.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.primestrider.kotlinstarter.feature.example.products.data.ProductsRepository
+import com.primestrider.kotlinstarter.feature.example.products.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -37,7 +39,7 @@ class ProductsViewModel
         private val initialQuery = query.value.trim()
 
         @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-        val products: Flow<PagingData<ProductDto>> =
+        val products: Flow<PagingData<Product>> =
             query
                 .map { it.trim() }
                 .debounce { if (it == initialQuery) 0L else SEARCH_DEBOUNCE_MILLIS }

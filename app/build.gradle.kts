@@ -84,6 +84,10 @@ dependencies {
     implementation(projects.feature.catalog.api)
     implementation(projects.feature.catalog.impl)
     // endregion
+    // region example:products
+    implementation(projects.feature.products.api)
+    implementation(projects.feature.products.impl)
+    // endregion
     testImplementation(projects.core.testing)
 
     implementation(libs.androidx.core.ktx)

@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.feature.example.products
+package com.primestrider.kotlinstarter.feature.example.products.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,7 +41,6 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppBottomSheet
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
@@ -56,6 +55,9 @@ import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.core.util.formatCurrency
 import com.primestrider.kotlinstarter.core.util.formatIsoDate
 import com.primestrider.kotlinstarter.core.util.formatPercent
+import com.primestrider.kotlinstarter.feature.example.products.model.Product
+import com.primestrider.kotlinstarter.feature.example.products.model.Review
+import com.primestrider.kotlinstarter.feature.products.impl.R
 import java.util.Locale
 
 /** Tag of the quantity value in the add-to-cart sheet. */
@@ -96,7 +98,7 @@ fun ProductDetailScreen(
 
 @Composable
 private fun ProductDetail(
-    product: ProductDto,
+    product: Product,
     onAddToCart: (Int) -> Unit,
     modifier: Modifier,
 ) {
@@ -154,7 +156,7 @@ private fun ProductDetail(
 
 @Composable
 private fun Specs(
-    product: ProductDto,
+    product: Product,
     locale: Locale,
 ) {
     Column {
@@ -166,7 +168,7 @@ private fun Specs(
 }
 
 @Composable
-private fun Reviews(reviews: List<ReviewDto>) {
+private fun Reviews(reviews: List<Review>) {
     if (reviews.isEmpty()) {
         Text(
             stringResource(R.string.products_no_reviews),

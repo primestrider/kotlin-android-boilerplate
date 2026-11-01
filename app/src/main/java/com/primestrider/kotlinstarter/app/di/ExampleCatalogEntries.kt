@@ -7,7 +7,6 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSection
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
-import com.primestrider.kotlinstarter.feature.example.ProductsRoute
 import com.primestrider.kotlinstarter.feature.example.TodosRoute
 import com.primestrider.kotlinstarter.feature.example.animation.animationEntries
 import com.primestrider.kotlinstarter.feature.example.sdk.sdkEntries
@@ -45,7 +44,6 @@ object ExampleCatalogEntries {
     @ElementsIntoSet
     fun entries(): Set<CatalogEntry> =
         setOf(
-            CatalogEntry(R.string.products_title, R.string.products_subtitle, ProductsRoute, CatalogSections.FEATURES, 10),
             CatalogEntry(R.string.todos_title, R.string.todos_subtitle, TodosRoute, CatalogSections.FEATURES, 20),
         ) + sdkEntries() + animationEntries()
 }

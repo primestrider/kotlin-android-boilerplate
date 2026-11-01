@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.feature.example.products
+package com.primestrider.kotlinstarter.feature.example.products.data
 
 import androidx.paging.PagingSource
 import kotlinx.coroutines.test.runTest

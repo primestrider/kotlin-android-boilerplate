@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.feature.example.products
+package com.primestrider.kotlinstarter.feature.example.products.data
 
 import com.primestrider.kotlinstarter.core.network.Anonymous
 import kotlinx.serialization.Serializable

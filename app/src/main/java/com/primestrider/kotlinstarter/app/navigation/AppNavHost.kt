@@ -11,7 +11,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.primestrider.kotlinstarter.BuildConfig
 import com.primestrider.kotlinstarter.feature.example.AccountRoute
 import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute
@@ -20,8 +19,6 @@ import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
 import com.primestrider.kotlinstarter.feature.example.AnimTransitionsRoute
 import com.primestrider.kotlinstarter.feature.example.CatalogHome
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
-import com.primestrider.kotlinstarter.feature.example.ProductDetailRoute
-import com.primestrider.kotlinstarter.feature.example.ProductsRoute
 import com.primestrider.kotlinstarter.feature.example.ProfileRoute
 import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
 import com.primestrider.kotlinstarter.feature.example.SettingsRoute
@@ -38,10 +35,7 @@ import com.primestrider.kotlinstarter.feature.example.auth.SignInScreen
 import com.primestrider.kotlinstarter.feature.example.auth.SignInViewModel
 import com.primestrider.kotlinstarter.feature.example.catalogComponentsDestinations
 import com.primestrider.kotlinstarter.feature.example.catalogHomeDestinations
-import com.primestrider.kotlinstarter.feature.example.products.ProductDetailScreen
-import com.primestrider.kotlinstarter.feature.example.products.ProductDetailViewModel
-import com.primestrider.kotlinstarter.feature.example.products.ProductsScreen
-import com.primestrider.kotlinstarter.feature.example.products.ProductsViewModel
+import com.primestrider.kotlinstarter.feature.example.products.ui.productsDestinations
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkDemoScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsViewModel
@@ -73,22 +67,9 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
         composable<HomeRoute> { CatalogHome(onOpen = { route -> navController.navigate(route) }) }
         catalogHomeDestinations(navController)
         // endregion
-        composable<ProductsRoute> {
-            val viewModel: ProductsViewModel = hiltViewModel()
-            val query by viewModel.query.collectAsStateWithLifecycle()
-            ProductsScreen(
-                query = query,
-                onQueryChange = viewModel::onQueryChange,
-                products = viewModel.products.collectAsLazyPagingItems(),
-                onOpen = { id -> navController.navigate(ProductDetailRoute(id)) },
-                onBack = back,
-            )
-        }
-        composable<ProductDetailRoute> {
-            val viewModel: ProductDetailViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsStateWithLifecycle()
-            ProductDetailScreen(state = state, onRetry = viewModel::retry, onAddToCart = viewModel::addToCart, onBack = back)
-        }
+        // region example:products
+        productsDestinations(navController)
+        // endregion
         composable<TodosRoute> {
             val viewModel: TodosViewModel = hiltViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()
