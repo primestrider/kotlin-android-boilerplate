@@ -99,5 +99,10 @@ task before starting; they link into `docs/architecture/` for the why.
 | `add-screen-route` | add a screen and route, navigate between them, protect a page, add a deep link |
 | `add-api-endpoint` | call a backend endpoint (Retrofit, DTO, mapping, `safeApiCall`, MockWebServer tests) |
 | `add-translation` | add or change strings in English and Indonesian |
+| `add-component-example` | show a component on the Components tab, or add a reusable design-system component |
+| `add-permission-feature` | build a feature that needs a runtime permission or a device API |
+| `swap-auth-backend` | connect sign-in and token refresh to a real backend |
+| `remove-examples` | remove the seven example features safely (copy first, then apply) |
+| `release-build` | bump the version, build and verify a signed release, distribute to testers |
 
 `SkillsTest` checks the frontmatter and that this table lists every skill; `DocsLinksTest` checks the paths they quote.

@@ -15,8 +15,8 @@ class SkillsTest {
     }
 
     @Test
-    fun there_are_at_least_four_skills() {
-        assertTrue("found ${skills.map { it.name }}", skills.size >= 4)
+    fun all_nine_skills_exist() {
+        assertTrue("found ${skills.map { it.name }}", skills.size >= 9)
     }
 
     @Test
