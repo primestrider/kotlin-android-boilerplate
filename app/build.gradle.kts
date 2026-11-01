@@ -88,6 +88,10 @@ dependencies {
     implementation(projects.feature.products.api)
     implementation(projects.feature.products.impl)
     // endregion
+    // region example:settings
+    implementation(projects.feature.settings.api)
+    implementation(projects.feature.settings.impl)
+    // endregion
     // region example:todos
     implementation(projects.feature.todos.api)
     implementation(projects.feature.todos.impl)

@@ -3,7 +3,6 @@ package com.primestrider.kotlinstarter.app.navigation
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -36,8 +35,7 @@ import com.primestrider.kotlinstarter.feature.example.catalogComponentsDestinati
 import com.primestrider.kotlinstarter.feature.example.catalogHomeDestinations
 import com.primestrider.kotlinstarter.feature.example.products.ui.productsDestinations
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkDemoScreen
-import com.primestrider.kotlinstarter.feature.example.settings.SettingsScreen
-import com.primestrider.kotlinstarter.feature.example.settings.SettingsViewModel
+import com.primestrider.kotlinstarter.feature.example.settings.settingsDestinations
 import com.primestrider.kotlinstarter.feature.example.todos.ui.todosDestinations
 import kotlinx.serialization.Serializable
 
@@ -110,20 +108,9 @@ fun NavGraphBuilder.profileGraph(navController: NavHostController) {
                 onOpenSettings = { navController.navigate(SettingsRoute) },
             )
         }
-        composable<SettingsRoute> {
-            val viewModel: SettingsViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsStateWithLifecycle()
-            LifecycleResumeEffect(Unit) {
-                viewModel.refreshLanguage()
-                onPauseOrDispose {}
-            }
-            SettingsScreen(
-                state = state,
-                onThemeModeChange = viewModel::setThemeMode,
-                onLanguageChange = viewModel::setLanguage,
-                onBack = back,
-            )
-        }
+        // region example:settings
+        settingsDestinations(navController)
+        // endregion
         composable<SignInRoute> {
             val viewModel: SignInViewModel = hiltViewModel()
             val state by viewModel.state.collectAsStateWithLifecycle()

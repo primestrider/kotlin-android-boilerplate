@@ -22,6 +22,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.AvatarSize
 import com.primestrider.kotlinstarter.core.designsystem.component.AvatarStatus
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.settings.impl.R as SettingsR
 
 /** Profile tab root: the signed-in user (or a sign-in prompt) and a way into Settings. */
 @Composable
@@ -59,7 +60,7 @@ fun ProfileScreen(
             HorizontalDivider()
             ListItem(
                 modifier = Modifier.clickable(role = Role.Button, onClick = onOpenSettings),
-                headlineContent = { Text(stringResource(R.string.settings_title)) },
+                headlineContent = { Text(stringResource(SettingsR.string.settings_title)) },
             )
         }
     }

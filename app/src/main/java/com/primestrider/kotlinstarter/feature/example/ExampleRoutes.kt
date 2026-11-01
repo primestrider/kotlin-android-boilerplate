@@ -4,9 +4,6 @@ import kotlinx.serialization.Serializable
 
 /** Type-safe destinations of the example feature. */
 @Serializable
-data object SettingsRoute
-
-@Serializable
 data object SignInRoute
 
 @Serializable

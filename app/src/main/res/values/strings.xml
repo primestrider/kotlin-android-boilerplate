@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">Kotlin Starter</string>
-    <string name="settings_title">Settings</string>
-    <string name="settings_theme_label">Color scheme</string>
-    <string name="settings_language_label">App language</string>
     <string name="nav_home">Home</string>
     <string name="nav_components">Components</string>
     <string name="nav_profile">Profile</string>
@@ -32,8 +29,6 @@
     <string name="auth_sign_out_failed">Could not sign out. Please try again.</string>
     <string name="auth_info_id">ID</string>
     <string name="auth_info_email">Email</string>
-    <string name="settings_developer">Developer</string>
-    <string name="settings_crash">Crash the app</string>
     <string name="example_home_sdk_title">Device APIs</string>
     <string name="example_home_sdk_description">Camera, location, notifications and more, as real Android screens</string>
     <string name="sdk_unknown">This demo does not exist</string>

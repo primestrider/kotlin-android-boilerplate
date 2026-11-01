@@ -19,8 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
-import com.primestrider.kotlinstarter.BuildConfig
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppRadioButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
@@ -30,6 +28,8 @@ import com.primestrider.kotlinstarter.core.designsystem.component.ThemeModeSelec
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.i18n.AppLanguage
 import com.primestrider.kotlinstarter.core.model.ThemeMode
+import com.primestrider.kotlinstarter.feature.settings.impl.BuildConfig
+import com.primestrider.kotlinstarter.feature.settings.impl.R
 
 const val SETTINGS_LIST_TAG = "settings_list"
 

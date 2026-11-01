@@ -1,8 +1,5 @@
 <resources>
     <string name="app_name">Kotlin Starter</string>
-    <string name="settings_title">Pengaturan</string>
-    <string name="settings_theme_label">Skema warna</string>
-    <string name="settings_language_label">Bahasa aplikasi</string>
     <string name="nav_home">Beranda</string>
     <string name="nav_components">Komponen</string>
     <string name="nav_profile">Profil</string>
@@ -32,8 +29,6 @@
     <string name="auth_sign_out_failed">Gagal keluar. Silakan coba lagi.</string>
     <string name="auth_info_id">ID</string>
     <string name="auth_info_email">Email</string>
-    <string name="settings_developer">Pengembang</string>
-    <string name="settings_crash">Buat aplikasi crash</string>
     <string name="example_home_sdk_title">API Perangkat</string>
     <string name="example_home_sdk_description">Kamera, lokasi, notifikasi, dan lainnya sebagai layar Android sungguhan</string>
     <string name="sdk_unknown">Demo ini tidak ada</string>
