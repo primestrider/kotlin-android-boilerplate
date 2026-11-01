@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# Navigation routes (@Serializable *Route classes in the feature :api modules) keep their names: the saved back
+# stack and deep links refer to them. Checked by ./gradlew verifyReleaseKeeps.
+-keepnames @kotlinx.serialization.Serializable class com.primestrider.kotlinstarter.**Route

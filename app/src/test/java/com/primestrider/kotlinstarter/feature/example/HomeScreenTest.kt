@@ -27,13 +27,14 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeUp
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
+import com.primestrider.kotlinstarter.feature.catalog.impl.R
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import com.primestrider.kotlinstarter.feature.devices.impl.R as DevicesR
 
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [36])
@@ -133,10 +134,10 @@ class HomeScreenTest {
     fun a_search_shows_how_many_of_a_sections_examples_matched() {
         show {}
         val context = ApplicationProvider.getApplicationContext<Context>()
-        val total = exampleSections.first { it.title == R.string.example_home_sdk_title }.entries.size
+        val total = exampleSections.first { it.title == DevicesR.string.example_home_sdk_title }.entries.size
         val matched =
             filterSections(exampleSections, "camera", null) { context.getString(it) }
-                .first { it.title == R.string.example_home_sdk_title }
+                .first { it.title == DevicesR.string.example_home_sdk_title }
                 .entries.size
         rule.onNodeWithText("Search features").performTextInput("camera")
         rule.onNodeWithContentDescription("$matched of $total examples").assertExists()

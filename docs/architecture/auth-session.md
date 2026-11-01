@@ -51,8 +51,10 @@ authenticator retries; `Authorization` is redacted.
 ## Refresh and expiry
 
 `AuthAdapter` (`core/auth`) is the only backend-specific piece: `signIn(credentials)` and
-`refresh(refreshToken)`. A feature module binds the implementation (the example binds
-`DummyJsonAuthAdapter` in `feature/example/auth/ExampleAuthModule.kt`). `refresh` must be built on
+`refresh(refreshToken)`. A feature module binds the implementation with `@Binds @AuthBackend` (the account
+example binds `DummyJsonAuthAdapter` in `ExampleAuthModule`, `feature/account/impl`); `core:auth`'s `AuthModule` turns
+that optional binding into the `AuthAdapter` everyone injects, or `NotConfiguredAuthAdapter` when no feature binds one
+(sign-in fails, a stored session cannot refresh and ends signed out). `refresh` must be built on
 `@RefreshRetrofit`, and must throw an `IOException` when the server cannot be reached. A 5xx or
 429 `HttpException` is also treated as transient; any other HTTP error means the refresh token was
 rejected.
@@ -134,6 +136,6 @@ retry 401 again -> authenticator gives up (priorResponse != null), caller gets t
 ## Swapping the backend
 
 1. Implement `AuthAdapter` (`signIn`, `refresh`) for your API. Build `refresh` on `@RefreshRetrofit` and throw an `IOException` when the server is unreachable (a 5xx or 429 `HttpException` also keeps the session).
-2. Bind it instead of `DummyJsonAuthAdapter` (replace the `@Binds` in `ExampleAuthModule`, or delete `feature/example/auth` and add your own module).
+2. Bind it with `@Binds @AuthBackend` instead of `DummyJsonAuthAdapter` (replace the binding in `ExampleAuthModule`, or remove the `account` feature and bind it in your own module). Without the `@AuthBackend` qualifier the binding is ignored and sign-in stays "not configured".
 3. Keep `@Anonymous` on the login and refresh methods so they never carry a bearer token or trigger the 401 flow.
-4. Set the base URL with `api.url` in `local.properties` or the `API_URL` environment variable.
+4. Set the base URL per flavour in `app/build.gradle.kts` (`apiUrl(...)`), or override it with `api.url` in `local.properties` or the `API_URL` environment variable.

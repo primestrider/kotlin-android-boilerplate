@@ -1,21 +1,23 @@
 # Architecture overview
 
-Single-module app (`:app`) with the root package `com.primestrider.kotlinstarter`.
+Multi-module app in the style of Google's Now in Android, root package `com.primestrider.kotlinstarter`.
 
-## Layers
+## Modules
 
-- `app/`: application shell. `MainActivity`, app-level ViewModel, and the navigation host that wires every route.
-- `core/*`: reusable building blocks (storage, design system, i18n, later networking and shared components). Knows nothing about features.
-- `feature/*`: user-facing features. `feature/example` holds the demo content and can be deleted without breaking `core`.
+- `:app`: application shell. `MainActivity`, `AppViewModel`, the tabs (`MainShell`) and `AppNavHost.kt`, the one place that wires features together. It owns the environment (flavours, `@ApiBaseUrl`).
+- `:core:*`: reusable building blocks, one module per responsibility: `common`, `model`, `datastore`, `designsystem`, `network`, `auth`, `ui`, and `testing` for shared test doubles. They know nothing about features.
+- `:feature:<name>:api` + `:impl`: user-facing features. `api` holds the `@Serializable` routes others may navigate to; `impl` holds screens, ViewModels, the `data/` layer and Hilt modules. All seven current features are examples and can be removed (`scripts/remove-examples.sh`).
+- `build-logic/`: convention plugins, so each module's build file is a few lines.
 
-## Dependency direction
+## Dependency direction (enforced by Gradle)
 
 ```
-app  ->  feature  ->  core
-app  ->  core
+app  ->  feature:*:impl  ->  feature:*:api
+ |              |
+ +------------> core:*  (core:auth -> core:network, core:datastore, core:designsystem; core:ui -> core:designsystem)
 ```
 
-`core` must never import `feature`. `feature` must not import `app`.
+`core` never depends on `feature`; an `impl` never depends on another `impl` (only on its `api`); only `:app` sees `impl` modules. Because these are module dependencies, a wrong import does not compile. `core:network` does not know `core:auth`: auth plugs its bearer interceptor into the app client through the `@AppInterceptors` multibinding and binds its 401 refresh as the optional `Authenticator`.
 
 ## Screen / Route / ViewModel split
 
@@ -44,7 +46,7 @@ WorkManager (`work-runtime-ktx`) runs deferrable work that must survive the app 
 - Periodic work runs at most every 15 minutes, and the OS decides when (Doze, battery saver, app standby).
 - Tests: `TestListenableWorkerBuilder` with a `WorkerFactory` for the worker itself; `WorkManagerTestInitHelper.initializeTestWorkManager(context, config)` (with a `SynchronousExecutor`) for code that enqueues work. `HiltTestApplication` is not a `Configuration.Provider`, so a Hilt test that reaches `WorkManager.getInstance` must initialise the test WorkManager first.
 
-The Background Task demo (`feature/example/sdk/background/`) is the reference implementation (docs/examples.md).
+The Background Task demo (`sdk/background/` in `feature/devices/impl`) is the reference implementation (docs/examples.md).
 
 ## Picture-in-picture
 

@@ -4,7 +4,7 @@ The app uses Navigation Compose with type-safe routes (kotlinx.serialization) in
 
 ## Shell and tabs
 
-`app/navigation/MainShell.kt` is the app's root composable (set by `MainActivity`). It is a `Scaffold` whose bottom bar is `AppNavigationBar` (`core/designsystem/component/`) and whose content is one `NavHost` with a nested graph per tab:
+`app/navigation/MainShell.kt` is the app's root composable (set by `MainActivity`). It is a `Scaffold` holding `AppNavigationSuite` (`core/designsystem/component/`), which puts the tabs in a bottom `AppNavigationBar` on compact width (phones in portrait) and in a `NavigationRail` at the start from medium width (tablets, foldables, phones in landscape), chosen from `currentWindowAdaptiveInfo()`. Its content is one `NavHost` with a nested graph per tab:
 
 | Tab (`TopLevelTab`) | Graph | Start route | Contents |
 | --- | --- | --- | --- |
@@ -17,21 +17,27 @@ Behavior:
 - Switching tabs uses `navigate(graph) { popUpTo(start) { saveState = true }; launchSingleTop = true; restoreState = true }`, so each tab keeps its own back stack.
 - Re-selecting the current tab pops it to its start route.
 - Back at the root of a non-Home tab switches to Home and restores Home's saved stack (a `BackHandler` composed after the `NavHost`, so Home's stale saved state is never resurrected later); back at Home's root leaves the app.
-- The `NavHost` consumes the shell's bottom inset, so screens use `AppScaffold` normally without a double navigation-bar gap.
+- The `NavHost` consumes the inset the bar or rail already pads for, so screens use `AppScaffold` normally without a double navigation-bar gap.
+
+## Adaptive layouts
+
+- **Shell:** bar or rail, see above (`AppNavigationSuiteTest` checks both with Robolectric `qualifiers = "w840dp-h900dp"`).
+- **List-detail:** `ProductsListDetail` (`feature/products/impl/src/main/java/com/primestrider/kotlinstarter/feature/example/products/ui/ProductsListDetail.kt`) uses Material's `ListDetailPaneScaffold`. When the window fits two panes (`navigator.scaffoldDirective.maxHorizontalPartitions >= 2`), tapping a product shows it beside the list; on narrower windows it is just `ProductsScreen` and a tap navigates to `ProductDetailRoute` as before. The detail's ViewModel takes the id through assisted injection (`hiltViewModel<ProductDetailViewModel, ProductDetailViewModel.Factory>(key = "product-$id") { it.create(id) }`), so the same ViewModel serves the page and the pane.
+- **Sizes inside a screen:** derive from the window, not the device type, e.g. the camera preview's `cameraPreviewHeight(screenHeightDp)` keeps the controls visible in landscape.
 
 ## Route objects
 
 Each destination is a `@Serializable` object or data class:
 
 - `HomeRoute` and the graph objects live in `app/navigation/AppNavHost.kt`.
-- Example-feature routes live in `feature/example/ExampleRoutes.kt`, so deleting `feature/example` removes them.
+- Feature routes live in the feature's `:api` module (e.g. `feature/products/api/src/main/java/com/primestrider/kotlinstarter/feature/example/ProductsRoutes.kt`). They keep the package `com.primestrider.kotlinstarter.feature.example`, because a route's serial name is its qualified class name and the saved back stack and deep links store it (`RouteNamesTest`); R8 keeps the names too (`verifyReleaseKeeps`).
 
 ## Registering a destination
 
-1. Add a `@Serializable` route object.
-2. Add `composable<MyRoute> { ... }` to the graph of the tab it belongs to (`homeGraph`, `componentsGraph`, `profileGraph` in `AppNavHost.kt`). Navigate only to destinations of the current tab (or switch tabs first): navigating into another tab's graph pushes the page onto the current stack and the selected tab flips to the declaring tab.
-3. To list it on an index, add an `ExampleEntry(title, subtitle, route)` to `exampleSections` (Home) or `componentEntries` (Components) in `feature/example/ExampleCatalog.kt`.
-4. A new top-level tab means a new `TopLevelTab` entry, a graph object and a `NavGraphBuilder` extension.
+1. Add a `@Serializable` route object to the feature's `:api` module.
+2. Register `composable<MyRoute> { ... }` in the feature's `NavGraphBuilder.<feature>Destinations(navController)` function. `:app` calls that function inside the graph of the tab the feature belongs to (`homeGraph` or `featureGraphs` in `AppNavHost.kt`, inside a `// region example:<feature>` block for the examples). Navigate only to destinations of the current tab (or switch tabs first): navigating into another tab's graph pushes the page onto the current stack and the selected tab flips to the declaring tab.
+3. To list it on Home, contribute a `CatalogEntry(title, subtitle, route, sectionId, order)` with `@Provides @IntoSet` from the feature's Hilt module; a feature that owns a Home section also contributes its `CatalogSection`. `catalog:impl` renders whatever the wired features contribute, so removing a feature removes its rows.
+4. A new top-level tab means a `TopLevelTab` added to `topLevelTabs`, a graph object and its nested graph in `featureGraphs`. With only one tab the bottom bar hides; without a feature providing Home, `PlaceholderHomeScreen` shows.
 
 ## Screen / Route split
 
@@ -78,7 +84,7 @@ Navigation Compose animates every navigation with four lambdas, each an `Animate
 - **Predictive back:** the system turns it on by default for apps targeting Android 16 (targetSdk 36) or higher; apps targeting 33 to 35 opt in with `android:enableOnBackInvokedCallback="true"` on `<application>`, and the gesture animations show on Android 14+. This app targets 37, so it needs no flag. `NavHost` then drives the pop transitions from the back gesture: the outgoing page follows the finger and a cancelled gesture restores it. A `BackHandler` that is enabled above a `NavHost` takes the press instead and replaces that seek with a plain pop, so enable one only while it has something of its own to close.
 - **Shared elements:** wrap the `NavHost` in `SharedTransitionLayout` and give the matching composables `Modifier.sharedBounds` or `Modifier.sharedElement` with the same key, passing each destination's `AnimatedVisibilityScope` (`this` inside `composable { }`).
 
-Animations > Page transitions (`feature/example/animation/transitions/`) shows all of this on a nested `NavHost` with six Material patterns, container transform through `sharedBounds`, and back that pops the nested page before leaving; the app's `NavHost` transitions are left unchanged.
+Animations > Page transitions (`animation/transitions/` in `feature/animation/impl`) shows all of this on a nested `NavHost` with six Material patterns, container transform through `sharedBounds`, and back that pops the nested page before leaving; the app's `NavHost` transitions are left unchanged.
 
 ## Deep links: scheme config and `navDeepLink`
 
@@ -97,4 +103,5 @@ The example feature opens screens from outside the app with `<scheme>://example/
   `.../sdk/payment-code?amount=50000` fills `SdkDemoRoute(id = "payment-code", amount = 50000)`. Fields with defaults (`amount: Long? = null`) are optional query parameters. The back stack under the target is built from its graph (Home, then the screen), so back returns to Home.
 - **Already running:** `MainActivity` creates the `NavHostController` and forwards `onNewIntent` to it with `addOnNewIntentListener { navController.handleDeepLink(it) }`. The first launch is handled by the NavHost itself.
 - **Reading the argument:** a ViewModel gets route fields from its `SavedStateHandle` (`savedStateHandle["amount"]` or `savedStateHandle.toRoute<SdkDemoRoute>()`), which survives rotation and process death.
+- **Plain URI patterns:** a route without fields can use `navDeepLink { uriPattern = "$appScheme://example/todos" }` (`todosDestinations`); the Todos home-screen widget opens the app with that link.
 - **Try it:** `adb shell am start -a android.intent.action.VIEW -d "kotlinstarter://example/sdk/payment-code?amount=50000"`.

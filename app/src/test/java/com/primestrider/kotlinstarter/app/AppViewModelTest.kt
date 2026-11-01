@@ -6,8 +6,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.auth.FakeSessionCipher
 import com.primestrider.kotlinstarter.core.auth.SessionRepository
 import com.primestrider.kotlinstarter.core.crash.CrashRecorder
-import com.primestrider.kotlinstarter.core.designsystem.theme.ThemeMode
-import com.primestrider.kotlinstarter.core.designsystem.theme.ThemePreferenceRepository
+import com.primestrider.kotlinstarter.core.datastore.ThemePreferenceRepository
+import com.primestrider.kotlinstarter.core.model.ThemeMode
 import com.primestrider.kotlinstarter.testing.GatedPreferencesDataStore
 import com.primestrider.kotlinstarter.testing.InMemoryPreferencesDataStore
 import kotlinx.coroutines.CompletableDeferred
