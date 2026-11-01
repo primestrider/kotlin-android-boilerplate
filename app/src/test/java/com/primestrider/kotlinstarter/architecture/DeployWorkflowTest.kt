@@ -68,4 +68,19 @@ class DeployWorkflowTest {
         assertTrue(workflow.contains("./gradlew -p build-logic test"))
         assertTrue(File(repoRoot, ".github/workflows/ci.yml").readText().contains("./gradlew -p build-logic test"))
     }
+
+    /** Robolectric's Android SDK 36 runtime needs Java 21; on 17 every Robolectric test fails in CI only. */
+    @Test
+    fun workflows_run_on_java_21() {
+        listOf("ci.yml", "deploy-android.yml").forEach { name ->
+            val versions =
+                Regex("""java-version:\s*"?(\d+)""")
+                    .findAll(File(repoRoot, ".github/workflows/$name").readText())
+                    .map {
+                        it.groupValues[1]
+                    }.toList()
+            assertTrue("$name has no setup-java", versions.isNotEmpty())
+            assertTrue("$name uses Java $versions", versions.all { it == "21" })
+        }
+    }
 }

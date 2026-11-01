@@ -5,7 +5,7 @@ A Kotlin Android starter kit built with Jetpack Compose, Material 3, and Hilt. I
 ## Requirements
 
 - Android Studio (latest stable)
-- JDK 17 or newer
+- JDK 21 or newer (Robolectric runs the tests on Android SDK 36, which needs Java 21; the code still targets JVM 17)
 - Android SDK 37
 
 ## Run
