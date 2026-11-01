@@ -43,6 +43,7 @@ import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
 import java.io.IOException
+import java.util.Optional
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -89,7 +90,11 @@ class AuthFlowTest {
         repository = SessionRepository(InMemoryPreferencesDataStore(), FakeSessionCipher(), json, backgroundScope)
         repository.signIn(Session(user, AuthTokens("a1", "r1")))
         val refresher = SessionRefresher(repository, adapter, refreshScope)
-        val client = NetworkModule.okHttpClient(AuthInterceptor(repository, apiUrl), TokenAuthenticator(Provider { refresher }, apiUrl))
+        val client =
+            NetworkModule.okHttpClient(
+                setOf(AuthInterceptor(repository, apiUrl)),
+                Optional.of(TokenAuthenticator(Provider { refresher }, apiUrl)),
+            )
         return retrofitApi(client, TestApi::class.java)
     }
 

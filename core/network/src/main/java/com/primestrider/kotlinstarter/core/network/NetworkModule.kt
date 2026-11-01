@@ -1,24 +1,45 @@
 package com.primestrider.kotlinstarter.core.network
 
-import com.primestrider.kotlinstarter.BuildConfig
-import com.primestrider.kotlinstarter.core.auth.AuthInterceptor
-import com.primestrider.kotlinstarter.core.auth.TokenAuthenticator
+import com.primestrider.kotlinstarter.core.network.BuildConfig
+import dagger.BindsOptionalOf
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import dagger.multibindings.Multibinds
 import kotlinx.serialization.json.Json
+import okhttp3.Authenticator
 import okhttp3.Dispatcher
 import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import java.util.Optional
 import java.util.concurrent.TimeUnit
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
+/** Interceptors every app (non-refresh) request goes through, contributed with `@IntoSet @AppInterceptors`. */
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class AppInterceptors
+
+/** Declares the extension points of the app client, so it builds even when nobody contributes to them. */
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class NetworkBindings {
+    @Multibinds
+    @AppInterceptors
+    abstract fun appInterceptors(): Set<Interceptor>
+
+    @BindsOptionalOf
+    abstract fun authenticator(): Authenticator
+}
+
+/** The `@ApiBaseUrl` itself is provided by `:app`, which owns the per-flavour environment. */
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -33,22 +54,19 @@ object NetworkModule {
             explicitNulls = false
         }
 
-    /** `BuildConfig.API_URL`: the base of both Retrofits and the only host that gets the bearer. */
-    @Provides
-    @Singleton
-    @ApiBaseUrl
-    fun apiBaseUrl(): HttpUrl = BuildConfig.API_URL.toHttpUrl()
-
-    /** The app client: bearer on every non-`@Anonymous` request to the API host, refresh and retry on 401. */
+    /**
+     * The app client. It knows nothing about auth: `core:auth` contributes its bearer interceptor to
+     * [AppInterceptors] and binds its 401 refresh as the [Authenticator]; without `core:auth` the client is plain.
+     */
     @Provides
     @Singleton
     fun okHttpClient(
-        authInterceptor: AuthInterceptor,
-        tokenAuthenticator: TokenAuthenticator,
+        @AppInterceptors interceptors: Set<@JvmSuppressWildcards Interceptor>,
+        authenticator: Optional<Authenticator>,
     ): OkHttpClient =
         baseClient()
-            .addInterceptor(authInterceptor)
-            .authenticator(tokenAuthenticator)
+            .apply { interceptors.forEach(::addInterceptor) }
+            .apply { authenticator.ifPresent(::authenticator) }
             .build()
 
     /** See [RefreshClient]: a separate dispatcher, so a refresh never waits behind blocked app calls. */

@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example.auth
 
 import com.primestrider.kotlinstarter.core.auth.AuthAdapter
+import com.primestrider.kotlinstarter.core.auth.AuthBackend
 import com.primestrider.kotlinstarter.core.network.RefreshRetrofit
 import dagger.Binds
 import dagger.Module
@@ -14,6 +15,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 abstract class ExampleAuthModule {
     @Binds
+    @AuthBackend
     abstract fun bindAuthAdapter(impl: DummyJsonAuthAdapter): AuthAdapter
 
     companion object {

@@ -76,6 +76,8 @@ dependencies {
     implementation(projects.core.model)
     implementation(projects.core.datastore)
     implementation(projects.core.designsystem)
+    implementation(projects.core.network)
+    implementation(projects.core.auth)
     testImplementation(projects.core.testing)
 
     implementation(libs.androidx.core.ktx)

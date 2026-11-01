@@ -1,7 +1,7 @@
 package com.primestrider.kotlinstarter.core.auth
 
 import app.cash.turbine.test
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.auth.R
 import com.primestrider.kotlinstarter.core.designsystem.component.MessageVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
@@ -39,7 +39,7 @@ class SessionExpiryAnnouncerTest {
                 runCurrent()
                 val message = awaitItem()
                 assertEquals(MessageVariant.ERROR, message.variant)
-                assertEquals(UiText.Resource(R.string.auth_session_expired), message.text)
+                assertEquals(UiText.Resource(R.string.core_auth_session_expired), message.text)
                 expectNoEvents()
             }
             assertNull(repository.signOutReason.value)

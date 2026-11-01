@@ -1,6 +1,6 @@
 package com.primestrider.kotlinstarter.core.auth
 
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.auth.R
 import com.primestrider.kotlinstarter.core.common.ApplicationScope
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
@@ -22,7 +22,7 @@ class SessionExpiryAnnouncer
             scope.launch {
                 repository.signOutReason.collect { reason ->
                     if (reason == SignOutReason.EXPIRED) {
-                        messenger.error(UiText.Resource(R.string.auth_session_expired))
+                        messenger.error(UiText.Resource(R.string.core_auth_session_expired))
                         repository.clearSignOutReason()
                     }
                 }

@@ -1,6 +1,7 @@
 plugins {
     id("kotlinstarter.android.library")
     id("kotlinstarter.android.compose")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -10,4 +11,6 @@ android {
 dependencies {
     api(libs.androidx.datastore.preferences)
     api(libs.kotlinx.coroutines.test)
+    implementation(projects.core.network)
+    implementation(projects.core.auth)
 }
