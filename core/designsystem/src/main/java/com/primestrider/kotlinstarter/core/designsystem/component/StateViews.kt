@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.style.TextAlign
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 
 /** Spinner with an optional message, filling and centered in the space it is given. */

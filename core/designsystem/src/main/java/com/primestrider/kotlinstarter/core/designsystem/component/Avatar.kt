@@ -24,7 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.SubcomposeAsyncImage
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 
 enum class AvatarSize(

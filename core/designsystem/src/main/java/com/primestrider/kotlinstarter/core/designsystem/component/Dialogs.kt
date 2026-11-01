@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.DialogProperties
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.R
 
 /**
  * Confirmation modal. [destructive] colors the confirm action as an error; [dismissible] = false

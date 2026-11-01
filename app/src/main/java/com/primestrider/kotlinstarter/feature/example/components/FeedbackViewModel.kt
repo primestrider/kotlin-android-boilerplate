@@ -8,6 +8,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.UiMessage
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
 
 /** Shows that a ViewModel raises app-wide messages by injecting [Messenger]; no Context needed. */
 @HiltViewModel
@@ -23,7 +24,7 @@ class FeedbackViewModel
                 UiMessage(
                     text = UiText.Resource(R.string.feedback_save_failed),
                     variant = MessageVariant.ERROR,
-                    actionLabel = UiText.Resource(R.string.component_retry),
+                    actionLabel = UiText.Resource(DesignR.string.component_retry),
                     onAction = ::saveSucceeded,
                 ),
             )

@@ -62,6 +62,7 @@ import com.primestrider.kotlinstarter.feature.example.animation.MinTouchTarget
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 import kotlin.random.Random
+import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
 
 private const val RELOAD_DELAY_MS = 1_500L
 private const val LOADED_ROWS = 3
@@ -108,7 +109,7 @@ private fun LoadingExample() {
             verticalArrangement = Arrangement.spacedBy(Spacing.s3),
         ) {
             if (loading) {
-                val loadingText = stringResource(R.string.component_loading)
+                val loadingText = stringResource(DesignR.string.component_loading)
                 Column(
                     Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = loadingText },
                     verticalArrangement = Arrangement.spacedBy(Spacing.s3),

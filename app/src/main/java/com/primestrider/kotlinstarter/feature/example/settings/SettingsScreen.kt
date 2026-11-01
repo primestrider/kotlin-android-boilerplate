@@ -26,10 +26,10 @@ import com.primestrider.kotlinstarter.core.designsystem.component.AppRadioButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
 import com.primestrider.kotlinstarter.core.designsystem.component.ButtonVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.SectionHeader
+import com.primestrider.kotlinstarter.core.designsystem.component.ThemeModeSelector
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.i18n.AppLanguage
 import com.primestrider.kotlinstarter.core.model.ThemeMode
-import com.primestrider.kotlinstarter.feature.example.ThemeModeSelector
 
 const val SETTINGS_LIST_TAG = "settings_list"
 

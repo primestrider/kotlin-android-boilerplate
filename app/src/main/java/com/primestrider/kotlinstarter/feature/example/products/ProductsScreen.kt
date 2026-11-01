@@ -43,6 +43,7 @@ import com.primestrider.kotlinstarter.core.network.asApiError
 import com.primestrider.kotlinstarter.core.network.userMessage
 import com.primestrider.kotlinstarter.core.util.currentLocale
 import com.primestrider.kotlinstarter.core.util.formatCurrency
+import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
 
 private const val SKELETON_ROWS = 6
 
@@ -118,7 +119,7 @@ private fun RetryRow(
             title?.let { Text(it, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.error) }
             Text(message, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
         }
-        AppButton(stringResource(R.string.component_retry), onClick = onRetry, variant = ButtonVariant.TEXT)
+        AppButton(stringResource(DesignR.string.component_retry), onClick = onRetry, variant = ButtonVariant.TEXT)
     }
 }
 

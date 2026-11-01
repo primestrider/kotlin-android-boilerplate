@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.R
 
 /** Top app bar: single-line title, a back arrow only when [onBack] is given, trailing [actions]. */
 @OptIn(ExperimentalMaterial3Api::class)

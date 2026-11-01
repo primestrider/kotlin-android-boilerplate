@@ -1,17 +1,22 @@
-package com.primestrider.kotlinstarter.core.i18n
+package com.primestrider.kotlinstarter.architecture
 
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 import javax.xml.parsers.DocumentBuilderFactory
 
+/** Every module carries its strings in values/ (English) and values-in/ (Indonesian) with the same keys. */
 class TranslationCompletenessTest {
-    // Gradle runs unit tests with the module directory (app/) as working dir.
-    private val resDir = File("src/main/res")
+    private val resDirs = moduleDirs().map { File(it, "src/main/res") }.filter { File(it, "values/strings.xml").isFile }
     private val placeholder = Regex("""%(\d+\$)?[sdf]""")
 
-    private fun load(path: String): Map<String, String> {
-        val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(File(resDir, path))
+    private fun load(
+        resDir: File,
+        path: String,
+    ): Map<String, String> {
+        val file = File(resDir, path)
+        if (!file.isFile) return emptyMap()
+        val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file)
         val nodes = doc.getElementsByTagName("string")
         return (0 until nodes.length)
             .map { nodes.item(it) }
@@ -20,8 +25,13 @@ class TranslationCompletenessTest {
     }
 
     /** Plural resources by name, to the text of their items, so a plurals entry cannot be missing in one language. */
-    private fun loadPlurals(path: String): Map<String, List<String>> {
-        val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(File(resDir, path))
+    private fun loadPlurals(
+        resDir: File,
+        path: String,
+    ): Map<String, List<String>> {
+        val file = File(resDir, path)
+        if (!file.isFile) return emptyMap()
+        val doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file)
         val nodes = doc.getElementsByTagName("plurals")
         return (0 until nodes.length).associate { index ->
             val node = nodes.item(index)
@@ -31,8 +41,25 @@ class TranslationCompletenessTest {
         }
     }
 
-    private val en get() = load("values/strings.xml")
-    private val id get() = load("values-in/strings.xml")
+    /** English and Indonesian strings of every module, merged; names are unique across modules (see below). */
+    private val en get() = resDirs.map { load(it, "values/strings.xml") }.fold(emptyMap<String, String>()) { a, b -> a + b }
+    private val id get() = resDirs.map { load(it, "values-in/strings.xml") }.fold(emptyMap<String, String>()) { a, b -> a + b }
+
+    @Test
+    fun scans_every_module_with_strings() {
+        assertTrue("found ${resDirs.map { it.parentFile.parentFile.name }}", resDirs.size >= 2)
+    }
+
+    /** Resource merging silently lets one module override another's string of the same name. */
+    @Test
+    fun string_names_are_unique_across_modules() {
+        val owners =
+            resDirs.flatMap { dir ->
+                (load(dir, "values/strings.xml").keys + loadPlurals(dir, "values/strings.xml").keys).map { it to dir.parentFile.parentFile }
+            }
+        val duplicates = owners.groupBy({ it.first }, { it.second.relativeTo(repoRoot).path }).filterValues { it.size > 1 }
+        assertTrue("Defined in more than one module: $duplicates", duplicates.isEmpty())
+    }
 
     @Test
     fun keySetsAreEqual() {
@@ -59,8 +86,8 @@ class TranslationCompletenessTest {
 
     @Test
     fun pluralsKeySetsAndPlaceholdersMatch() {
-        val en = loadPlurals("values/strings.xml")
-        val id = loadPlurals("values-in/strings.xml")
+        val en = resDirs.map { loadPlurals(it, "values/strings.xml") }.fold(emptyMap<String, List<String>>()) { a, b -> a + b }
+        val id = resDirs.map { loadPlurals(it, "values-in/strings.xml") }.fold(emptyMap<String, List<String>>()) { a, b -> a + b }
         val bad =
             en.keys.intersect(id.keys).filter { key ->
                 en.getValue(key).flatMap(::placeholders).toSet() != id.getValue(key).flatMap(::placeholders).toSet()

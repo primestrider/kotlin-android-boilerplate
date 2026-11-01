@@ -54,6 +54,7 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
 import com.primestrider.kotlinstarter.core.designsystem.component.SearchField
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
 
 internal const val HOME_LIST_TAG = "home_list"
 
@@ -118,7 +119,7 @@ fun HomeScreen(
                     title = stringResource(R.string.home_no_match, query.trim()),
                     description = stringResource(R.string.home_no_match_hint),
                     icon = Icons.Filled.Search,
-                    actionLabel = stringResource(R.string.component_clear_search),
+                    actionLabel = stringResource(DesignR.string.component_clear_search),
                     onAction = {
                         query = ""
                         selected = ALL_SECTIONS

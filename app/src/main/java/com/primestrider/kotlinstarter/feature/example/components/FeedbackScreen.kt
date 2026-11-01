@@ -36,6 +36,7 @@ import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
 
 private const val OVERLAY_DURATION_MS = 1500L
 
@@ -113,7 +114,7 @@ private fun StateViewsSection() {
         SegmentedChoice(states.indices.toList(), selected, onSelect = { selected = it }, label = { labels[it] })
         Box(Modifier.fillMaxWidth().height(STATE_BOX_HEIGHT), contentAlignment = Alignment.Center) {
             when (selected) {
-                0 -> LoadingState(message = stringResource(R.string.component_loading))
+                0 -> LoadingState(message = stringResource(DesignR.string.component_loading))
                 1 ->
                     EmptyState(
                         title = stringResource(R.string.components_empty_title),

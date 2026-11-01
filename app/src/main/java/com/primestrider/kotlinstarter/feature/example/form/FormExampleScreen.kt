@@ -27,6 +27,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.PasswordTextFi
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
+import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
 
 internal const val SUBMIT_BUTTON_TAG = "form_submit"
 
@@ -84,7 +85,7 @@ fun FormExampleScreen(
                 label = stringResource(R.string.form_field_bio),
                 placeholder = stringResource(R.string.form_field_bio_placeholder),
                 errorText = errorText(state, FormField.BIO),
-                supportingText = stringResource(R.string.component_counter, state.values.bio.length, BIO_MAX),
+                supportingText = stringResource(DesignR.string.component_counter, state.values.bio.length, BIO_MAX),
                 singleLine = false,
                 minLines = 3,
             )

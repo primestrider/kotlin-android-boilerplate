@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing

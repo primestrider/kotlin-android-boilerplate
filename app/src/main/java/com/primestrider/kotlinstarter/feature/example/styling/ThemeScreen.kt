@@ -19,13 +19,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.component.ThemeModeSelector
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppThemeTokens
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
 import com.primestrider.kotlinstarter.core.model.ThemeMode
 import com.primestrider.kotlinstarter.feature.example.DemoSection
 import com.primestrider.kotlinstarter.feature.example.ExamplePageScaffold
-import com.primestrider.kotlinstarter.feature.example.ThemeModeSelector
 
 @Composable
 fun ThemeScreen(

@@ -38,7 +38,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.R
 import com.primestrider.kotlinstarter.core.designsystem.theme.ControlShapes
 import com.primestrider.kotlinstarter.core.designsystem.theme.LocalAppColors
 import com.primestrider.kotlinstarter.core.designsystem.theme.Radii

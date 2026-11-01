@@ -1,10 +1,10 @@
-package com.primestrider.kotlinstarter.feature.example
+package com.primestrider.kotlinstarter.core.designsystem.component
 
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.primestrider.kotlinstarter.R
+import com.primestrider.kotlinstarter.core.designsystem.R
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.model.ThemeMode
 
@@ -22,7 +22,7 @@ fun ThemeModeSelector(
 @StringRes
 private fun ThemeMode.labelRes(): Int =
     when (this) {
-        ThemeMode.SYSTEM -> R.string.settings_theme_system
-        ThemeMode.LIGHT -> R.string.settings_theme_light
-        ThemeMode.DARK -> R.string.settings_theme_dark
+        ThemeMode.SYSTEM -> R.string.component_theme_system
+        ThemeMode.LIGHT -> R.string.component_theme_light
+        ThemeMode.DARK -> R.string.component_theme_dark
     }

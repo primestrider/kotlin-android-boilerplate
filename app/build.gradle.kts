@@ -75,6 +75,7 @@ dependencies {
     implementation(projects.core.common)
     implementation(projects.core.model)
     implementation(projects.core.datastore)
+    implementation(projects.core.designsystem)
     testImplementation(projects.core.testing)
 
     implementation(libs.androidx.core.ktx)

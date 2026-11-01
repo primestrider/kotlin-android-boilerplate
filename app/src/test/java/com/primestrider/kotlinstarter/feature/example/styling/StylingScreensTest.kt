@@ -18,6 +18,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
+import com.primestrider.kotlinstarter.core.designsystem.R as DesignR
 
 @RunWith(ParameterizedRobolectricTestRunner::class)
 @Config(sdk = [36])
@@ -58,7 +59,7 @@ class StylingScreensTest(
     fun backButtonInvokesOnBack() {
         var backs = 0
         rule.setContent { AppTheme(darkTheme = false) { page.content { backs++ } } }
-        rule.onNodeWithContentDescription(string(R.string.component_back)).performClick()
+        rule.onNodeWithContentDescription(string(DesignR.string.component_back)).performClick()
         assertEquals(1, backs)
     }
 }
