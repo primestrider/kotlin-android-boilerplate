@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.primestrider.kotlinstarter.feature.example.todos.ExampleDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -27,7 +26,7 @@ import org.robolectric.annotation.Config
 class TransactionsViewModelTest {
     // One dispatcher for Main, Room queries and runTest, so no arch-IO thread resumes via Main during setMain/resetMain.
     private val main = StandardTestDispatcher()
-    private lateinit var database: ExampleDatabase
+    private lateinit var database: DevicesDatabase
     private var now = 0L
     private val created = mutableListOf<TransactionsViewModel>()
 
@@ -36,7 +35,7 @@ class TransactionsViewModelTest {
         Dispatchers.setMain(main)
         database =
             Room
-                .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ExampleDatabase::class.java)
+                .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), DevicesDatabase::class.java)
                 .allowMainThreadQueries()
                 .setQueryCoroutineContext(main)
                 .build()

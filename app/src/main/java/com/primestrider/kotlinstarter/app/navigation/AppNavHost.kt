@@ -23,7 +23,6 @@ import com.primestrider.kotlinstarter.feature.example.ProfileRoute
 import com.primestrider.kotlinstarter.feature.example.SdkDemoRoute
 import com.primestrider.kotlinstarter.feature.example.SettingsRoute
 import com.primestrider.kotlinstarter.feature.example.SignInRoute
-import com.primestrider.kotlinstarter.feature.example.TodosRoute
 import com.primestrider.kotlinstarter.feature.example.animation.cards.CardsScreen
 import com.primestrider.kotlinstarter.feature.example.animation.lists.ListsScreen
 import com.primestrider.kotlinstarter.feature.example.animation.micro.MicroInteractionsScreen
@@ -39,8 +38,7 @@ import com.primestrider.kotlinstarter.feature.example.products.ui.productsDestin
 import com.primestrider.kotlinstarter.feature.example.sdk.SdkDemoScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsScreen
 import com.primestrider.kotlinstarter.feature.example.settings.SettingsViewModel
-import com.primestrider.kotlinstarter.feature.example.todos.TodosScreen
-import com.primestrider.kotlinstarter.feature.example.todos.TodosViewModel
+import com.primestrider.kotlinstarter.feature.example.todos.ui.todosDestinations
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -70,20 +68,9 @@ fun NavGraphBuilder.homeGraph(navController: NavHostController) {
         // region example:products
         productsDestinations(navController)
         // endregion
-        composable<TodosRoute> {
-            val viewModel: TodosViewModel = hiltViewModel()
-            val state by viewModel.state.collectAsStateWithLifecycle()
-            TodosScreen(
-                state = state,
-                onInputChange = viewModel::onInputChange,
-                onAdd = viewModel::add,
-                onToggle = viewModel::toggle,
-                onRemove = viewModel::remove,
-                onClearCompleted = viewModel::clearCompleted,
-                onFilterChange = viewModel::setFilter,
-                onBack = back,
-            )
-        }
+        // region example:todos
+        todosDestinations(navController)
+        // endregion
         composable<SdkDemoRoute>(
             deepLinks = listOf(navDeepLink<SdkDemoRoute>(basePath = "${BuildConfig.APP_SCHEME}://example/sdk")),
         ) { entry -> SdkDemoScreen(id = entry.toRoute<SdkDemoRoute>().id, onBack = back) }

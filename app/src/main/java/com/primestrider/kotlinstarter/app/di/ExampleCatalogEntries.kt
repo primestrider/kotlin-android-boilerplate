@@ -7,7 +7,6 @@ import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSection
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
-import com.primestrider.kotlinstarter.feature.example.TodosRoute
 import com.primestrider.kotlinstarter.feature.example.animation.animationEntries
 import com.primestrider.kotlinstarter.feature.example.sdk.sdkEntries
 import dagger.Module
@@ -42,8 +41,5 @@ object ExampleCatalogEntries {
 
     @Provides
     @ElementsIntoSet
-    fun entries(): Set<CatalogEntry> =
-        setOf(
-            CatalogEntry(R.string.todos_title, R.string.todos_subtitle, TodosRoute, CatalogSections.FEATURES, 20),
-        ) + sdkEntries() + animationEntries()
+    fun entries(): Set<CatalogEntry> = (sdkEntries() + animationEntries()).toSet()
 }

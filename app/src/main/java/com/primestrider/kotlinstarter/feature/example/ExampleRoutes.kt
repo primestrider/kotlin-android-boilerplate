@@ -16,9 +16,6 @@ data object ProfileRoute
 @Serializable
 data object AccountRoute
 
-@Serializable
-data object TodosRoute
-
 /** Every "Device APIs" demo shares this one destination; [id] picks the demo from `sdkDemos`. */
 @Serializable
 data class SdkDemoRoute(

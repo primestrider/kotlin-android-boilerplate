@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.feature.example.todos
+package com.primestrider.kotlinstarter.feature.example.todos.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -6,10 +6,15 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.MessageVariant
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
+import com.primestrider.kotlinstarter.feature.example.todos.data.DefaultTodosRepository
+import com.primestrider.kotlinstarter.feature.example.todos.data.ExampleDatabase
+import com.primestrider.kotlinstarter.feature.example.todos.data.TodoDao
+import com.primestrider.kotlinstarter.feature.example.todos.data.TodoEntity
+import com.primestrider.kotlinstarter.feature.example.todos.data.TodosRepository
+import com.primestrider.kotlinstarter.feature.todos.impl.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
@@ -48,7 +53,7 @@ class TodosViewModelTest {
                 .allowMainThreadQueries()
                 .setQueryCoroutineContext(main)
                 .build()
-        repository = TodosRepository(database.todoDao()) { ++now }
+        repository = DefaultTodosRepository(database.todoDao()) { ++now }
     }
 
     @After
@@ -184,7 +189,7 @@ class TodosViewModelTest {
                 object : TodoDao by database.todoDao() {
                     override suspend fun insert(todo: TodoEntity) = throw android.database.sqlite.SQLiteFullException("disk full")
                 }
-            val viewModel = TodosViewModel(TodosRepository(failing) { ++now }, SavedStateHandle(), messenger).also { created += it }
+            val viewModel = TodosViewModel(DefaultTodosRepository(failing) { ++now }, SavedStateHandle(), messenger).also { created += it }
             messenger.messages.test {
                 viewModel.onInputChange("Buy milk")
                 viewModel.add()

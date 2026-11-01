@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.feature.example.todos
+package com.primestrider.kotlinstarter.feature.example.todos.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,7 +26,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextDecoration
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.AppButton
 import com.primestrider.kotlinstarter.core.designsystem.component.AppCheckbox
 import com.primestrider.kotlinstarter.core.designsystem.component.AppScaffold
@@ -36,6 +35,8 @@ import com.primestrider.kotlinstarter.core.designsystem.component.ConfirmDialog
 import com.primestrider.kotlinstarter.core.designsystem.component.EmptyState
 import com.primestrider.kotlinstarter.core.designsystem.component.SegmentedChoice
 import com.primestrider.kotlinstarter.core.designsystem.theme.Spacing
+import com.primestrider.kotlinstarter.feature.example.todos.model.Todo
+import com.primestrider.kotlinstarter.feature.todos.impl.R
 
 const val TODO_INPUT_TAG = "todo_input"
 
@@ -125,7 +126,7 @@ fun TodosScreen(
 
 @Composable
 private fun TodoRow(
-    todo: TodoEntity,
+    todo: Todo,
     onToggle: () -> Unit,
     onDelete: () -> Unit,
 ) {

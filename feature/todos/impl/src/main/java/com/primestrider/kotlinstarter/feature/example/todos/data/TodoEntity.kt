@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.feature.example.todos
+package com.primestrider.kotlinstarter.feature.example.todos.data
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

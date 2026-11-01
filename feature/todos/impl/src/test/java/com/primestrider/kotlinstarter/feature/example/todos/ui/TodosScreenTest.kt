@@ -1,4 +1,4 @@
-package com.primestrider.kotlinstarter.feature.example.todos
+package com.primestrider.kotlinstarter.feature.example.todos.ui
 
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performImeAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
+import com.primestrider.kotlinstarter.feature.example.todos.model.Todo
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -24,7 +25,7 @@ class TodosScreenTest {
     private val removed = mutableListOf<String>()
     private var added = 0
 
-    private fun show(todos: List<TodoEntity>) =
+    private fun show(todos: List<Todo>) =
         rule.setContent {
             AppTheme(false) {
                 TodosScreen(
@@ -56,7 +57,7 @@ class TodosScreenTest {
 
     @Test
     fun delete_asks_first_and_only_confirm_removes() {
-        show(listOf(TodoEntity("a", "Walk the dog", done = false, createdAt = 1)))
+        show(listOf(Todo("a", "Walk the dog", done = false, createdAt = 1)))
         rule.onNodeWithContentDescription("Delete Walk the dog").performClick()
         rule.onNodeWithText("Delete this task?").assertExists()
         rule.onNodeWithText("Cancel").performClick()
@@ -76,7 +77,7 @@ class TodosScreenTest {
 
     @Test
     fun clear_completed_disabled_when_nothing_done() {
-        show(listOf(TodoEntity("a", "Walk the dog", done = false, createdAt = 1)))
+        show(listOf(Todo("a", "Walk the dog", done = false, createdAt = 1)))
         rule.onNodeWithText("Clear completed").assertIsNotEnabled()
     }
 }

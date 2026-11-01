@@ -88,6 +88,10 @@ dependencies {
     implementation(projects.feature.products.api)
     implementation(projects.feature.products.impl)
     // endregion
+    // region example:todos
+    implementation(projects.feature.todos.api)
+    implementation(projects.feature.todos.impl)
+    // endregion
     testImplementation(projects.core.testing)
 
     implementation(libs.androidx.core.ktx)

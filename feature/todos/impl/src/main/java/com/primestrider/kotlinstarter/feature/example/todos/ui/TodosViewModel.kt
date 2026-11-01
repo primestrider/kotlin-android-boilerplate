@@ -1,13 +1,15 @@
-package com.primestrider.kotlinstarter.feature.example.todos
+package com.primestrider.kotlinstarter.feature.example.todos.ui
 
 import android.database.sqlite.SQLiteException
 import androidx.annotation.StringRes
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.primestrider.kotlinstarter.R
 import com.primestrider.kotlinstarter.core.designsystem.component.Messenger
 import com.primestrider.kotlinstarter.core.designsystem.component.UiText
+import com.primestrider.kotlinstarter.feature.example.todos.data.TodosRepository
+import com.primestrider.kotlinstarter.feature.example.todos.model.Todo
+import com.primestrider.kotlinstarter.feature.todos.impl.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.SharingStarted
@@ -41,7 +43,7 @@ data class TodosUiState(
     val input: String,
     @StringRes val inputError: Int?,
     val filter: TodoFilter,
-    val todos: List<TodoEntity>,
+    val todos: List<Todo>,
     val done: Int,
     val total: Int,
     /** False until the database has answered once, so the empty state does not flash on open. */
@@ -64,7 +66,7 @@ class TodosViewModel
                 savedStateHandle.getStateFlow(SUBMITTED_KEY, false),
                 savedStateHandle.getStateFlow(FILTER_KEY, TodoFilter.ALL),
                 // null until the database answers, so typing is never held back by the first query.
-                repository.todos.onStart<List<TodoEntity>?> { emit(null) },
+                repository.todos.onStart<List<Todo>?> { emit(null) },
             ) { input, submitted, filter, stored ->
                 val all = stored.orEmpty()
                 TodosUiState(

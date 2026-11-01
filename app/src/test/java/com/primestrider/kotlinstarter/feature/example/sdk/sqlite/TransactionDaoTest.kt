@@ -3,7 +3,6 @@ package com.primestrider.kotlinstarter.feature.example.sdk.sqlite
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.primestrider.kotlinstarter.feature.example.todos.ExampleDatabase
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -17,14 +16,14 @@ import org.robolectric.annotation.Config
 @RunWith(AndroidJUnit4::class)
 @Config(sdk = [36])
 class TransactionDaoTest {
-    private lateinit var database: ExampleDatabase
+    private lateinit var database: DevicesDatabase
     private lateinit var dao: TransactionDao
 
     @Before
     fun setUp() {
         database =
             Room
-                .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), ExampleDatabase::class.java)
+                .inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), DevicesDatabase::class.java)
                 .allowMainThreadQueries()
                 .build()
         dao = database.transactionDao()
