@@ -28,6 +28,15 @@ data object FeedbackRoute
 data object PickersRoute
 
 @Serializable
+data object AppBarsRoute
+
+/** A full-screen component demo opened from the App bars page; [id] is a `ComponentDemo.id`. */
+@Serializable
+data class ComponentDemoRoute(
+    val id: String,
+)
+
+@Serializable
 data object FormExampleRoute
 
 @Serializable

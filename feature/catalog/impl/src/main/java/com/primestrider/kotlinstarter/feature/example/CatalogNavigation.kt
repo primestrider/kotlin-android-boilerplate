@@ -1,6 +1,7 @@
 package com.primestrider.kotlinstarter.feature.example
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
@@ -9,17 +10,20 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.primestrider.kotlinstarter.core.datastore.ThemePreferenceRepository
 import com.primestrider.kotlinstarter.core.model.ThemeMode
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSection
 import com.primestrider.kotlinstarter.feature.example.components.ActionsScreen
+import com.primestrider.kotlinstarter.feature.example.components.AppBarsScreen
 import com.primestrider.kotlinstarter.feature.example.components.DisplayScreen
 import com.primestrider.kotlinstarter.feature.example.components.FeedbackScreen
 import com.primestrider.kotlinstarter.feature.example.components.FeedbackViewModel
 import com.primestrider.kotlinstarter.feature.example.components.InputsScreen
 import com.primestrider.kotlinstarter.feature.example.components.OverlaysScreen
 import com.primestrider.kotlinstarter.feature.example.components.PickersScreen
+import com.primestrider.kotlinstarter.feature.example.components.componentDemos
 import com.primestrider.kotlinstarter.feature.example.form.FormExampleScreen
 import com.primestrider.kotlinstarter.feature.example.form.FormExampleViewModel
 import com.primestrider.kotlinstarter.feature.example.styling.AppearanceScreen
@@ -119,4 +123,9 @@ fun NavGraphBuilder.catalogComponentsDestinations(navController: NavController) 
         FeedbackScreen(onBack = back, onSaveSucceeded = viewModel::saveSucceeded, onSaveFailed = viewModel::saveFailed)
     }
     composable<PickersRoute> { PickersScreen(onBack = back) }
+    composable<AppBarsRoute> { AppBarsScreen(onBack = back, onOpenDemo = { navController.navigate(ComponentDemoRoute(it)) }) }
+    composable<ComponentDemoRoute> { entry ->
+        val demo = componentDemos.firstOrNull { it.id == entry.toRoute<ComponentDemoRoute>().id }
+        if (demo != null) demo.content(back) else LaunchedEffect(Unit) { back() }
+    }
 }

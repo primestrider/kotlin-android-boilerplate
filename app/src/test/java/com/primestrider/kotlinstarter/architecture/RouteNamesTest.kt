@@ -8,8 +8,10 @@ import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimListsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
 import com.primestrider.kotlinstarter.feature.example.AnimTransitionsRoute
+import com.primestrider.kotlinstarter.feature.example.AppBarsRoute
 import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
 import com.primestrider.kotlinstarter.feature.example.ColorsRoute
+import com.primestrider.kotlinstarter.feature.example.ComponentDemoRoute
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
 import com.primestrider.kotlinstarter.feature.example.DisplayRoute
 import com.primestrider.kotlinstarter.feature.example.FeedbackRoute
@@ -80,11 +82,13 @@ class RouteNamesTest {
                 serializer<GestureSwipeRoute>(),
                 serializer<GestureScrollRoute>(),
                 serializer<GesturePointerRoute>(),
+                serializer<AppBarsRoute>(),
+                serializer<ComponentDemoRoute>(),
                 serializer<PickersRoute>(),
             ).map { it.descriptor.serialName.substringAfterLast('.') to it.descriptor.serialName }
         names.forEach { (simple, serialName) ->
             assertEquals("com.primestrider.kotlinstarter.feature.example.$simple", serialName)
         }
-        assertEquals(33, names.size)
+        assertEquals(35, names.size)
     }
 }
