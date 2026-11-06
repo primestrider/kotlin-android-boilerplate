@@ -17,6 +17,7 @@ import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSection
 import com.primestrider.kotlinstarter.feature.example.components.ActionsScreen
 import com.primestrider.kotlinstarter.feature.example.components.AppBarsScreen
+import com.primestrider.kotlinstarter.feature.example.components.CarouselScreen
 import com.primestrider.kotlinstarter.feature.example.components.DisplayScreen
 import com.primestrider.kotlinstarter.feature.example.components.FeedbackScreen
 import com.primestrider.kotlinstarter.feature.example.components.FeedbackViewModel
@@ -128,4 +129,5 @@ fun NavGraphBuilder.catalogComponentsDestinations(navController: NavController) 
         val demo = componentDemos.firstOrNull { it.id == entry.toRoute<ComponentDemoRoute>().id }
         if (demo != null) demo.content(back) else LaunchedEffect(Unit) { back() }
     }
+    composable<CarouselRoute> { CarouselScreen(onBack = back) }
 }

@@ -37,6 +37,9 @@ data class ComponentDemoRoute(
 )
 
 @Serializable
+data object CarouselRoute
+
+@Serializable
 data object FormExampleRoute
 
 @Serializable

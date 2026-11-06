@@ -28,6 +28,7 @@ val componentEntries: List<ExampleEntry> =
         ExampleEntry(R.string.example_components_display_title, R.string.example_components_display_subtitle, DisplayRoute),
         ExampleEntry(R.string.example_components_overlays_title, R.string.example_components_overlays_subtitle, OverlaysRoute),
         ExampleEntry(R.string.example_components_feedback_title, R.string.example_components_feedback_subtitle, FeedbackRoute),
+        ExampleEntry(R.string.example_components_carousel_title, R.string.example_components_carousel_subtitle, CarouselRoute),
         ExampleEntry(R.string.example_components_app_bars_title, R.string.example_components_app_bars_subtitle, AppBarsRoute),
         ExampleEntry(R.string.example_components_pickers_title, R.string.example_components_pickers_subtitle, PickersRoute),
     )

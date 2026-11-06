@@ -345,4 +345,21 @@
     <string name="components_demo_sheet_detail">The sheet keeps its peek height on the page and expands over it; drag it back down or press back.</string>
     <string name="components_demo_sheet_page">The page sits behind the sheet and stays usable while the sheet only peeks.</string>
     <string name="components_demo_sheet_expand">Expand sheet</string>
+    <string name="example_components_carousel_title">Carousel &amp; grids</string>
+    <string name="example_components_carousel_subtitle">Multi-browse, uncontained and hero carousels, staggered and horizontal grids</string>
+    <string name="components_carousel_multi">Multi-browse carousel</string>
+    <string name="components_carousel_multi_usage">Browse many items at once: one large, then smaller ones that hint at more. It snaps one item per swipe.</string>
+    <string name="components_carousel_uncontained">Uncontained carousel</string>
+    <string name="components_carousel_uncontained_usage">Same-size items that run past the edge, for content where each item matters equally. It scrolls freely without snapping.</string>
+    <string name="components_carousel_hero">Hero carousel</string>
+    <string name="components_carousel_hero_usage">One featured item centred and large, with its neighbours peeking at both sides.</string>
+    <string name="components_carousel_item">Item %1$d</string>
+    <string name="components_carousel_card">Card %1$d</string>
+    <string name="components_carousel_hero_item">Feature %1$d</string>
+    <string name="components_grid_staggered">Staggered grid</string>
+    <string name="components_grid_staggered_usage">Items of different heights packed into columns, like a photo wall or a board of notes.</string>
+    <string name="components_grid_tile">Tile %1$d</string>
+    <string name="components_grid_horizontal">Horizontal grid</string>
+    <string name="components_grid_horizontal_usage">A fixed number of rows that scroll sideways, like shelves of categories.</string>
+    <string name="components_grid_cell">Cell %1$d</string>
 </resources>

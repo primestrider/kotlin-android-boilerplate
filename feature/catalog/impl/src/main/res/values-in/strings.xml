@@ -341,4 +341,21 @@
     <string name="components_demo_sheet_detail">Sheet mempertahankan tinggi intipnya di halaman dan meluas di atasnya; seret kembali ke bawah atau tekan kembali.</string>
     <string name="components_demo_sheet_page">Halaman berada di balik sheet dan tetap bisa dipakai selama sheet hanya mengintip.</string>
     <string name="components_demo_sheet_expand">Buka sheet</string>
+    <string name="example_components_carousel_title">Carousel &amp; grid</string>
+    <string name="example_components_carousel_subtitle">Carousel multi-browse, uncontained, dan hero, grid staggered dan horizontal</string>
+    <string name="components_carousel_multi">Carousel multi-browse</string>
+    <string name="components_carousel_multi_usage">Jelajahi banyak item sekaligus: satu besar, lalu yang lebih kecil sebagai petunjuk ada lagi. Berhenti satu item per geseran.</string>
+    <string name="components_carousel_uncontained">Carousel uncontained</string>
+    <string name="components_carousel_uncontained_usage">Item berukuran sama yang melewati tepi, untuk konten yang tiap itemnya sama penting. Bergulir bebas tanpa berhenti.</string>
+    <string name="components_carousel_hero">Carousel hero</string>
+    <string name="components_carousel_hero_usage">Satu item unggulan di tengah dan besar, dengan tetangganya mengintip di kedua sisi.</string>
+    <string name="components_carousel_item">Item %1$d</string>
+    <string name="components_carousel_card">Kartu %1$d</string>
+    <string name="components_carousel_hero_item">Unggulan %1$d</string>
+    <string name="components_grid_staggered">Grid staggered</string>
+    <string name="components_grid_staggered_usage">Item dengan tinggi berbeda yang disusun dalam kolom, seperti dinding foto atau papan catatan.</string>
+    <string name="components_grid_tile">Ubin %1$d</string>
+    <string name="components_grid_horizontal">Grid horizontal</string>
+    <string name="components_grid_horizontal_usage">Jumlah baris tetap yang bergulir ke samping, seperti rak kategori.</string>
+    <string name="components_grid_cell">Sel %1$d</string>
 </resources>
