@@ -24,7 +24,8 @@ feature modules alone.
    tests starting with `// remove-examples:`), then runs `ktlintFormat` to drop the imports those blocks used.
    Install it: the app opens on `PlaceholderHomeScreen` with one tab; sign-in is "not configured" until a feature binds
    an `@AuthBackend AuthAdapter` (see `swap-auth-backend`).
-3. **Apply it** to the real checkout (`bash scripts/remove-examples.sh`), or merge the copy's branch. On Windows run the
+3. **Apply it** to the real checkout (`bash scripts/remove-examples.sh`, or `bash scripts/remove-examples.sh --keep .examples`
+   to keep the deleted code as git-ignored reference in `.examples/`, see AGENTS.md), or merge the copy's branch. On Windows run the
    script from Git Bash. Delete the worktree afterwards (`git worktree remove ../no-examples`; if Windows keeps files
    locked, stop Gradle first with `./gradlew --stop`).
 4. **Installed builds:** the Background Task demo scheduled periodic work named `example-background-sync`. Cancel it
