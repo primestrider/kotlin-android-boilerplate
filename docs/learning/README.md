@@ -16,6 +16,7 @@ together, and why are they shaped like this", and links into the reference docs 
 | 5 | [Build, test and ship](05-build-test-ship.md) | Gradle and build-logic, flavours, tests, CI, releases |
 | 6 | [For React and Vue developers](06-for-react-and-vue-developers.md) | every concept mapped to what you already know, with side-by-side code |
 | 7 | [Cookbook: UI patterns side by side](07-ui-patterns-cookbook.md) | how to write props, slots, state, events, conditional and list rendering, loading/error states, forms, layout, dialogs, effects, refs, context, animation and navigation, in React, Vue and Compose |
+| 8 | [Environment config](08-environment-config.md) | the `.env` of an Android app: `local.properties`, env vars, flavours, `BuildConfig`, and what must never go in it |
 
 Web developers: chapter 6 works as a dictionary and chapter 7 as a cookbook. Read chapter 1, then keep chapters 6 and 7
 open next to chapters 2-5.
