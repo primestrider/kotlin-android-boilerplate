@@ -23,6 +23,7 @@ import com.primestrider.kotlinstarter.core.designsystem.component.AppNavigationS
 import com.primestrider.kotlinstarter.core.designsystem.component.LocalMessenger
 import com.primestrider.kotlinstarter.core.designsystem.component.MessengerHost
 import com.primestrider.kotlinstarter.core.designsystem.component.NavBarItem
+import com.primestrider.kotlinstarter.core.designsystem.component.NavBarKeyboardMode
 
 /**
  * App shell: bottom navigation over one nested graph per tab.
@@ -70,6 +71,8 @@ fun MainShell(
             selectedIndex = tabs.indexOf(current),
             onSelect = { open(tabs[it]) },
             modifier = Modifier.padding(inner).consumeWindowInsets(inner),
+            // Hide: the bottom bar goes away while the keyboard is up. KeepBehindKeyboard: it stays, covered by the keyboard.
+            keyboardMode = NavBarKeyboardMode.Hide,
         ) {
             NavHost(navController = navController, startDestination = HomeGraph) {
                 homeGraph(navController, homeScreens)
