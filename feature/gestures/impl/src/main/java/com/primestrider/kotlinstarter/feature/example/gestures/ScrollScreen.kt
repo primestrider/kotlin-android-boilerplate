@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -165,7 +166,6 @@ private fun NestedScrollExample() {
                 }
             }
         }
-    val collapse = ((maxPx - headerPx) / (maxPx - minPx)).coerceIn(0f, 1f)
     DemoSection(
         R.string.gesture_scroll_nested_title,
         R.string.gesture_scroll_nested_usage,
@@ -183,8 +183,12 @@ private fun NestedScrollExample() {
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(with(density) { headerPx.toDp() })
-                    .background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiary)))
+                    // Read in the layout and draw phases only, so a scroll frame re-measures the header without recomposing.
+                    .layout { measurable, constraints ->
+                        val height = headerPx.roundToInt()
+                        val placeable = measurable.measure(constraints.copy(minHeight = height, maxHeight = height))
+                        layout(placeable.width, height) { placeable.place(0, 0) }
+                    }.background(Brush.verticalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.tertiary)))
                     .testTag("nestedHeader")
                     .padding(Spacing.s4),
                 contentAlignment = Alignment.BottomStart,
@@ -193,7 +197,7 @@ private fun NestedScrollExample() {
                     stringResource(R.string.gesture_scroll_nested_header),
                     color = MaterialTheme.colorScheme.onPrimary,
                     style = MaterialTheme.typography.headlineSmall,
-                    modifier = Modifier.graphicsLayer { alpha = 1f - collapse * 0.4f },
+                    modifier = Modifier.graphicsLayer { alpha = 1f - ((maxPx - headerPx) / (maxPx - minPx)).coerceIn(0f, 1f) * 0.4f },
                 )
             }
             LazyColumn(Modifier.fillMaxWidth().testTag("nestedList")) {
