@@ -34,9 +34,31 @@ Modular, in the style of Google's Now in Android:
 
 Module boundaries are Gradle dependencies, so a feature cannot reach into another feature's implementation. Details: [docs/architecture/overview.md](docs/architecture/overview.md).
 
-## Removing the examples
+## Starting a new project
 
-`bash scripts/remove-examples.sh <copy-of-the-project>` deletes every example feature and its wiring; the app still builds and runs, with a placeholder Home. Try it on a copy (`git worktree add`) first. CI checks that this keeps working.
+No need to clone: download the code without its git history, rename it, optionally drop the examples, then start your
+own repository.
+
+1. **Get the code**: on GitHub, **Code → Download ZIP** and unzip it, or `npx degit primestrider/kotlin-android-boilerplate my-app`.
+2. **Rename** the package/applicationId, app name, class and theme names, deep-link scheme and Gradle project name in one go:
+   ```
+   bash scripts/rename-project.sh com.acme.shop "Acme Shop"
+   ```
+3. **Remove the examples** (optional). This deletes every example feature and its wiring; the app still builds and runs, with a
+   placeholder Home. `--keep .examples` first copies the removed code into a git-ignored `.examples/` folder that agents
+   read as reference (see [AGENTS.md](AGENTS.md)); leave it out to delete it for good:
+   ```
+   bash scripts/remove-examples.sh --keep .examples
+   ```
+4. **Check and commit**:
+   ```
+   ./gradlew test assembleDevDebug
+   git init && git add . && git commit -m "chore: start from kotlin-starter"
+   ```
+
+On Windows run the scripts from Git Bash. Both stop the Gradle daemon first (`./gradlew --stop`) and delete the build
+outputs before changing any source, so a file Windows still keeps open stops them with nothing changed. CI checks that
+the app still builds without the examples.
 
 ## Environments, release and CI
 
