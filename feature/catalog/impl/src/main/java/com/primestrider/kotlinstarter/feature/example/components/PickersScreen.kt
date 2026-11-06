@@ -17,6 +17,7 @@ import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -125,7 +126,7 @@ private fun DateRangePickerExample() {
 @Composable
 private fun TimePickerDialogExample() {
     // Minutes after midnight; -1 = nothing chosen yet.
-    var minutes by rememberSaveable { mutableStateOf(-1) }
+    var minutes by rememberSaveable { mutableIntStateOf(-1) }
     var open by rememberSaveable { mutableStateOf(false) }
     DemoSection(
         R.string.components_pickers_time_dialog,
