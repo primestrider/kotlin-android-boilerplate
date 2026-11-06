@@ -60,7 +60,15 @@
     <string name="gesture_transform_rotate_step">Putar 15°</string>
     <string name="gesture_transform_angle">Sudut: %1$d°</string>
     <string name="gesture_swipe_title">Geser &amp; lempar</string>
-    <string name="gesture_swipe_subtitle">Munculkan aksi, geser kartu, dan biarkan benda meluncur</string>
+    <string name="gesture_swipe_subtitle">Geser antar menu, munculkan aksi, geser kartu, dan biarkan benda meluncur</string>
+    <string name="gesture_swipe_menu_title">Geser antar menu</string>
+    <string name="gesture_swipe_menu_usage">Beberapa menu yang setara, misalnya kategori. Geser ke kiri untuk menu berikutnya dan ke kanan untuk menu sebelumnya, atau ketuk tab.</string>
+    <string name="gesture_swipe_menu_food">Makanan</string>
+    <string name="gesture_swipe_menu_drinks">Minuman</string>
+    <string name="gesture_swipe_menu_desserts">Hidangan penutup</string>
+    <string name="gesture_swipe_menu_food_content">Nasi goreng, mi, sate</string>
+    <string name="gesture_swipe_menu_drinks_content">Es teh, kopi, jus</string>
+    <string name="gesture_swipe_menu_desserts_content">Puding, es krim, kue</string>
     <string name="gesture_swipe_reveal_title">Geser untuk memunculkan aksi</string>
     <string name="gesture_swipe_reveal_usage">Baris daftar dengan aksi cepat seperti arsip atau hapus. TalkBack mendapat aksi Tampilkan aksi sebagai ganti geseran.</string>
     <string name="gesture_swipe_reveal_hint">Geser baris ini ke kiri</string>
