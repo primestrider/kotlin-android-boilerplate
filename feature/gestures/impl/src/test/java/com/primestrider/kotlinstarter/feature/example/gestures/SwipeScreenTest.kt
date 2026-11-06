@@ -1,5 +1,6 @@
 package com.primestrider.kotlinstarter.feature.example.gestures
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.StateRestorationTester
@@ -89,6 +90,21 @@ class SwipeScreenTest {
         rule.onNodeWithContentDescription("Keep").performScrollTo().performClick()
         rule.waitForIdle()
         restore.emulateSavedInstanceStateRestore()
+        rule.onNodeWithText("Card 2").assertExists()
+    }
+
+    @Test
+    fun a_short_fast_flick_sends_the_card_off() {
+        show()
+        val stack = rule.onNodeWithTag("cardStack").performScrollTo()
+        stack.performTouchInput { down(center) }
+        // Three quick moves, one per frame, well short of 40% of the width: only the speed can send the card off.
+        repeat(3) {
+            stack.performTouchInput { moveBy(Offset(30f, 0f), delayMillis = 0) }
+            rule.mainClock.advanceTimeByFrame()
+        }
+        stack.performTouchInput { up() }
+        rule.waitForIdle()
         rule.onNodeWithText("Card 2").assertExists()
     }
 }

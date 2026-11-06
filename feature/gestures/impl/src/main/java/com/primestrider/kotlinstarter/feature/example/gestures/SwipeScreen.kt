@@ -44,6 +44,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -209,13 +210,20 @@ private fun CardStackExample() {
                             rotationZ = offsetX.value / widthPx * CARD_TILT
                         }.pointerInput(top) {
                             val tracker = VelocityTracker()
+                            // This input sits inside the card's moving, rotating layer, so change.position barely changes
+                            // while the card follows the finger. The summed drag deltas track the finger itself.
+                            var travelled = Offset.Zero
                             detectDragGestures(
-                                onDragStart = { tracker.resetTracking() },
+                                onDragStart = {
+                                    tracker.resetTracking()
+                                    travelled = Offset.Zero
+                                },
                                 onDragEnd = { leave(swipeOutcome(offsetX.value, tracker.calculateVelocity().x, widthPx)) },
                                 onDragCancel = { leave(SwipeOutcome.Return) },
                             ) { change, drag ->
                                 change.consume()
-                                tracker.addPosition(change.uptimeMillis, change.position)
+                                travelled += drag
+                                tracker.addPosition(change.uptimeMillis, travelled)
                                 scope.launch { offsetX.snapTo(offsetX.value + drag.x) }
                             }
                         }.testTag("cardStack"),
