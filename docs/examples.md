@@ -308,6 +308,12 @@ The section sits on the Home tab after Animations. Each page is a list of live g
   - A free 2D drag (`detectDragGestures`, with `change.consume()` so the page does not scroll and the object clamped to the area).
   - A sheet that snaps between Collapsed, Half and Expanded (`AnchoredDraggableState` + `Modifier.anchoredDraggable`, saved with `AnchoredDraggableState.Saver()`, with buttons as the non-gesture alternative). The sheet is only as tall as its visible part, so its touch area matches what is on screen.
   - A list reordered by long press then drag (`detectDragGesturesAfterLongPress` with `List.moved`), with up/down buttons for every row.
+- **Transform** (`TransformScreen.kt`):
+  - A photo stand-in you pinch to zoom (`MIN_ZOOM` 1× to `MAX_ZOOM` 4×), pan and rotate (`detectTransformGestures`).
+  - Pan is clamped by `clampPan`, so the zoomed content never leaves a gap at the edges and cannot move at 1×.
+  - Double tap toggles between 1× and `DOUBLE_TAP_ZOOM` 2.5× (`toggleZoom`).
+  - Zoom in, Zoom out and Reset buttons are the non-gesture alternative.
+  - A rotation-only example of the higher-level `Modifier.transformable`.
 
 ### Adding a gesture page
 

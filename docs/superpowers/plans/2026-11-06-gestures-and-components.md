@@ -171,7 +171,7 @@ routes, Hilt multibindings, Robolectric 4.17 (`@Config(sdk = [36])`), Compose UI
   - `const val MaxZoom = 4f`
   - `const val DoubleTapZoom = 2.5f`
   - `fun clampPan(pan: Offset, scale: Float, size: Size): Offset`, which allows at most `size * (scale - 1) / 2` per axis.
-  - `fun toggleZoom(scale: Float): Float`, which returns `DoubleTapZoom` when `scale < DoubleTapZoom - 0.01f`, otherwise `MinZoom`.
+  - `fun toggleZoom(scale: Float): Float`, which returns `DOUBLE_TAP_ZOOM` when `scale < DOUBLE_TAP_ZOOM - 0.01f`, otherwise `MIN_ZOOM`.
 - `@Composable fun TransformScreen(onBack: () -> Unit)`
 
 - [ ] **Step 1: Write the failing tests.**

@@ -47,4 +47,16 @@
     <string name="gesture_drag_item">Item %1$d</string>
     <string name="gesture_drag_move_up">Pindahkan %1$s ke atas</string>
     <string name="gesture_drag_move_down">Pindahkan %1$s ke bawah</string>
+    <string name="gesture_transform_title">Transformasi</string>
+    <string name="gesture_transform_subtitle">Cubit untuk zoom, geser, putar, dan ketuk dua kali untuk zoom</string>
+    <string name="gesture_transform_pinch_title">Cubit, geser, dan putar</string>
+    <string name="gesture_transform_pinch_usage">Penampil foto dan peta: dua jari untuk zoom dan putar, satu jari menggeser di area yang di-zoom, dan ketuk dua kali mengganti zoom.</string>
+    <string name="gesture_transform_zoom">Zoom: %1$.1f×</string>
+    <string name="gesture_transform_zoom_in">Perbesar</string>
+    <string name="gesture_transform_zoom_out">Perkecil</string>
+    <string name="gesture_transform_reset">Atur ulang</string>
+    <string name="gesture_transform_rotate_title">Transformable</string>
+    <string name="gesture_transform_rotate_usage">Modifier tingkat tinggi, untuk saat Anda hanya butuh angkanya. Di sini hanya rotasi yang dipakai: putar dengan dua jari.</string>
+    <string name="gesture_transform_rotate_step">Putar 15°</string>
+    <string name="gesture_transform_angle">Sudut: %1$d°</string>
 </resources>

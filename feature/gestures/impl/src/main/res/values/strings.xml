@@ -47,4 +47,16 @@
     <string name="gesture_drag_item">Item %1$d</string>
     <string name="gesture_drag_move_up">Move %1$s up</string>
     <string name="gesture_drag_move_down">Move %1$s down</string>
+    <string name="gesture_transform_title">Transform</string>
+    <string name="gesture_transform_subtitle">Pinch to zoom, pan, rotate and double tap to zoom</string>
+    <string name="gesture_transform_pinch_title">Pinch, pan and rotate</string>
+    <string name="gesture_transform_pinch_usage">Photo and map viewers: two fingers zoom and rotate, one finger pans inside the zoomed area, and a double tap toggles zoom.</string>
+    <string name="gesture_transform_zoom">Zoom: %1$.1f×</string>
+    <string name="gesture_transform_zoom_in">Zoom in</string>
+    <string name="gesture_transform_zoom_out">Zoom out</string>
+    <string name="gesture_transform_reset">Reset</string>
+    <string name="gesture_transform_rotate_title">Transformable</string>
+    <string name="gesture_transform_rotate_usage">The high-level modifier, for when you only need the numbers. Here only the rotation is used: twist with two fingers.</string>
+    <string name="gesture_transform_rotate_step">Rotate 15°</string>
+    <string name="gesture_transform_angle">Angle: %1$d°</string>
 </resources>
