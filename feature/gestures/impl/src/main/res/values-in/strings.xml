@@ -95,4 +95,20 @@
     <string name="gesture_scroll_overscroll_usage">Umpan balik saat daftar ditarik melewati ujungnya. Daftar memilikinya secara bawaan; berikan null untuk mematikannya, atau efek sendiri.</string>
     <string name="gesture_scroll_overscroll_on">Dengan overscroll</string>
     <string name="gesture_scroll_overscroll_off">Tanpa</string>
+    <string name="gesture_pointer_title">Pointer lanjutan</string>
+    <string name="gesture_pointer_subtitle">Event multi-touch mentah, menggambar dengan jari, dan siapa yang mengonsumsi event</string>
+    <string name="gesture_pointer_touch_title">Visualisasi multi-touch</string>
+    <string name="gesture_pointer_touch_usage">Baca setiap pointer sendiri saat tidak ada detektor yang cocok: setiap jari punya id dan posisi selama masih menempel.</string>
+    <string name="gesture_pointer_touch_hint">Letakkan satu jari atau lebih di sini</string>
+    <string name="gesture_pointer_touch_count">Pointer: %1$d</string>
+    <string name="gesture_pointer_draw_title">Menggambar dengan jari</string>
+    <string name="gesture_pointer_draw_usage">Kumpulkan posisi seretan menjadi goresan dan gambar sebagai path, seperti tanda tangan, anotasi, atau sketsa.</string>
+    <string name="gesture_pointer_draw_count">Goresan: %1$d</string>
+    <string name="gesture_pointer_draw_clear">Hapus</string>
+    <string name="gesture_pointer_conflict_title">Konflik gestur</string>
+    <string name="gesture_pointer_conflict_usage">Event sampai ke elemen terdalam lebih dulu. Saat elemen itu mengonsumsi perubahan, detektor luar melewatinya. Begitulah tombol di dalam kartu yang bisa diketuk menang.</string>
+    <string name="gesture_pointer_conflict_parent">Induk</string>
+    <string name="gesture_pointer_conflict_child">Anak</string>
+    <string name="gesture_pointer_conflict_switch">Anak mengonsumsi</string>
+    <string name="gesture_pointer_conflict_counts">Anak: %1$d · Induk: %2$d</string>
 </resources>

@@ -322,6 +322,10 @@ The section sits on the Home tab after Animations. Each page is a list of live g
   - A dial driven by `Modifier.scrollable` that turns scroll deltas into a 0–100 value. It returns only the delta it used, so the page scrolls on at either end, and has − / + buttons and `setProgress` semantics.
   - A collapsing header made with a `NestedScrollConnection`, whose height math is in `headerHeightAfter`. It shrinks in `onPreScroll` before the list moves, and grows back in `onPostScroll` once the list is at its top.
   - Two lists side by side, with and without the overscroll effect (`LazyColumn(overscrollEffect = rememberOverscrollEffect() / null)`).
+- **Advanced pointer** (`PointerScreen.kt`):
+  - A multi-touch visualiser that reads raw events (`awaitEachGesture { awaitPointerEvent() }`) and draws a ring with its id for every pressed pointer.
+  - A finger-drawing canvas (`detectDragGestures` + `Canvas` paths). Strokes are saved as flat float arrays, so they survive rotation and process death.
+  - A conflict demo where a child consumes the up event, so the parent's `detectTapGestures` ignores the tap. Switch "Child consumes" off and both count the tap.
 
 ### Adding a gesture page
 

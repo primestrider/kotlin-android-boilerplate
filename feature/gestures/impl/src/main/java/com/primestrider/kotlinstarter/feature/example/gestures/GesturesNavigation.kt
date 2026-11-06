@@ -9,6 +9,7 @@ import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSection
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
 import com.primestrider.kotlinstarter.feature.example.GestureDragRoute
+import com.primestrider.kotlinstarter.feature.example.GesturePointerRoute
 import com.primestrider.kotlinstarter.feature.example.GestureScrollRoute
 import com.primestrider.kotlinstarter.feature.example.GestureSwipeRoute
 import com.primestrider.kotlinstarter.feature.example.GestureTapRoute
@@ -29,6 +30,7 @@ fun NavGraphBuilder.gestureDestinations(navController: NavController) {
     composable<GestureTransformRoute> { TransformScreen(onBack = back) }
     composable<GestureSwipeRoute> { SwipeScreen(onBack = back) }
     composable<GestureScrollRoute> { ScrollScreen(onBack = back) }
+    composable<GesturePointerRoute> { PointerScreen(onBack = back) }
 }
 
 /** The Gestures section on Home and its rows. */

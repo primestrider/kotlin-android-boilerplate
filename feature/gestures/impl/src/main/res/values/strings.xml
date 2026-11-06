@@ -95,4 +95,20 @@
     <string name="gesture_scroll_overscroll_usage">Feedback when a list is pulled past its end. Lists have it by default; pass null to turn it off, or your own effect.</string>
     <string name="gesture_scroll_overscroll_on">With overscroll</string>
     <string name="gesture_scroll_overscroll_off">Without</string>
+    <string name="gesture_pointer_title">Advanced pointer</string>
+    <string name="gesture_pointer_subtitle">Raw multi-touch events, finger drawing and who consumes an event</string>
+    <string name="gesture_pointer_touch_title">Multi-touch visualiser</string>
+    <string name="gesture_pointer_touch_usage">Read every pointer yourself when no detector fits: each finger has an id and a position for as long as it is down.</string>
+    <string name="gesture_pointer_touch_hint">Put one or more fingers here</string>
+    <string name="gesture_pointer_touch_count">Pointers: %1$d</string>
+    <string name="gesture_pointer_draw_title">Finger drawing</string>
+    <string name="gesture_pointer_draw_usage">Collect drag positions into strokes and draw them as paths, as in signatures, annotations or sketches.</string>
+    <string name="gesture_pointer_draw_count">Strokes: %1$d</string>
+    <string name="gesture_pointer_draw_clear">Clear</string>
+    <string name="gesture_pointer_conflict_title">Gesture conflicts</string>
+    <string name="gesture_pointer_conflict_usage">Events reach the innermost element first. When it consumes the change, outer detectors skip it, which is how a button inside a tappable card wins.</string>
+    <string name="gesture_pointer_conflict_parent">Parent</string>
+    <string name="gesture_pointer_conflict_child">Child</string>
+    <string name="gesture_pointer_conflict_switch">Child consumes</string>
+    <string name="gesture_pointer_conflict_counts">Child: %1$d · Parent: %2$d</string>
 </resources>
