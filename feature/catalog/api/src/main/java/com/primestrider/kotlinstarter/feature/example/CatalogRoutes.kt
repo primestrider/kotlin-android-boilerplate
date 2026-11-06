@@ -25,6 +25,9 @@ data object OverlaysRoute
 data object FeedbackRoute
 
 @Serializable
+data object PickersRoute
+
+@Serializable
 data object FormExampleRoute
 
 @Serializable

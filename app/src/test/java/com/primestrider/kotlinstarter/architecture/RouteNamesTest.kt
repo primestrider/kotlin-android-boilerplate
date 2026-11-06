@@ -23,6 +23,7 @@ import com.primestrider.kotlinstarter.feature.example.GestureTransformRoute
 import com.primestrider.kotlinstarter.feature.example.InputsRoute
 import com.primestrider.kotlinstarter.feature.example.LayoutRoute
 import com.primestrider.kotlinstarter.feature.example.OverlaysRoute
+import com.primestrider.kotlinstarter.feature.example.PickersRoute
 import com.primestrider.kotlinstarter.feature.example.ProductDetailRoute
 import com.primestrider.kotlinstarter.feature.example.ProductsRoute
 import com.primestrider.kotlinstarter.feature.example.ProfileRoute
@@ -79,10 +80,11 @@ class RouteNamesTest {
                 serializer<GestureSwipeRoute>(),
                 serializer<GestureScrollRoute>(),
                 serializer<GesturePointerRoute>(),
+                serializer<PickersRoute>(),
             ).map { it.descriptor.serialName.substringAfterLast('.') to it.descriptor.serialName }
         names.forEach { (simple, serialName) ->
             assertEquals("com.primestrider.kotlinstarter.feature.example.$simple", serialName)
         }
-        assertEquals(32, names.size)
+        assertEquals(33, names.size)
     }
 }

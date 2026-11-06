@@ -279,4 +279,26 @@
     </plurals>
     <string name="catalog_components_title">Komponen</string>
     <string name="catalog_home_title">Kotlin Starter</string>
+    <string name="example_components_pickers_title">Pemilih</string>
+    <string name="example_components_pickers_subtitle">Pemilih tanggal, rentang tanggal, dan waktu, inline dan dalam dialog</string>
+    <string name="components_pickers_inline_date">Pemilih tanggal</string>
+    <string name="components_pickers_inline_date_usage">Kalender yang tampil di halaman, untuk layar yang tugas utamanya memilih tanggal.</string>
+    <string name="components_pickers_date_dialog">Dialog pemilih tanggal</string>
+    <string name="components_pickers_date_dialog_usage">Kasus umum di form: buka, pilih, konfirmasi. Batal mempertahankan nilai sebelumnya.</string>
+    <string name="components_pickers_pick_date">Pilih tanggal</string>
+    <string name="components_pickers_selected">Terpilih: %1$s</string>
+    <string name="components_pickers_none">belum ada</string>
+    <string name="components_pickers_ok">OK</string>
+    <string name="components_pickers_cancel">Batal</string>
+    <string name="components_pickers_range">Pemilih rentang tanggal</string>
+    <string name="components_pickers_range_usage">Tanggal mulai dan akhir, seperti pemesanan atau periode laporan.</string>
+    <string name="components_pickers_range_value">Dari %1$s sampai %2$s</string>
+    <string name="components_pickers_time_dialog">Dialog pemilih waktu</string>
+    <string name="components_pickers_time_dialog_usage">Muka jam untuk memilih waktu dengan sentuhan, seperti alarm dan pengingat.</string>
+    <string name="components_pickers_pick_time">Pilih waktu</string>
+    <string name="components_pickers_time_title">Atur waktu</string>
+    <string name="components_pickers_time_none">Waktu: belum ada</string>
+    <string name="components_pickers_time_value">Waktu: %1$02d.%2$02d</string>
+    <string name="components_pickers_time_input">Input waktu</string>
+    <string name="components_pickers_time_input_usage">Jam dan menit yang diketik, lebih cepat dengan keyboard dan saat waktu pastinya sudah diketahui.</string>
 </resources>

@@ -19,6 +19,7 @@ import com.primestrider.kotlinstarter.feature.example.components.FeedbackScreen
 import com.primestrider.kotlinstarter.feature.example.components.FeedbackViewModel
 import com.primestrider.kotlinstarter.feature.example.components.InputsScreen
 import com.primestrider.kotlinstarter.feature.example.components.OverlaysScreen
+import com.primestrider.kotlinstarter.feature.example.components.PickersScreen
 import com.primestrider.kotlinstarter.feature.example.form.FormExampleScreen
 import com.primestrider.kotlinstarter.feature.example.form.FormExampleViewModel
 import com.primestrider.kotlinstarter.feature.example.styling.AppearanceScreen
@@ -117,4 +118,5 @@ fun NavGraphBuilder.catalogComponentsDestinations(navController: NavController) 
         val viewModel: FeedbackViewModel = hiltViewModel()
         FeedbackScreen(onBack = back, onSaveSucceeded = viewModel::saveSucceeded, onSaveFailed = viewModel::saveFailed)
     }
+    composable<PickersRoute> { PickersScreen(onBack = back) }
 }

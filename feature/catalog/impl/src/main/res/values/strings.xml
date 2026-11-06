@@ -283,4 +283,26 @@
     </plurals>
     <string name="catalog_components_title">Components</string>
     <string name="catalog_home_title">Kotlin Starter</string>
+    <string name="example_components_pickers_title">Pickers</string>
+    <string name="example_components_pickers_subtitle">Date, date range and time pickers, inline and in dialogs</string>
+    <string name="components_pickers_inline_date">Date picker</string>
+    <string name="components_pickers_inline_date_usage">A calendar shown in the page, for screens where choosing a date is the main task.</string>
+    <string name="components_pickers_date_dialog">Date picker dialog</string>
+    <string name="components_pickers_date_dialog_usage">The usual form field case: open it, choose, confirm. Cancel keeps the previous value.</string>
+    <string name="components_pickers_pick_date">Pick a date</string>
+    <string name="components_pickers_selected">Selected: %1$s</string>
+    <string name="components_pickers_none">none</string>
+    <string name="components_pickers_ok">OK</string>
+    <string name="components_pickers_cancel">Cancel</string>
+    <string name="components_pickers_range">Date range picker</string>
+    <string name="components_pickers_range_usage">A start and an end date, like a booking or a report period.</string>
+    <string name="components_pickers_range_value">From %1$s to %2$s</string>
+    <string name="components_pickers_time_dialog">Time picker dialog</string>
+    <string name="components_pickers_time_dialog_usage">A clock face for choosing a time by touch, like alarms and reminders.</string>
+    <string name="components_pickers_pick_time">Pick a time</string>
+    <string name="components_pickers_time_title">Select time</string>
+    <string name="components_pickers_time_none">Time: none</string>
+    <string name="components_pickers_time_value">Time: %1$02d:%2$02d</string>
+    <string name="components_pickers_time_input">Time input</string>
+    <string name="components_pickers_time_input_usage">Typed hours and minutes, quicker with a keyboard and when the exact time is known.</string>
 </resources>

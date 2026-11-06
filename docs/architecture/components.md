@@ -67,3 +67,18 @@ private fun TodosScreenPreview() {
 - `UiMessage(text, variant, actionLabel, onAction, long)` adds an action ("Undo", "Retry"); `onAction` runs only if the user taps it.
 - Messages are queued in a buffered channel (up to 64): one sent while no screen is collecting (rotation, before the UI starts) is shown once the host collects, and several are shown one after another in order. Keep `onAction` lambdas short-lived; they live until the message is shown.
 - `MainActivity` provides `LocalMessenger`; tests that replace the activity content must provide it too (see `MainShellTest`).
+
+## Components tab pages
+
+The Components tab (`feature/catalog/impl/.../feature/example/components/`) shows Material 3 and design-system components working. Each page is listed in `componentEntries` (`ExampleCatalog.kt`) and registered in `catalogComponentsDestinations` (`CatalogNavigation.kt`). New examples pass `usage`, `api` and `file` to `DemoSection`, so each one says when to use it, which API it is, and which file holds it.
+
+| Page | File | Shows |
+| --- | --- | --- |
+| Actions | `ActionsScreen.kt` | Buttons, icon buttons, floating action buttons, chips |
+| Inputs | `InputsScreen.kt` | Text fields, selection controls, select, sliders, tabs |
+| Display | `DisplayScreen.kt` | Cards, list items, badges, progress, avatars, skeletons, banners |
+| Overlays | `OverlaysScreen.kt` | Dialogs, bottom sheets, menus, tooltips |
+| Feedback | `FeedbackScreen.kt` | App-wide messages, loading, empty and error states |
+| Pickers | `PickersScreen.kt` | `DatePicker` inline, `DatePickerDialog` (Cancel keeps the previous value), `DateRangePicker`, `TimePickerDialog` + `TimePicker`, `TimeInput`. Picker millis are midnight UTC, so dates are formatted in UTC |
+
+**TODO: Expressive page.** `ButtonGroup`, `SplitButton`, `LoadingIndicator`, `FloatingToolbar`, `FloatingActionButtonMenu` and the wavy progress indicators ship only in Material 3 1.5, while the Compose BOM `2026.09.00` still resolves Material 3 1.4.0. Build this page once a Compose BOM ships Material 3 1.5 stable; do not pin Material 3 outside the BOM.
