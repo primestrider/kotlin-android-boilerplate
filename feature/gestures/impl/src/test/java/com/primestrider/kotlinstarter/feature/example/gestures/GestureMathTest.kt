@@ -3,6 +3,7 @@ package com.primestrider.kotlinstarter.feature.example.gestures
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GestureMathTest {
@@ -54,5 +55,23 @@ class GestureMathTest {
     @Test
     fun header_grows_back_up_to_its_full_height() {
         assertEquals(200f to 36f, headerHeightAfter(500f, 164f, 64f, 200f))
+    }
+
+    @Test
+    fun compact_strokes_bounds_the_saved_points_and_keeps_every_stroke() {
+        val long = List(30_000) { Offset(it.toFloat(), 0f) }
+        val strokes = listOf(long, List(5_000) { Offset(0f, it.toFloat()) }, listOf(Offset(1f, 1f)))
+        val compact = compactStrokes(strokes, maxPoints = 10_000)
+        assertTrue(compact.sumOf { it.size } <= 10_000)
+        assertEquals(3, compact.size)
+        assertEquals(long.first(), compact[0].first())
+        assertEquals(long.last(), compact[0].last())
+        assertEquals(listOf(Offset(1f, 1f)), compact[2])
+    }
+
+    @Test
+    fun compact_strokes_leaves_small_drawings_alone() {
+        val strokes = listOf(listOf(Offset(1f, 2f), Offset(3f, 4f)))
+        assertEquals(strokes, compactStrokes(strokes, maxPoints = 10_000))
     }
 }

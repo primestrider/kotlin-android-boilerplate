@@ -54,10 +54,25 @@ import kotlin.math.roundToInt
 
 private const val FILE = "PointerScreen.kt"
 
-/** Strokes saved as flat `x, y, x, y…` arrays, which a Bundle can hold. */
+/** Points kept when the drawing is saved: 8 bytes each, so about 160 KB at most in the saved-state Bundle. */
+private const val MAX_SAVED_POINTS = 20_000
+
+/** Strokes saved as flat `x, y, x, y…` arrays, which a Bundle can hold, thinned by [compactStrokes]. */
 private val StrokesSaver =
     listSaver<SnapshotStateList<List<Offset>>, FloatArray>(
-        save = { strokes -> strokes.map { s -> FloatArray(s.size * 2) { i -> if (i % 2 == 0) s[i / 2].x else s[i / 2].y } } },
+        save = { strokes ->
+            compactStrokes(strokes, MAX_SAVED_POINTS).map { s ->
+                FloatArray(s.size * 2) { i ->
+                    if (i % 2 ==
+                        0
+                    ) {
+                        s[i / 2].x
+                    } else {
+                        s[i / 2].y
+                    }
+                }
+            }
+        },
         restore = { saved -> saved.map { a -> List(a.size / 2) { i -> Offset(a[2 * i], a[2 * i + 1]) } }.toMutableStateList() },
     )
 

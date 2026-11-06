@@ -74,3 +74,25 @@ fun headerHeightAfter(
     val next = (current + scrollDelta).coerceIn(min, max)
     return next to (next - current)
 }
+
+/**
+ * [strokes] thinned to at most [maxPoints] points in all, so a long drawing session still fits in the saved-state
+ * Bundle (the binder transaction limit is about 1 MB). Every stroke keeps its first and last point; the points in
+ * between are kept every n-th. With more strokes than the budget allows, only the newest ones are kept.
+ */
+fun compactStrokes(
+    strokes: List<List<Offset>>,
+    maxPoints: Int,
+): List<List<Offset>> {
+    val total = strokes.sumOf { it.size }
+    if (total <= maxPoints) return strokes
+    // Endpoints alone cost up to 2 points per stroke.
+    val kept = if (strokes.size * 2 > maxPoints / 2) strokes.takeLast(maxPoints / 4) else strokes
+    val budget = (maxPoints - kept.size * 2).coerceAtLeast(1)
+    val stride = (kept.sumOf { it.size } + budget - 1) / budget
+    return kept.map { stroke ->
+        if (stroke.size <= 2 || stride <= 1) return@map stroke
+        val thinned = stroke.filterIndexed { index, _ -> index % stride == 0 }
+        if ((stroke.size - 1) % stride == 0) thinned else thinned + stroke.last()
+    }
+}

@@ -300,7 +300,11 @@ private fun ReorderExample() {
                                 shadowElevation = if (isDragged) 8.dp.toPx() else 0f
                             }.clip(RoundedCornerShape(12.dp))
                             .background(
-                                if (isDragged) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                                if (isDragged) {
+                                    MaterialTheme.colorScheme.secondaryContainer
+                                } else {
+                                    MaterialTheme.colorScheme.surfaceContainerHigh
+                                },
                             ).pointerInput(id) {
                                 detectDragGesturesAfterLongPress(
                                     onDragStart = {
