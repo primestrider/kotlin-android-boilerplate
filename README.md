@@ -36,10 +36,10 @@ Module boundaries are Gradle dependencies, so a feature cannot reach into anothe
 
 ## Starting a new project
 
-No need to clone: download the code without its git history, rename it, optionally drop the examples, then start your
-own repository.
+This repository is a GitHub template: create your own repository from it, rename it, optionally drop the examples.
 
-1. **Get the code**: on GitHub, **Code → Download ZIP** and unzip it, or `npx degit primestrider/kotlin-android-boilerplate my-app`.
+1. **Create your repository**: on GitHub, **Use this template → Create a new repository** (it starts from one clean
+   commit, without this repository's history), then clone your new repository.
 2. **Rename** the package/applicationId, app name, class and theme names, deep-link scheme and Gradle project name in one go:
    ```
    bash scripts/rename-project.sh com.acme.shop "Acme Shop"
@@ -50,10 +50,10 @@ own repository.
    ```
    bash scripts/remove-examples.sh --keep .examples
    ```
-4. **Check and commit**:
+4. **Check and push**:
    ```
    ./gradlew test assembleDevDebug
-   git init && git add . && git commit -m "chore: start from kotlin-starter"
+   git add . && git commit -m "chore: rename and remove examples" && git push
    ```
 
 On Windows run the scripts from Git Bash. Both stop the Gradle daemon first (`./gradlew --stop`) and delete the build
