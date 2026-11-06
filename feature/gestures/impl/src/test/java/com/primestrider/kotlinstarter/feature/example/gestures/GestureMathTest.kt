@@ -43,4 +43,16 @@ class GestureMathTest {
         assertEquals(SwipeOutcome.Right, swipeOutcome(10f, 2000f, 1000f))
         assertEquals(SwipeOutcome.Left, swipeOutcome(10f, -2000f, 1000f))
     }
+
+    @Test
+    fun header_consumes_until_collapsed() {
+        assertEquals(150f to -50f, headerHeightAfter(-50f, 200f, 64f, 200f))
+        assertEquals(64f to -36f, headerHeightAfter(-500f, 100f, 64f, 200f))
+        assertEquals(64f to 0f, headerHeightAfter(-10f, 64f, 64f, 200f))
+    }
+
+    @Test
+    fun header_grows_back_up_to_its_full_height() {
+        assertEquals(200f to 36f, headerHeightAfter(500f, 164f, 64f, 200f))
+    }
 }

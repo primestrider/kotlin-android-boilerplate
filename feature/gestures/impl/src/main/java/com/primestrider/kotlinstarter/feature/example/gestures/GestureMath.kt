@@ -59,3 +59,18 @@ fun swipeOutcome(
         kotlin.math.abs(offsetX) > widthPx * SWIPE_DISTANCE_FRACTION -> if (offsetX > 0) SwipeOutcome.Right else SwipeOutcome.Left
         else -> SwipeOutcome.Return
     }
+
+/**
+ * A collapsing header taking its share of a scroll: [scrollDelta] < 0 (content moving up) shrinks it towards [min],
+ * > 0 grows it towards [max]. Returns the new height and the part of the delta it consumed; the rest is left for
+ * the list. The caller decides when growing is allowed (only once the list is back at its top).
+ */
+fun headerHeightAfter(
+    scrollDelta: Float,
+    current: Float,
+    min: Float,
+    max: Float,
+): Pair<Float, Float> {
+    val next = (current + scrollDelta).coerceIn(min, max)
+    return next to (next - current)
+}

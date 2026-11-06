@@ -80,4 +80,19 @@
     <string name="gesture_swipe_fling_title">Lempar dengan perlambatan</string>
     <string name="gesture_swipe_fling_usage">Biarkan objek tetap bergerak setelah dilepas dan melambat secara alami, seperti lemparan scroll, dibatasi area.</string>
     <string name="gesture_swipe_fling_position">Posisi: %1$d</string>
+    <string name="gesture_scroll_title">Gulir</string>
+    <string name="gesture_scroll_subtitle">Scrollable kustom, header nested scroll, dan overscroll</string>
+    <string name="gesture_scroll_dial_title">Scrollable kustom</string>
+    <string name="gesture_scroll_dial_usage">Ubah delta gulir menjadi nilai sendiri, seperti dial, wheel picker, atau zoom. Ia ikut nested scrolling, jadi halaman lanjut menggulir di 0 dan 100.</string>
+    <string name="gesture_scroll_dial_value">Nilai: %1$d</string>
+    <string name="gesture_scroll_dial_increase">Naikkan</string>
+    <string name="gesture_scroll_dial_decrease">Turunkan</string>
+    <string name="gesture_scroll_nested_title">Nested scroll</string>
+    <string name="gesture_scroll_nested_usage">Header yang menyusut sebelum daftar menggulir dan kembali saat daftar sudah di atas, seperti perilaku halaman profil dan detail.</string>
+    <string name="gesture_scroll_nested_header">Header menyusut</string>
+    <string name="gesture_scroll_row">Baris %1$d</string>
+    <string name="gesture_scroll_overscroll_title">Overscroll</string>
+    <string name="gesture_scroll_overscroll_usage">Umpan balik saat daftar ditarik melewati ujungnya. Daftar memilikinya secara bawaan; berikan null untuk mematikannya, atau efek sendiri.</string>
+    <string name="gesture_scroll_overscroll_on">Dengan overscroll</string>
+    <string name="gesture_scroll_overscroll_off">Tanpa</string>
 </resources>

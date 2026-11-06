@@ -80,4 +80,19 @@
     <string name="gesture_swipe_fling_title">Fling with decay</string>
     <string name="gesture_swipe_fling_usage">Let an object keep moving after release and slow down naturally, like a scroll fling, bounded by the area.</string>
     <string name="gesture_swipe_fling_position">Position: %1$d</string>
+    <string name="gesture_scroll_title">Scroll</string>
+    <string name="gesture_scroll_subtitle">A custom scrollable, a nested-scroll header and overscroll</string>
+    <string name="gesture_scroll_dial_title">Custom scrollable</string>
+    <string name="gesture_scroll_dial_usage">Turn scroll deltas into your own value, like a dial, a wheel picker or a zoom. It joins nested scrolling, so the page scrolls on at 0 and 100.</string>
+    <string name="gesture_scroll_dial_value">Value: %1$d</string>
+    <string name="gesture_scroll_dial_increase">Increase</string>
+    <string name="gesture_scroll_dial_decrease">Decrease</string>
+    <string name="gesture_scroll_nested_title">Nested scroll</string>
+    <string name="gesture_scroll_nested_usage">A header that collapses before the list scrolls and comes back once the list is at its top, the way profile and detail pages behave.</string>
+    <string name="gesture_scroll_nested_header">Collapsing header</string>
+    <string name="gesture_scroll_row">Row %1$d</string>
+    <string name="gesture_scroll_overscroll_title">Overscroll</string>
+    <string name="gesture_scroll_overscroll_usage">Feedback when a list is pulled past its end. Lists have it by default; pass null to turn it off, or your own effect.</string>
+    <string name="gesture_scroll_overscroll_on">With overscroll</string>
+    <string name="gesture_scroll_overscroll_off">Without</string>
 </resources>

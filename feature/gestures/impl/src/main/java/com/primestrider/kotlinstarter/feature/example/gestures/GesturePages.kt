@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
 import com.primestrider.kotlinstarter.feature.example.GestureDragRoute
+import com.primestrider.kotlinstarter.feature.example.GestureScrollRoute
 import com.primestrider.kotlinstarter.feature.example.GestureSwipeRoute
 import com.primestrider.kotlinstarter.feature.example.GestureTapRoute
 import com.primestrider.kotlinstarter.feature.example.GestureTransformRoute
@@ -26,6 +27,7 @@ val gesturePages: List<GesturePage> =
         GesturePage(GestureDragRoute, R.string.gesture_drag_title, R.string.gesture_drag_subtitle),
         GesturePage(GestureTransformRoute, R.string.gesture_transform_title, R.string.gesture_transform_subtitle),
         GesturePage(GestureSwipeRoute, R.string.gesture_swipe_title, R.string.gesture_swipe_subtitle),
+        GesturePage(GestureScrollRoute, R.string.gesture_scroll_title, R.string.gesture_scroll_subtitle),
     )
 
 /** Home entries for the "Gestures" section, built from [gesturePages]. */

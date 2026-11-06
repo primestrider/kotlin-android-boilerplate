@@ -318,6 +318,10 @@ The section sits on the Home tab after Animations. Each page is a list of live g
   - A row you swipe left to reveal Archive and Delete (`anchoredDraggable` between Closed and Open). TalkBack gets a "Show actions" custom action instead.
   - A stack of five cards: drag one and it tilts with the finger. On release, `swipeOutcome` sends it off when it travelled 40% of the width or was flung faster than 1500 px/s, and springs it back otherwise (`detectDragGestures` + `VelocityTracker` + `Animatable`). Keep and Skip buttons do the same, and "Start over" refills the stack.
   - A puck that keeps gliding after release and slows down, bounded by its area (`Animatable.animateDecay(exponentialDecay())`).
+- **Scroll** (`ScrollScreen.kt`):
+  - A dial driven by `Modifier.scrollable` that turns scroll deltas into a 0–100 value. It returns only the delta it used, so the page scrolls on at either end, and has − / + buttons and `setProgress` semantics.
+  - A collapsing header made with a `NestedScrollConnection`, whose height math is in `headerHeightAfter`. It shrinks in `onPreScroll` before the list moves, and grows back in `onPostScroll` once the list is at its top.
+  - Two lists side by side, with and without the overscroll effect (`LazyColumn(overscrollEffect = rememberOverscrollEffect() / null)`).
 
 ### Adding a gesture page
 
