@@ -37,7 +37,7 @@ core/testing                 shared test doubles: in-memory DataStore, FakeSessi
 feature/<name>/api           @Serializable routes other modules may navigate to
 feature/<name>/impl          screens, ViewModels, data/ (api, dto, entity, dao, repository, mappers), Hilt modules, strings, tests
 baselineprofile/             startup baseline profile generator and startup benchmark (needs a device)
-scripts/remove-examples.sh   removes every example feature (see below)
+scripts/remove-examples.sh   removes every example feature, optionally keeping them in .examples/ (see below)
 ```
 
 Example features (all deletable): `catalog` (Home, Components tab, component and styling pages, form), `products`
@@ -78,6 +78,22 @@ Every screen and design-system component file has a light/dark `@ThemePreviews` 
 drive examples, then runs `ktlintFormat`. Run it on a copy (`git worktree add`), check `./gradlew test assembleDevDebug`,
 then apply it to your project. Without examples the app shows `PlaceholderHomeScreen` with one tab, and sign-in reports
 "not configured" until a feature binds an `@AuthBackend AuthAdapter`. CI runs this check on every push.
+
+`bash scripts/remove-examples.sh --keep .examples` copies everything it deletes into `.examples/` first (the feature
+modules, the `:app` files as they were before their example regions were stripped, and the deleted `:app` tests, each at
+its original path) and adds that folder to `.gitignore`. It is not part of the Gradle build.
+
+### Example code in `.examples/` (for agents)
+
+If `.examples/` exists, it is the reference code of the removed examples. Before writing a feature, screen, API call,
+form or Device API demo, look there for the matching example and follow its patterns. Rules:
+
+- Search tools that respect `.gitignore` or skip hidden folders (ripgrep, Grep/Glob) do not see it: list or read it by
+  explicit path (e.g. `ls .examples/feature`, then read the files), or search with `rg --no-ignore --hidden ... .examples`.
+- Read and copy only. Never `include` it in `settings.gradle.kts`, depend on it or import from it; code you take from it
+  moves into your own module and package.
+- How a feature is wired into `:app` (dependencies, destinations, tabs): `.examples/app/`, whose files still contain the
+  `// region example:<feature>` blocks.
 
 ## Testing conventions
 

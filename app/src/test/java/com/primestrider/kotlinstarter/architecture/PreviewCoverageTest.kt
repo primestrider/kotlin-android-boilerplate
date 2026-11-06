@@ -30,7 +30,8 @@ class PreviewCoverageTest {
     @Test
     fun every_screen_and_component_has_a_preview() {
         val files = candidates()
-        assertTrue("scanned only ${files.size} files", files.size > 30)
+        // Sanity check that the scan found the sources: 21 files remain after scripts/remove-examples.sh.
+        assertTrue("scanned only ${files.size} files", files.size > 15)
         val missing =
             files
                 .filterNot { it.readText().let { text -> text.contains("@ThemePreviews") || text.contains("@Preview") } }
