@@ -59,4 +59,25 @@
     <string name="gesture_transform_rotate_usage">The high-level modifier, for when you only need the numbers. Here only the rotation is used: twist with two fingers.</string>
     <string name="gesture_transform_rotate_step">Rotate 15°</string>
     <string name="gesture_transform_angle">Angle: %1$d°</string>
+    <string name="gesture_swipe_title">Swipe &amp; fling</string>
+    <string name="gesture_swipe_subtitle">Reveal actions, swipe cards away and let things glide</string>
+    <string name="gesture_swipe_reveal_title">Swipe to reveal actions</string>
+    <string name="gesture_swipe_reveal_usage">List rows with quick actions such as archive or delete. TalkBack gets a Show actions action instead of the swipe.</string>
+    <string name="gesture_swipe_reveal_hint">Swipe this row to the left</string>
+    <string name="gesture_swipe_reveal_archive">Archive</string>
+    <string name="gesture_swipe_reveal_delete">Delete</string>
+    <string name="gesture_swipe_reveal_show">Show actions</string>
+    <string name="gesture_swipe_reveal_hide">Hide actions</string>
+    <string name="gesture_swipe_reveal_hidden">Actions: hidden</string>
+    <string name="gesture_swipe_reveal_shown">Actions: shown</string>
+    <string name="gesture_swipe_stack_title">Swipe a card stack</string>
+    <string name="gesture_swipe_stack_usage">Decide on one item at a time. A far drag or a quick flick sends the card off; anything less springs it back. The buttons do the same.</string>
+    <string name="gesture_swipe_stack_card">Card %1$d</string>
+    <string name="gesture_swipe_stack_keep">Keep</string>
+    <string name="gesture_swipe_stack_skip">Skip</string>
+    <string name="gesture_swipe_stack_empty">No cards left</string>
+    <string name="gesture_swipe_stack_restart">Start over</string>
+    <string name="gesture_swipe_fling_title">Fling with decay</string>
+    <string name="gesture_swipe_fling_usage">Let an object keep moving after release and slow down naturally, like a scroll fling, bounded by the area.</string>
+    <string name="gesture_swipe_fling_position">Position: %1$d</string>
 </resources>

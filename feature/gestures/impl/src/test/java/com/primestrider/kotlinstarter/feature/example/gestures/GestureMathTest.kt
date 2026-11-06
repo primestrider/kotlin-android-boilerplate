@@ -34,4 +34,13 @@ class GestureMathTest {
         assertEquals(MIN_ZOOM, toggleZoom(MAX_ZOOM))
         assertEquals(2.5f, DOUBLE_TAP_ZOOM)
     }
+
+    @Test
+    fun swipe_outcome_by_distance_and_velocity() {
+        assertEquals(SwipeOutcome.Return, swipeOutcome(50f, 0f, 1000f))
+        assertEquals(SwipeOutcome.Left, swipeOutcome(-500f, 0f, 1000f))
+        assertEquals(SwipeOutcome.Right, swipeOutcome(500f, 0f, 1000f))
+        assertEquals(SwipeOutcome.Right, swipeOutcome(10f, 2000f, 1000f))
+        assertEquals(SwipeOutcome.Left, swipeOutcome(10f, -2000f, 1000f))
+    }
 }

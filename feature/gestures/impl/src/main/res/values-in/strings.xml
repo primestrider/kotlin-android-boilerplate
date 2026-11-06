@@ -59,4 +59,25 @@
     <string name="gesture_transform_rotate_usage">Modifier tingkat tinggi, untuk saat Anda hanya butuh angkanya. Di sini hanya rotasi yang dipakai: putar dengan dua jari.</string>
     <string name="gesture_transform_rotate_step">Putar 15°</string>
     <string name="gesture_transform_angle">Sudut: %1$d°</string>
+    <string name="gesture_swipe_title">Geser &amp; lempar</string>
+    <string name="gesture_swipe_subtitle">Munculkan aksi, geser kartu, dan biarkan benda meluncur</string>
+    <string name="gesture_swipe_reveal_title">Geser untuk memunculkan aksi</string>
+    <string name="gesture_swipe_reveal_usage">Baris daftar dengan aksi cepat seperti arsip atau hapus. TalkBack mendapat aksi Tampilkan aksi sebagai ganti geseran.</string>
+    <string name="gesture_swipe_reveal_hint">Geser baris ini ke kiri</string>
+    <string name="gesture_swipe_reveal_archive">Arsipkan</string>
+    <string name="gesture_swipe_reveal_delete">Hapus</string>
+    <string name="gesture_swipe_reveal_show">Tampilkan aksi</string>
+    <string name="gesture_swipe_reveal_hide">Sembunyikan aksi</string>
+    <string name="gesture_swipe_reveal_hidden">Aksi: tersembunyi</string>
+    <string name="gesture_swipe_reveal_shown">Aksi: tampil</string>
+    <string name="gesture_swipe_stack_title">Geser tumpukan kartu</string>
+    <string name="gesture_swipe_stack_usage">Putuskan satu item setiap kali. Seretan jauh atau jentikan cepat mengirim kartu pergi; selain itu kartu kembali. Tombol melakukan hal yang sama.</string>
+    <string name="gesture_swipe_stack_card">Kartu %1$d</string>
+    <string name="gesture_swipe_stack_keep">Simpan</string>
+    <string name="gesture_swipe_stack_skip">Lewati</string>
+    <string name="gesture_swipe_stack_empty">Kartu habis</string>
+    <string name="gesture_swipe_stack_restart">Mulai lagi</string>
+    <string name="gesture_swipe_fling_title">Lempar dengan perlambatan</string>
+    <string name="gesture_swipe_fling_usage">Biarkan objek tetap bergerak setelah dilepas dan melambat secara alami, seperti lemparan scroll, dibatasi area.</string>
+    <string name="gesture_swipe_fling_position">Posisi: %1$d</string>
 </resources>
