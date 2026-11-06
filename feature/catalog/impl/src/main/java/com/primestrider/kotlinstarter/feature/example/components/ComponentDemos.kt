@@ -1,9 +1,11 @@
 package com.primestrider.kotlinstarter.feature.example.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -29,6 +32,7 @@ import androidx.compose.material3.DismissibleDrawerSheet
 import androidx.compose.material3.DismissibleNavigationDrawer
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExpandedDockedSearchBar
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -146,7 +150,15 @@ val componentDemos: List<ComponentDemo> =
             R.string.components_demo_search_usage,
             "SearchBar + ExpandedFullScreenSearchBar",
         ) {
-            SearchBarDemo(it)
+            SearchBarDemo(docked = false, onBack = it)
+        },
+        ComponentDemo(
+            "docked-search-bar",
+            R.string.components_demo_docked_search,
+            R.string.components_demo_docked_search_usage,
+            "SearchBar + ExpandedDockedSearchBar",
+        ) {
+            SearchBarDemo(docked = true, onBack = it)
         },
         ComponentDemo(
             "bottom-sheet-scaffold",
@@ -317,7 +329,10 @@ private val fruits =
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SearchBarDemo(onBack: () -> Unit) {
+private fun SearchBarDemo(
+    docked: Boolean,
+    onBack: () -> Unit,
+) {
     val searchState = rememberSearchBarState()
     val text = rememberTextFieldState()
     val scope = rememberCoroutineScope()
@@ -336,7 +351,12 @@ private fun SearchBarDemo(onBack: () -> Unit) {
         )
     }
     Scaffold(
-        topBar = { TopAppBar(title = { Text(stringResource(R.string.components_demo_search)) }, navigationIcon = { BackButton(onBack) }) },
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(if (docked) R.string.components_demo_docked_search else R.string.components_demo_search)) },
+                navigationIcon = { BackButton(onBack) },
+            )
+        },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding).padding(horizontal = Spacing.s4)) {
             SearchBar(state = searchState, inputField = { input("searchInput") }, modifier = Modifier.fillMaxWidth())
@@ -345,10 +365,23 @@ private fun SearchBarDemo(onBack: () -> Unit) {
                 modifier = Modifier.padding(vertical = Spacing.s4),
             )
         }
-        ExpandedFullScreenSearchBar(state = searchState, inputField = { input("searchInputExpanded") }) {
+        // A suggestion fills the query and closes the expanded bar, like a search submitted by hand.
+        val suggestions: @Composable ColumnScope.() -> Unit = {
             matches.forEach { fruit ->
-                ListItem(headlineContent = { Text(fruit) })
+                ListItem(
+                    headlineContent = { Text(fruit) },
+                    modifier =
+                        Modifier.clickable {
+                            text.setTextAndPlaceCursorAtEnd(fruit)
+                            scope.launch { searchState.animateToCollapsed() }
+                        },
+                )
             }
+        }
+        if (docked) {
+            ExpandedDockedSearchBar(state = searchState, inputField = { input("searchInputExpanded") }, content = suggestions)
+        } else {
+            ExpandedFullScreenSearchBar(state = searchState, inputField = { input("searchInputExpanded") }, content = suggestions)
         }
     }
 }

@@ -369,4 +369,6 @@
     <string name="components_swipe_dismiss_delete">Hapus %1$s</string>
     <string name="components_swipe_dismiss_removed">%1$s dihapus</string>
     <string name="components_swipe_dismiss_undo">Urungkan</string>
+    <string name="components_demo_docked_search">Search bar docked</string>
+    <string name="components_demo_docked_search_usage">Pencarian di layar lebih besar atau di dalam panel: saran terbuka di panel di bawah bar alih-alih memenuhi layar.</string>
 </resources>

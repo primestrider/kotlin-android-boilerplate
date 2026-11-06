@@ -51,6 +51,7 @@ class ComponentDemosTest {
                 "modal-drawer",
                 "dismissible-drawer",
                 "search-bar",
+                "docked-search-bar",
                 "bottom-sheet-scaffold",
             ),
             componentDemos.map { it.id },
@@ -131,5 +132,27 @@ class ComponentDemosTest {
         rule.onNodeWithText("Expand sheet").performClick()
         rule.waitForIdle()
         rule.onNodeWithText("Sheet content").assertIsDisplayed()
+    }
+
+    @Test
+    fun tapping_a_suggestion_fills_the_query_and_collapses() {
+        show("search-bar")
+        rule.onNodeWithTag("searchInput").performClick()
+        rule.waitForIdle()
+        rule.onNodeWithText("Apple").performClick()
+        rule.waitForIdle()
+        rule.onNodeWithText("Searched for: Apple").assertIsDisplayed()
+        rule.onNodeWithTag("searchInputExpanded").assertDoesNotExist()
+    }
+
+    @Test
+    fun docked_search_bar_expands_and_filters() {
+        show("docked-search-bar")
+        rule.onNodeWithTag("searchInput").performClick()
+        rule.waitForIdle()
+        rule.onNodeWithTag("searchInputExpanded").performTextInput("ap")
+        rule.waitForIdle()
+        rule.onNodeWithText("Apricot").assertExists()
+        rule.onNodeWithText("Banana").assertDoesNotExist()
     }
 }
