@@ -16,7 +16,7 @@
 #   4. runs ktlintFormat, which drops the imports the deleted blocks used.
 set -euo pipefail
 
-EXAMPLES=(catalog products todos account settings devices animation)
+EXAMPLES=(catalog products todos account settings devices animation gestures)
 
 root="${1:-.}"
 cd "$root"
@@ -47,7 +47,7 @@ if [ -d app/src/test ]; then
     modules=$(IFS='|'; echo "${EXAMPLES[*]}")
     # Example code keeps the package feature.example(.<sub>); core:ui's helpers share that root package, so a plain
     # `feature.example` import is not enough to delete a test: it takes an example sub-package or module package.
-    pattern="^package com\.primestrider\.kotlinstarter\.feature\.|^// remove-examples: |kotlinstarter\.feature\.($modules)\.|kotlinstarter\.feature\.example\.(products|todos|auth|settings|sdk|animation|components|styling|form)\."
+    pattern="^package com\.primestrider\.kotlinstarter\.feature\.|^// remove-examples: |kotlinstarter\.feature\.($modules)\.|kotlinstarter\.feature\.example\.(products|todos|auth|settings|sdk|animation|gestures|components|styling|form)\."
     { grep -rlE "$pattern" app/src/test || true; } | while IFS= read -r file; do rm -f "$file"; done
 fi
 

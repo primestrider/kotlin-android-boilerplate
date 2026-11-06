@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gesture_home_title">Gestures</string>
+    <string name="gesture_home_description">Tap, drag, pinch, swipe, scroll and raw pointer input, with the Compose API behind each</string>
+    <string name="gesture_tap_title">Tap</string>
+    <string name="gesture_tap_subtitle">Clicks, long press, double tap and where the finger touched</string>
+    <string name="gesture_tap_clickable_title">Clickable</string>
+    <string name="gesture_tap_clickable_usage">The default for anything tappable: ripple, focus, keyboard and the button role come for free.</string>
+    <string name="gesture_tap_clickable_label">Tap me</string>
+    <string name="gesture_tap_count">Taps: %1$d</string>
+    <string name="gesture_tap_combined_title">Combined clickable</string>
+    <string name="gesture_tap_combined_usage">One element with a main action plus shortcuts. The long press is also offered to TalkBack as an action.</string>
+    <string name="gesture_tap_combined_hint">Tap, hold or tap twice</string>
+    <string name="gesture_tap_long_label">Show options</string>
+    <string name="gesture_tap_log_empty">No events yet</string>
+    <string name="gesture_tap_event_click">Click</string>
+    <string name="gesture_tap_event_long">Long press</string>
+    <string name="gesture_tap_event_double">Double tap</string>
+    <string name="gesture_tap_detect_title">Raw tap detection</string>
+    <string name="gesture_tap_detect_usage">When you need the touch position or press and release, e.g. a custom canvas or tap to focus.</string>
+    <string name="gesture_tap_detect_hint">Touch anywhere in the box</string>
+    <string name="gesture_tap_pressed">Pressed</string>
+    <string name="gesture_tap_last">Last: %1$s at %2$d, %3$d</string>
+    <string name="gesture_tap_kind_tap">tap</string>
+    <string name="gesture_tap_kind_double">double tap</string>
+    <string name="gesture_tap_kind_long">long press</string>
+</resources>

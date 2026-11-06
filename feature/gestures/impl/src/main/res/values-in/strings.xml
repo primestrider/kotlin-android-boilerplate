@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gesture_home_title">Gestur</string>
+    <string name="gesture_home_description">Ketuk, seret, cubit, geser, gulir, dan input pointer mentah, beserta API Compose di baliknya</string>
+    <string name="gesture_tap_title">Ketuk</string>
+    <string name="gesture_tap_subtitle">Klik, tekan lama, ketuk dua kali, dan posisi sentuhan jari</string>
+    <string name="gesture_tap_clickable_title">Clickable</string>
+    <string name="gesture_tap_clickable_usage">Bawaan untuk apa pun yang bisa diketuk: ripple, fokus, keyboard, dan peran tombol langsung didapat.</string>
+    <string name="gesture_tap_clickable_label">Ketuk saya</string>
+    <string name="gesture_tap_count">Ketukan: %1$d</string>
+    <string name="gesture_tap_combined_title">Combined clickable</string>
+    <string name="gesture_tap_combined_usage">Satu elemen dengan aksi utama plus pintasan. Tekan lama juga ditawarkan ke TalkBack sebagai aksi.</string>
+    <string name="gesture_tap_combined_hint">Ketuk, tahan, atau ketuk dua kali</string>
+    <string name="gesture_tap_long_label">Tampilkan opsi</string>
+    <string name="gesture_tap_log_empty">Belum ada kejadian</string>
+    <string name="gesture_tap_event_click">Klik</string>
+    <string name="gesture_tap_event_long">Tekan lama</string>
+    <string name="gesture_tap_event_double">Ketuk dua kali</string>
+    <string name="gesture_tap_detect_title">Deteksi ketukan mentah</string>
+    <string name="gesture_tap_detect_usage">Saat butuh posisi sentuhan atau tekan dan lepas, misalnya kanvas kustom atau ketuk untuk fokus.</string>
+    <string name="gesture_tap_detect_hint">Sentuh di mana saja di dalam kotak</string>
+    <string name="gesture_tap_pressed">Ditekan</string>
+    <string name="gesture_tap_last">Terakhir: %1$s di %2$d, %3$d</string>
+    <string name="gesture_tap_kind_tap">ketuk</string>
+    <string name="gesture_tap_kind_double">ketuk dua kali</string>
+    <string name="gesture_tap_kind_long">tekan lama</string>
+</resources>

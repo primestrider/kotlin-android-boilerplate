@@ -16,7 +16,7 @@ class HomeSectionsOrderTest {
     fun home_sections_are_in_order() {
         val context = ApplicationProvider.getApplicationContext<android.content.Context>()
         val titles = exampleSections.map { context.getString(it.title) }
-        assertEquals(listOf("Features", "Device APIs", "Animations", "Styling"), titles)
+        assertEquals(listOf("Features", "Device APIs", "Animations", "Gestures", "Styling"), titles)
         val sdk = exampleSections[1]
         assertEquals(sdkDemos.map { SdkDemoRoute(it.id) }, sdk.entries.map { it.route })
     }

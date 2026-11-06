@@ -295,6 +295,33 @@ Examples respect "Remove animations": Compose scales every animation by the syst
 
 The section is the `:feature:animation:api` and `:feature:animation:impl` modules. Delete `feature/animation/`, its `include` lines and the `// region example:animation` blocks in `app/build.gradle.kts` and `AppNavHost.kt`, run `./gradlew ktlintFormat`, drop the last paragraph of "Page transitions" in `docs/architecture/navigation.md`, and update the section order in `HomeSectionsOrderTest` and the `exampleSections` helper in `:app`'s tests. Run `bash scripts/remove-examples.sh` (on a copy first, see AGENTS.md) to remove every example feature at once.
 
+## The Gestures section
+
+The section sits on the Home tab after Animations. Each page is a list of live gesture examples. Every example is a `DemoSection(title, usage, api, file)` (from `core:ui`), so it shows when to use it, the Compose API behind it, and the file to open (`feature/gestures/impl`, package `com.primestrider.kotlinstarter.feature.example.gestures`). The pages are listed in `gesturePages` (`GesturePages.kt`) in Home order, and each has its own route in `GestureRoutes.kt`. Inline gesture surfaces have a fixed height and consume their pointer input, so the page's vertical scroll never steals a drag that starts on them. Every gesture-only action also has a button or a TalkBack action.
+
+- **Tap** (`TapScreen.kt`):
+  - `Modifier.clickable` with a tap counter.
+  - `Modifier.combinedClickable`: click, long press (with `onLongClickLabel`, offered to TalkBack) and double tap, with a log of the last five events.
+  - `pointerInput { detectTapGestures() }`, which marks where the finger touched and shows the pressed state while held (`onPress` + `tryAwaitRelease`). A single tap is reported once the double-tap window has passed.
+
+### Adding a gesture page
+
+1. Add a `@Serializable data object` route to `feature/gestures/api/src/main/java/com/primestrider/kotlinstarter/feature/example/GestureRoutes.kt`.
+2. Write `XxxScreen(onBack)` on top of `ExamplePageScaffold`, made of `DemoSection(title, usage, api, file) { ... }` blocks. Keep user-chosen state in `rememberSaveable`.
+3. Add a `GesturePage(route, title, subtitle)` entry to `gesturePages` in its place in the order.
+4. Add `composable<XxxRoute> { XxxScreen(onBack = back) }` to `gestureDestinations` in `GesturesNavigation.kt`.
+5. Add `gesture_<page>_` strings to the module's `values/strings.xml` and `values-in/strings.xml`.
+
+### Deleting the Gestures section
+
+The section is made of the `:feature:gestures:api` and `:feature:gestures:impl` modules. To delete it:
+1. Delete `feature/gestures/` and its `include` lines.
+2. Delete the `// region example:gestures` blocks in `app/build.gradle.kts` and `AppNavHost.kt`.
+3. Run `./gradlew ktlintFormat`.
+4. Update the section order in `HomeSectionsOrderTest`, the `exampleSections` helper in `:app`'s tests, and the gesture routes in `RouteNamesTest`.
+
+`bash scripts/remove-examples.sh` removes it together with the other examples.
+
 ## Physical-device checklist
 
 Robolectric covers the logic; these need real hardware (or a well-equipped emulator) before a release:

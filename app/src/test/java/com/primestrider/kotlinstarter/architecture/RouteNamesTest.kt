@@ -14,6 +14,12 @@ import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
 import com.primestrider.kotlinstarter.feature.example.DisplayRoute
 import com.primestrider.kotlinstarter.feature.example.FeedbackRoute
 import com.primestrider.kotlinstarter.feature.example.FormExampleRoute
+import com.primestrider.kotlinstarter.feature.example.GestureDragRoute
+import com.primestrider.kotlinstarter.feature.example.GesturePointerRoute
+import com.primestrider.kotlinstarter.feature.example.GestureScrollRoute
+import com.primestrider.kotlinstarter.feature.example.GestureSwipeRoute
+import com.primestrider.kotlinstarter.feature.example.GestureTapRoute
+import com.primestrider.kotlinstarter.feature.example.GestureTransformRoute
 import com.primestrider.kotlinstarter.feature.example.InputsRoute
 import com.primestrider.kotlinstarter.feature.example.LayoutRoute
 import com.primestrider.kotlinstarter.feature.example.OverlaysRoute
@@ -67,10 +73,16 @@ class RouteNamesTest {
                 serializer<AnimCardsRoute>(),
                 serializer<AnimListsRoute>(),
                 serializer<AnimTransitionsRoute>(),
+                serializer<GestureTapRoute>(),
+                serializer<GestureDragRoute>(),
+                serializer<GestureTransformRoute>(),
+                serializer<GestureSwipeRoute>(),
+                serializer<GestureScrollRoute>(),
+                serializer<GesturePointerRoute>(),
             ).map { it.descriptor.serialName.substringAfterLast('.') to it.descriptor.serialName }
         names.forEach { (simple, serialName) ->
             assertEquals("com.primestrider.kotlinstarter.feature.example.$simple", serialName)
         }
-        assertEquals(26, names.size)
+        assertEquals(32, names.size)
     }
 }

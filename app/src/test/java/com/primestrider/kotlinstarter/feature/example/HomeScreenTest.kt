@@ -21,6 +21,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
@@ -99,10 +100,10 @@ class HomeScreenTest {
     @Test
     fun section_chip_limits_the_list_to_that_section() {
         show {}
-        rule.onNode(hasText("Styling") and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)).performClick()
+        rule.onNode(hasText("Styling") and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)).performScrollTo().performClick()
         rule.onNodeWithText("Colors").assertIsDisplayed()
         rule.onNodeWithText("Form").assertDoesNotExist()
-        rule.onNode(hasText("All") and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)).performClick()
+        rule.onNode(hasText("All") and SemanticsMatcher.keyIsDefined(SemanticsProperties.Selected)).performScrollTo().performClick()
         scrollTo("Form")
         rule.onNodeWithText("Form").assertIsDisplayed()
     }
@@ -125,7 +126,7 @@ class HomeScreenTest {
     fun chips_are_radio_buttons_and_the_chosen_one_is_selected() {
         show {}
         val styling = hasText("Styling") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton)
-        rule.onNode(styling).performClick()
+        rule.onNode(styling).performScrollTo().performClick()
         rule.onNode(styling).assertIsSelected()
         rule.onNode(hasText("All") and SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton)).assertIsNotSelected()
     }
