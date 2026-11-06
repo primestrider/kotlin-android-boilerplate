@@ -38,6 +38,7 @@ feature/<name>/api           @Serializable routes other modules may navigate to
 feature/<name>/impl          screens, ViewModels, data/ (api, dto, entity, dao, repository, mappers), Hilt modules, strings, tests
 baselineprofile/             startup baseline profile generator and startup benchmark (needs a device)
 scripts/remove-examples.sh   removes every example feature, optionally keeping them in .examples/ (see below)
+scripts/rename-project.sh    renames package/applicationId, app name, classes, scheme and plugin ids for a new app (README)
 ```
 
 Example features (all deletable): `catalog` (Home, Components tab, component and styling pages, form), `products`
