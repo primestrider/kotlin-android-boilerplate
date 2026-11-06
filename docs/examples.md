@@ -295,6 +295,56 @@ Examples respect "Remove animations": Compose scales every animation by the syst
 
 The section is the `:feature:animation:api` and `:feature:animation:impl` modules. Delete `feature/animation/`, its `include` lines and the `// region example:animation` blocks in `app/build.gradle.kts` and `AppNavHost.kt`, run `./gradlew ktlintFormat`, drop the last paragraph of "Page transitions" in `docs/architecture/navigation.md`, and update the section order in `HomeSectionsOrderTest` and the `exampleSections` helper in `:app`'s tests. Run `bash scripts/remove-examples.sh` (on a copy first, see AGENTS.md) to remove every example feature at once.
 
+## The Gestures section
+
+The section sits on the Home tab after Animations. Each page is a list of live gesture examples. Every example is a `DemoSection(title, usage, api, file)` (from `core:ui`), so it shows when to use it, the Compose API behind it, and the file to open (`feature/gestures/impl`, package `com.primestrider.kotlinstarter.feature.example.gestures`). The pages are listed in `gesturePages` (`GesturePages.kt`) in Home order, and each has its own route in `GestureRoutes.kt`. Inline gesture surfaces have a fixed height and consume their pointer input, so the page's vertical scroll never steals a drag that starts on them. Every gesture-only action also has a button or a TalkBack action.
+
+- **Tap** (`TapScreen.kt`):
+  - `Modifier.clickable` with a tap counter.
+  - `Modifier.combinedClickable`: click, long press (with `onLongClickLabel`, offered to TalkBack) and double tap, with a log of the last five events.
+  - `pointerInput { detectTapGestures() }`, which marks where the finger touched and shows the pressed state while held (`onPress` + `tryAwaitRelease`). A single tap is reported once the double-tap window has passed.
+- **Drag** (`DragScreen.kt`):
+  - A one-axis handle (`Modifier.draggable`, value 0–100, plus `setProgress` semantics for TalkBack).
+  - A free 2D drag (`detectDragGestures`, with `change.consume()` so the page does not scroll and the object clamped to the area).
+  - A sheet that snaps between Collapsed, Half and Expanded (`AnchoredDraggableState` + `Modifier.anchoredDraggable`, saved with `AnchoredDraggableState.Saver()`, with buttons as the non-gesture alternative). The sheet is only as tall as its visible part, so its touch area matches what is on screen.
+  - A list reordered by long press then drag (`detectDragGesturesAfterLongPress` with `List.moved`), with up/down buttons for every row.
+- **Transform** (`TransformScreen.kt`):
+  - A photo stand-in you pinch to zoom (`MIN_ZOOM` 1× to `MAX_ZOOM` 4×), pan and rotate (`detectTransformGestures`).
+  - Pan is clamped by `clampPan`, so the zoomed content never leaves a gap at the edges and cannot move at 1×.
+  - Double tap toggles between 1× and `DOUBLE_TAP_ZOOM` 2.5× (`toggleZoom`).
+  - Zoom in, Zoom out and Reset buttons are the non-gesture alternative.
+  - A rotation-only example of the higher-level `Modifier.transformable`.
+- **Swipe & fling** (`SwipeScreen.kt`):
+  - A row you swipe left to reveal Archive and Delete (`anchoredDraggable` between Closed and Open). TalkBack gets a "Show actions" custom action instead.
+  - A stack of five cards: drag one and it tilts with the finger. On release, `swipeOutcome` sends it off when it travelled 40% of the width or was flung faster than 1500 px/s, and springs it back otherwise (`detectDragGestures` + `VelocityTracker` + `Animatable`). Keep and Skip buttons do the same, and "Start over" refills the stack.
+  - A puck that keeps gliding after release and slows down, bounded by its area (`Animatable.animateDecay(exponentialDecay())`).
+- **Scroll** (`ScrollScreen.kt`):
+  - A dial driven by `Modifier.scrollable` that turns scroll deltas into a 0–100 value. It returns only the delta it used, so the page scrolls on at either end, and has − / + buttons and `setProgress` semantics.
+  - A collapsing header made with a `NestedScrollConnection`, whose height math is in `headerHeightAfter`. It shrinks in `onPreScroll` before the list moves, and grows back in `onPostScroll` once the list is at its top.
+  - Two lists side by side, with and without the overscroll effect (`LazyColumn(overscrollEffect = rememberOverscrollEffect() / null)`).
+- **Advanced pointer** (`PointerScreen.kt`):
+  - A multi-touch visualiser that reads raw events (`awaitEachGesture { awaitPointerEvent() }`) and draws a ring with its id for every pressed pointer.
+  - A finger-drawing canvas (`detectDragGestures` + `Canvas` paths). Strokes are saved as flat float arrays, so they survive rotation and process death.
+  - A conflict demo where a child consumes the up event, so the parent's `detectTapGestures` ignores the tap. Switch "Child consumes" off and both count the tap.
+
+### Adding a gesture page
+
+1. Add a `@Serializable data object` route to `feature/gestures/api/src/main/java/com/primestrider/kotlinstarter/feature/example/GestureRoutes.kt`.
+2. Write `XxxScreen(onBack)` on top of `ExamplePageScaffold`, made of `DemoSection(title, usage, api, file) { ... }` blocks. Keep user-chosen state in `rememberSaveable`.
+3. Add a `GesturePage(route, title, subtitle)` entry to `gesturePages` in its place in the order.
+4. Add `composable<XxxRoute> { XxxScreen(onBack = back) }` to `gestureDestinations` in `GesturesNavigation.kt`.
+5. Add `gesture_<page>_` strings to the module's `values/strings.xml` and `values-in/strings.xml`.
+
+### Deleting the Gestures section
+
+The section is made of the `:feature:gestures:api` and `:feature:gestures:impl` modules. To delete it:
+1. Delete `feature/gestures/` and its `include` lines.
+2. Delete the `// region example:gestures` blocks in `app/build.gradle.kts` and `AppNavHost.kt`.
+3. Run `./gradlew ktlintFormat`.
+4. Update the section order in `HomeSectionsOrderTest`, the `exampleSections` helper in `:app`'s tests, and the gesture routes in `RouteNamesTest`.
+
+`bash scripts/remove-examples.sh` removes it together with the other examples.
+
 ## Physical-device checklist
 
 Robolectric covers the logic; these need real hardware (or a well-equipped emulator) before a release:

@@ -8,15 +8,25 @@ import com.primestrider.kotlinstarter.feature.example.AnimCardsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimListsRoute
 import com.primestrider.kotlinstarter.feature.example.AnimMicroRoute
 import com.primestrider.kotlinstarter.feature.example.AnimTransitionsRoute
+import com.primestrider.kotlinstarter.feature.example.AppBarsRoute
 import com.primestrider.kotlinstarter.feature.example.AppearanceRoute
+import com.primestrider.kotlinstarter.feature.example.CarouselRoute
 import com.primestrider.kotlinstarter.feature.example.ColorsRoute
+import com.primestrider.kotlinstarter.feature.example.ComponentDemoRoute
 import com.primestrider.kotlinstarter.feature.example.ComponentsHomeRoute
 import com.primestrider.kotlinstarter.feature.example.DisplayRoute
 import com.primestrider.kotlinstarter.feature.example.FeedbackRoute
 import com.primestrider.kotlinstarter.feature.example.FormExampleRoute
+import com.primestrider.kotlinstarter.feature.example.GestureDragRoute
+import com.primestrider.kotlinstarter.feature.example.GesturePointerRoute
+import com.primestrider.kotlinstarter.feature.example.GestureScrollRoute
+import com.primestrider.kotlinstarter.feature.example.GestureSwipeRoute
+import com.primestrider.kotlinstarter.feature.example.GestureTapRoute
+import com.primestrider.kotlinstarter.feature.example.GestureTransformRoute
 import com.primestrider.kotlinstarter.feature.example.InputsRoute
 import com.primestrider.kotlinstarter.feature.example.LayoutRoute
 import com.primestrider.kotlinstarter.feature.example.OverlaysRoute
+import com.primestrider.kotlinstarter.feature.example.PickersRoute
 import com.primestrider.kotlinstarter.feature.example.ProductDetailRoute
 import com.primestrider.kotlinstarter.feature.example.ProductsRoute
 import com.primestrider.kotlinstarter.feature.example.ProfileRoute
@@ -67,10 +77,20 @@ class RouteNamesTest {
                 serializer<AnimCardsRoute>(),
                 serializer<AnimListsRoute>(),
                 serializer<AnimTransitionsRoute>(),
+                serializer<GestureTapRoute>(),
+                serializer<GestureDragRoute>(),
+                serializer<GestureTransformRoute>(),
+                serializer<GestureSwipeRoute>(),
+                serializer<GestureScrollRoute>(),
+                serializer<GesturePointerRoute>(),
+                serializer<CarouselRoute>(),
+                serializer<AppBarsRoute>(),
+                serializer<ComponentDemoRoute>(),
+                serializer<PickersRoute>(),
             ).map { it.descriptor.serialName.substringAfterLast('.') to it.descriptor.serialName }
         names.forEach { (simple, serialName) ->
             assertEquals("com.primestrider.kotlinstarter.feature.example.$simple", serialName)
         }
-        assertEquals(26, names.size)
+        assertEquals(36, names.size)
     }
 }

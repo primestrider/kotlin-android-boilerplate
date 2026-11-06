@@ -136,6 +136,10 @@ dependencies {
     implementation(projects.feature.devices.api)
     implementation(projects.feature.devices.impl)
     // endregion
+    // region example:gestures
+    implementation(projects.feature.gestures.api)
+    implementation(projects.feature.gestures.impl)
+    // endregion
     // region example:products
     implementation(projects.feature.products.api)
     implementation(projects.feature.products.impl)

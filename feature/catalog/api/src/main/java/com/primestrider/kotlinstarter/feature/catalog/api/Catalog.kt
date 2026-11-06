@@ -34,5 +34,6 @@ object CatalogSections {
     const val FEATURES = "features"
     const val DEVICES = "devices"
     const val ANIMATION = "animation"
+    const val GESTURES = "gestures"
     const val STYLING = "styling"
 }

@@ -20,6 +20,7 @@ import com.primestrider.kotlinstarter.feature.example.animation.animationDestina
 import com.primestrider.kotlinstarter.feature.example.auth.accountDestinations
 import com.primestrider.kotlinstarter.feature.example.catalogComponentsDestinations
 import com.primestrider.kotlinstarter.feature.example.catalogHomeDestinations
+import com.primestrider.kotlinstarter.feature.example.gestures.gestureDestinations
 import com.primestrider.kotlinstarter.feature.example.products.ui.productsDestinations
 import com.primestrider.kotlinstarter.feature.example.sdk.devicesDestinations
 import com.primestrider.kotlinstarter.feature.example.settings.settingsDestinations
@@ -110,6 +111,9 @@ fun NavGraphBuilder.homeGraph(
         // endregion
         // region example:animation
         animationDestinations(navController)
+        // endregion
+        // region example:gestures
+        gestureDestinations(navController)
         // endregion
     }
 }
