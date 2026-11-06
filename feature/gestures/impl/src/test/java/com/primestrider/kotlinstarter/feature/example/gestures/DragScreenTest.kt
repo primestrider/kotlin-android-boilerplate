@@ -1,5 +1,6 @@
 package com.primestrider.kotlinstarter.feature.example.gestures
 
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -79,5 +80,30 @@ class DragScreenTest {
         val one = top("Item 1")
         val two = top("Item 2")
         assertTrue("order kept", two < one)
+    }
+
+    @Test
+    fun long_press_drag_moves_a_row_several_places() {
+        show()
+        val row = rule.onNodeWithTag("reorderRow-1").performScrollTo()
+        val rowHeight =
+            row
+                .fetchSemanticsNode()
+                .size.height
+                .toFloat()
+        row.performTouchInput {
+            down(Offset(width / 4f, height / 2f))
+        }
+        // Past the long-press timeout, which runs on the main clock.
+        rule.mainClock.advanceTimeBy(1_000)
+        // One move per frame, like a real finger: the list recomposes between moves.
+        repeat(10) {
+            row.performTouchInput { moveBy(Offset(0f, rowHeight * 0.25f)) }
+            rule.mainClock.advanceTimeByFrame()
+            rule.waitForIdle()
+        }
+        row.performTouchInput { up() }
+        rule.waitForIdle()
+        assertTrue("Item 1 below Item 3", top("Item 1") > top("Item 3"))
     }
 }

@@ -34,6 +34,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -285,46 +286,50 @@ private fun ReorderExample() {
     ) {
         Column(Modifier.fillMaxWidth().testTag("reorderList")) {
             order.forEachIndexed { index, id ->
-                val label = stringResource(R.string.gesture_drag_item, id)
-                val isDragged = dragged == index
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .onSizeChanged { rowPx = it.height.coerceAtLeast(1) }
-                        .graphicsLayer {
-                            translationY = if (isDragged) dragOffset else 0f
-                            shadowElevation = if (isDragged) 8.dp.toPx() else 0f
-                        }.clip(RoundedCornerShape(12.dp))
-                        .background(
-                            if (isDragged) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
-                        ).pointerInput(id) {
-                            detectDragGesturesAfterLongPress(
-                                onDragStart = {
-                                    dragged = order.indexOf(id)
-                                    dragOffset = 0f
-                                },
-                                onDragEnd = { dragged = -1 },
-                                onDragCancel = { dragged = -1 },
-                            ) { change, drag ->
-                                change.consume()
-                                dragOffset += drag.y
-                                val from = dragged
-                                val to = (from + (dragOffset / rowPx).roundToInt()).coerceIn(0, order.lastIndex)
-                                if (to != from) {
-                                    move(from, to)
-                                    dragOffset -= (to - from) * rowPx
-                                    dragged = to
+                // Keyed by id so a row keeps its node, and its running drag gesture, when it moves to another index.
+                key(id) {
+                    val label = stringResource(R.string.gesture_drag_item, id)
+                    val isDragged = dragged == index
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .onSizeChanged { rowPx = it.height.coerceAtLeast(1) }
+                            .testTag("reorderRow-$id")
+                            .graphicsLayer {
+                                translationY = if (isDragged) dragOffset else 0f
+                                shadowElevation = if (isDragged) 8.dp.toPx() else 0f
+                            }.clip(RoundedCornerShape(12.dp))
+                            .background(
+                                if (isDragged) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                            ).pointerInput(id) {
+                                detectDragGesturesAfterLongPress(
+                                    onDragStart = {
+                                        dragged = order.indexOf(id)
+                                        dragOffset = 0f
+                                    },
+                                    onDragEnd = { dragged = -1 },
+                                    onDragCancel = { dragged = -1 },
+                                ) { change, drag ->
+                                    change.consume()
+                                    dragOffset += drag.y
+                                    val from = dragged
+                                    val to = (from + (dragOffset / rowPx).roundToInt()).coerceIn(0, order.lastIndex)
+                                    if (to != from) {
+                                        move(from, to)
+                                        dragOffset -= (to - from) * rowPx
+                                        dragged = to
+                                    }
                                 }
-                            }
-                        }.padding(start = Spacing.s3),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(label, Modifier.weight(1f))
-                    IconButton(onClick = { move(index, index - 1) }, enabled = index > 0) {
-                        Icon(Icons.Filled.KeyboardArrowUp, stringResource(R.string.gesture_drag_move_up, label))
-                    }
-                    IconButton(onClick = { move(index, index + 1) }, enabled = index < order.lastIndex) {
-                        Icon(Icons.Filled.KeyboardArrowDown, stringResource(R.string.gesture_drag_move_down, label))
+                            }.padding(start = Spacing.s3),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(label, Modifier.weight(1f))
+                        IconButton(onClick = { move(index, index - 1) }, enabled = index > 0) {
+                            Icon(Icons.Filled.KeyboardArrowUp, stringResource(R.string.gesture_drag_move_up, label))
+                        }
+                        IconButton(onClick = { move(index, index + 1) }, enabled = index < order.lastIndex) {
+                            Icon(Icons.Filled.KeyboardArrowDown, stringResource(R.string.gesture_drag_move_down, label))
+                        }
                     }
                 }
             }
