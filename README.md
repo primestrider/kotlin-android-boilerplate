@@ -56,8 +56,9 @@ own repository.
    git init && git add . && git commit -m "chore: start from kotlin-starter"
    ```
 
-On Windows run the scripts from Git Bash, with Android Studio closed or Gradle stopped (`./gradlew --stop`): open
-build files are locked and cannot be deleted. CI checks that the app still builds without the examples.
+On Windows run the scripts from Git Bash. Both stop the Gradle daemon first (`./gradlew --stop`) and delete the build
+outputs before changing any source, so a file Windows still keeps open stops them with nothing changed. CI checks that
+the app still builds without the examples.
 
 ## Environments, release and CI
 

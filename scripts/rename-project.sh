@@ -14,8 +14,7 @@
 #   kotlinstarter  -> acmeshop                        (plugin ids kotlinstarter.*, deep-link scheme, key alias)
 # then moves every source folder com/primestrider/kotlinstarter to com/acme/shop, renames files named after the old
 # package or class (Room schemas, KotlinStarterApp.kt), deletes build outputs and runs ktlintFormat (import order
-# changes with the package). Requires bash and perl (both ship with Git for Windows). On Windows close Android Studio
-# or run `./gradlew --stop` first: Gradle keeps build files open and they cannot be deleted.
+# changes with the package). Requires bash and perl (both ship with Git for Windows; on Windows run it from Git Bash).
 set -euo pipefail
 
 [ $# -ge 2 ] || { sed -n '2,6p' "$0" >&2; exit 1; }
@@ -42,8 +41,12 @@ old_dirs=$(find . \( -name build -o -name .git -o -name .gradle -o -name .kotlin
 
 echo "package $package, app name \"$name\", classes ${pascal}App / Theme.$pascal, scheme $lower, project $kebab"
 
-# Build outputs hold classes and generated code under the old package.
-find . \( -name .git -prune \) -o -type d \( -name build -o -name .kotlin \) -prune -exec rm -rf {} +
+# Build outputs hold classes and generated code under the old package. They go first, before any source changes: a
+# running Gradle daemon (Android Studio's too; it restarts on the next sync) keeps them open, and Windows cannot delete
+# open files.
+./gradlew --stop >/dev/null 2>&1 || true
+find . \( -name .git -prune \) -o -type d \( -name build -o -name .kotlin \) -prune -exec rm -rf {} + ||
+    { echo "could not delete the build outputs (a file is still open): close Android Studio and run again. Nothing was renamed." >&2; exit 1; }
 
 # 1. Text. The escaped forms come first: remove-examples.sh matches packages with regexes (com\.primestrider\...).
 export R_PKG="$package" R_PATH="$path" R_NAME="$name" R_PASCAL="$pascal" R_LOWER="$lower" R_KEBAB="$kebab"

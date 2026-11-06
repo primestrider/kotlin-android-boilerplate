@@ -50,6 +50,15 @@ keep_copy() {
     cp -r "$1" "$keep/$1"
 }
 
+# Build outputs of the examples go first, before any source changes: a running Gradle daemon (Android Studio's too; it
+# restarts on the next sync) keeps them open, and Windows cannot delete open files.
+./gradlew --stop >/dev/null 2>&1 || true
+for feature in "${EXAMPLES[@]}"; do
+    [ -d "feature/$feature" ] || continue
+    find "feature/$feature" -type d \( -name build -o -name .kotlin \) -prune -exec rm -rf {} + ||
+        { echo "could not delete feature/$feature build outputs (a file is still open): close Android Studio and run again. Nothing was removed." >&2; exit 1; }
+done
+
 for feature in "${EXAMPLES[@]}"; do
     keep_copy "feature/$feature"
     rm -rf "feature/$feature"
