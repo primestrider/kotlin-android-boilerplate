@@ -9,4 +9,5 @@
     <string name="permission_grant">Beri akses</string>
     <string name="permission_open_settings">Buka Pengaturan</string>
     <string name="permission_blocked_suffix">Aktifkan di Pengaturan untuk melanjutkan.</string>
+    <string name="example_file_label">Berkas: %1$s</string>
 </resources>

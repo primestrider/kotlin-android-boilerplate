@@ -30,4 +30,23 @@ class ExamplePageScaffoldTest {
             ).assert(SemanticsMatcher.keyIsDefined(SemanticsProperties.Heading))
         rule.onNodeWithText("Body").assertExists()
     }
+
+    @Test
+    fun demo_section_shows_usage_api_and_file() {
+        rule.setContent {
+            AppTheme(false) {
+                DemoSection(R.string.crash_title, usage = R.string.crash_title, api = "anchoredDraggable", file = "DragScreen.kt") {
+                    Text("Body")
+                }
+            }
+        }
+        rule.onNodeWithText("anchoredDraggable").assertExists()
+        rule.onNodeWithText("File: DragScreen.kt").assertExists()
+    }
+
+    @Test
+    fun demo_section_without_labels_shows_no_file() {
+        rule.setContent { AppTheme(false) { DemoSection(R.string.crash_title) { Text("Body") } } }
+        rule.onNodeWithText("File:", substring = true).assertDoesNotExist()
+    }
 }
