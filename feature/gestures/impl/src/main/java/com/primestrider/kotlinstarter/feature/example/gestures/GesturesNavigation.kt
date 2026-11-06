@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogEntry
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSection
 import com.primestrider.kotlinstarter.feature.catalog.api.CatalogSections
+import com.primestrider.kotlinstarter.feature.example.GestureDragRoute
 import com.primestrider.kotlinstarter.feature.example.GestureTapRoute
 import com.primestrider.kotlinstarter.feature.gestures.impl.R
 import dagger.Module
@@ -21,6 +22,7 @@ import dagger.multibindings.IntoSet
 fun NavGraphBuilder.gestureDestinations(navController: NavController) {
     val back: () -> Unit = { navController.popBackStack() }
     composable<GestureTapRoute> { TapScreen(onBack = back) }
+    composable<GestureDragRoute> { DragScreen(onBack = back) }
 }
 
 /** The Gestures section on Home and its rows. */

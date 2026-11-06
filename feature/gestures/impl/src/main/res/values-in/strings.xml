@@ -24,4 +24,27 @@
     <string name="gesture_tap_kind_tap">ketuk</string>
     <string name="gesture_tap_kind_double">ketuk dua kali</string>
     <string name="gesture_tap_kind_long">tekan lama</string>
+    <string name="gesture_drag_title">Seret</string>
+    <string name="gesture_drag_subtitle">Seret di satu sumbu, ke mana saja, ke titik tambat, dan untuk mengurutkan</string>
+    <string name="gesture_drag_axis_title">Seret satu sumbu</string>
+    <string name="gesture_drag_axis_usage">Slider, seek bar, atau scrubber kustom: gerak hanya di satu sumbu, sehingga sumbu lain tetap bebas untuk menggulir.</string>
+    <string name="gesture_drag_value">Nilai: %1$d</string>
+    <string name="gesture_drag_free_title">Seret bebas</string>
+    <string name="gesture_drag_free_usage">Pindahkan objek dua dimensi, seperti stiker, gelembung mengambang, atau kotak crop. Seretan dikonsumsi, jadi halaman tidak ikut menggulir.</string>
+    <string name="gesture_drag_position">Posisi: %1$d, %2$d</string>
+    <string name="gesture_drag_anchor_title">Tambat ke titik</string>
+    <string name="gesture_drag_anchor_usage">Sesuatu yang diam di beberapa posisi dan mengendap setelah dilempar, seperti sheet, drawer, atau toggle kustom.</string>
+    <string name="gesture_drag_anchor_state">Titik: %1$s</string>
+    <string name="gesture_drag_anchor_collapsed">Tertutup</string>
+    <string name="gesture_drag_anchor_half">Setengah</string>
+    <string name="gesture_drag_anchor_expanded">Terbuka</string>
+    <string name="gesture_drag_sheet_hint">Seret sheet ke atas atau ke bawah</string>
+    <string name="gesture_drag_collapse">Tutup</string>
+    <string name="gesture_drag_half">Setengah</string>
+    <string name="gesture_drag_expand">Buka</string>
+    <string name="gesture_drag_reorder_title">Urutkan dengan menyeret</string>
+    <string name="gesture_drag_reorder_usage">Biarkan pengguna mengurutkan daftar pendek dengan menekan lama sebuah baris, lalu menyeretnya. Tanda panah melakukan hal yang sama untuk TalkBack dan keyboard.</string>
+    <string name="gesture_drag_item">Item %1$d</string>
+    <string name="gesture_drag_move_up">Pindahkan %1$s ke atas</string>
+    <string name="gesture_drag_move_down">Pindahkan %1$s ke bawah</string>
 </resources>

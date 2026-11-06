@@ -303,6 +303,11 @@ The section sits on the Home tab after Animations. Each page is a list of live g
   - `Modifier.clickable` with a tap counter.
   - `Modifier.combinedClickable`: click, long press (with `onLongClickLabel`, offered to TalkBack) and double tap, with a log of the last five events.
   - `pointerInput { detectTapGestures() }`, which marks where the finger touched and shows the pressed state while held (`onPress` + `tryAwaitRelease`). A single tap is reported once the double-tap window has passed.
+- **Drag** (`DragScreen.kt`):
+  - A one-axis handle (`Modifier.draggable`, value 0–100, plus `setProgress` semantics for TalkBack).
+  - A free 2D drag (`detectDragGestures`, with `change.consume()` so the page does not scroll and the object clamped to the area).
+  - A sheet that snaps between Collapsed, Half and Expanded (`AnchoredDraggableState` + `Modifier.anchoredDraggable`, saved with `AnchoredDraggableState.Saver()`, with buttons as the non-gesture alternative). The sheet is only as tall as its visible part, so its touch area matches what is on screen.
+  - A list reordered by long press then drag (`detectDragGesturesAfterLongPress` with `List.moved`), with up/down buttons for every row.
 
 ### Adding a gesture page
 
