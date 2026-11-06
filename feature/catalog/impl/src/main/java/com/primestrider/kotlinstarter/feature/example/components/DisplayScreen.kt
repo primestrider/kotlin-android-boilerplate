@@ -83,6 +83,8 @@ fun DisplayScreen(onBack: () -> Unit) {
     ) {
         CardsSection()
         ListItemsSection()
+        SwipeToDismissSection()
+        PullToRefreshSection()
         BadgesSection()
         DividersSection()
         ProgressSection()

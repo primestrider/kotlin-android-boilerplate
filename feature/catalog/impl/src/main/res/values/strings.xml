@@ -362,4 +362,15 @@
     <string name="components_grid_horizontal">Horizontal grid</string>
     <string name="components_grid_horizontal_usage">A fixed number of rows that scroll sideways, like shelves of categories.</string>
     <string name="components_grid_cell">Cell %1$d</string>
+    <string name="components_section_pull_refresh">Pull to refresh</string>
+    <string name="components_pull_refresh_usage">Let people reload a list by pulling it down from the top. The button does the same without the gesture.</string>
+    <string name="components_pull_refresh_row">Update %1$d (refresh %2$d)</string>
+    <string name="components_pull_refresh_button">Refresh list</string>
+    <string name="components_pull_refresh_count">Refreshed %1$d×</string>
+    <string name="components_section_swipe_dismiss">Swipe to dismiss</string>
+    <string name="components_swipe_dismiss_usage">Remove a row with a swipe towards the start, with Undo for mistakes and a delete button for TalkBack and keyboards.</string>
+    <string name="components_swipe_dismiss_row">Message %1$d</string>
+    <string name="components_swipe_dismiss_delete">Delete %1$s</string>
+    <string name="components_swipe_dismiss_removed">%1$s removed</string>
+    <string name="components_swipe_dismiss_undo">Undo</string>
 </resources>

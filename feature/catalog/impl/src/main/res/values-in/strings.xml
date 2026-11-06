@@ -358,4 +358,15 @@
     <string name="components_grid_horizontal">Grid horizontal</string>
     <string name="components_grid_horizontal_usage">Jumlah baris tetap yang bergulir ke samping, seperti rak kategori.</string>
     <string name="components_grid_cell">Sel %1$d</string>
+    <string name="components_section_pull_refresh">Tarik untuk menyegarkan</string>
+    <string name="components_pull_refresh_usage">Biarkan pengguna memuat ulang daftar dengan menariknya dari atas. Tombol melakukan hal yang sama tanpa gestur.</string>
+    <string name="components_pull_refresh_row">Pembaruan %1$d (segar %2$d)</string>
+    <string name="components_pull_refresh_button">Segarkan daftar</string>
+    <string name="components_pull_refresh_count">Disegarkan %1$d×</string>
+    <string name="components_section_swipe_dismiss">Geser untuk menghapus</string>
+    <string name="components_swipe_dismiss_usage">Hapus baris dengan geseran ke arah awal, dengan Urungkan untuk kesalahan dan tombol hapus untuk TalkBack dan keyboard.</string>
+    <string name="components_swipe_dismiss_row">Pesan %1$d</string>
+    <string name="components_swipe_dismiss_delete">Hapus %1$s</string>
+    <string name="components_swipe_dismiss_removed">%1$s dihapus</string>
+    <string name="components_swipe_dismiss_undo">Urungkan</string>
 </resources>

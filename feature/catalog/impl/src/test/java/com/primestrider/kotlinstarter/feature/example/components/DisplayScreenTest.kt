@@ -9,6 +9,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.swipeDown
+import androidx.compose.ui.test.swipeLeft
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.primestrider.kotlinstarter.core.designsystem.theme.AppTheme
 import org.junit.Before
@@ -61,5 +64,33 @@ class DisplayScreenTest {
     @Test
     fun badge_caps_at_99_plus() {
         rule.onNodeWithText("99+").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun pull_to_refresh_updates_the_list() {
+        rule.onNodeWithText("Refreshed 0×").performScrollTo().assertExists()
+        rule.onNodeWithTag("pullRefreshList").performScrollTo().performTouchInput { swipeDown() }
+        rule.mainClock.advanceTimeBy(2_000)
+        rule.waitForIdle()
+        rule.onNodeWithText("Refreshed 1×").assertExists()
+    }
+
+    @Test
+    fun refresh_button_is_the_accessible_alternative() {
+        rule.onNodeWithText("Refresh list").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(2_000)
+        rule.waitForIdle()
+        rule.onNodeWithText("Refreshed 1×").assertExists()
+    }
+
+    @Test
+    fun swipe_to_dismiss_removes_row_and_undo_restores() {
+        rule.onNodeWithTag("dismissRow-1").performScrollTo().performTouchInput { swipeLeft() }
+        rule.waitForIdle()
+        rule.onNodeWithText("Message 1").assertDoesNotExist()
+        rule.onNodeWithText("Undo").performScrollTo().performClick()
+        rule.onNodeWithText("Message 1").assertExists()
+        rule.onNodeWithContentDescription("Delete Message 2").performScrollTo().performClick()
+        rule.onNodeWithText("Message 2").assertDoesNotExist()
     }
 }

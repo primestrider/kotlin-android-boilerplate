@@ -76,7 +76,7 @@ The Components tab (`feature/catalog/impl/.../feature/example/components/`) show
 | --- | --- | --- |
 | Actions | `ActionsScreen.kt` | Buttons, icon buttons, floating action buttons, chips |
 | Inputs | `InputsScreen.kt` | Text fields, selection controls, select, sliders, tabs |
-| Display | `DisplayScreen.kt` | Cards, list items, badges, progress, avatars, skeletons, banners |
+| Display | `DisplayScreen.kt`, `RefreshDismissSections.kt` | Cards, list items, badges, progress, avatars, skeletons, banners, `SwipeToDismissBox` (swipe towards the start, a delete button per row, Undo) and `PullToRefreshBox` (with a "Refresh list" button as the non-gesture alternative) |
 | Overlays | `OverlaysScreen.kt` | Dialogs, bottom sheets, menus, tooltips |
 | Feedback | `FeedbackScreen.kt` | App-wide messages, loading, empty and error states |
 | Pickers | `PickersScreen.kt` | `DatePicker` inline, `DatePickerDialog` (Cancel keeps the previous value), `DateRangePicker`, `TimePickerDialog` + `TimePicker`, `TimeInput`. Picker millis are midnight UTC, so dates are formatted in UTC |
