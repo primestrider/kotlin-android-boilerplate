@@ -60,7 +60,15 @@
     <string name="gesture_transform_rotate_step">Rotate 15°</string>
     <string name="gesture_transform_angle">Angle: %1$d°</string>
     <string name="gesture_swipe_title">Swipe &amp; fling</string>
-    <string name="gesture_swipe_subtitle">Reveal actions, swipe cards away and let things glide</string>
+    <string name="gesture_swipe_subtitle">Swipe between menus, reveal actions, swipe cards away and let things glide</string>
+    <string name="gesture_swipe_menu_title">Swipe between menus</string>
+    <string name="gesture_swipe_menu_usage">A few menus of equal rank, such as categories. Swipe left for the next menu and right for the previous one, or tap a tab.</string>
+    <string name="gesture_swipe_menu_food">Food</string>
+    <string name="gesture_swipe_menu_drinks">Drinks</string>
+    <string name="gesture_swipe_menu_desserts">Desserts</string>
+    <string name="gesture_swipe_menu_food_content">Fried rice, noodles, satay</string>
+    <string name="gesture_swipe_menu_drinks_content">Iced tea, coffee, juice</string>
+    <string name="gesture_swipe_menu_desserts_content">Pudding, ice cream, cake</string>
     <string name="gesture_swipe_reveal_title">Swipe to reveal actions</string>
     <string name="gesture_swipe_reveal_usage">List rows with quick actions such as archive or delete. TalkBack gets a Show actions action instead of the swipe.</string>
     <string name="gesture_swipe_reveal_hint">Swipe this row to the left</string>

@@ -3,6 +3,10 @@ package com.primestrider.kotlinstarter.feature.example.gestures
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -27,6 +31,41 @@ class SwipeScreenTest {
     val rule = createComposeRule()
 
     private fun show() = rule.setContent { AppTheme(false) { SwipeScreen(onBack = {}) } }
+
+    @Test
+    fun swiping_moves_between_menus() {
+        show()
+        rule.onNodeWithText("Fried rice, noodles, satay").assertIsDisplayed()
+        val pager = rule.onNodeWithTag("menuPager").performScrollTo()
+        pager.performTouchInput { swipeLeft() }
+        rule.waitForIdle()
+        rule.onNodeWithText("Iced tea, coffee, juice").assertIsDisplayed()
+        rule.onNode(hasText("Drinks") and hasAnyAncestor(hasTestTag("menuTabs"))).assertIsSelected()
+        pager.performTouchInput { swipeLeft() }
+        rule.waitForIdle()
+        rule.onNodeWithText("Pudding, ice cream, cake").assertIsDisplayed()
+        pager.performTouchInput { swipeRight() }
+        rule.waitForIdle()
+        rule.onNodeWithText("Iced tea, coffee, juice").assertIsDisplayed()
+    }
+
+    @Test
+    fun tapping_a_menu_tab_scrolls_the_pager() {
+        show()
+        rule.onNode(hasText("Desserts") and hasAnyAncestor(hasTestTag("menuTabs"))).performScrollTo().performClick()
+        rule.waitForIdle()
+        rule.onNodeWithText("Pudding, ice cream, cake").assertIsDisplayed()
+    }
+
+    @Test
+    fun menu_page_survives_recreation() {
+        val restore = StateRestorationTester(rule)
+        restore.setContent { AppTheme(false) { SwipeScreen(onBack = {}) } }
+        rule.onNodeWithTag("menuPager").performScrollTo().performTouchInput { swipeLeft() }
+        rule.waitForIdle()
+        restore.emulateSavedInstanceStateRestore()
+        rule.onNodeWithText("Iced tea, coffee, juice").assertIsDisplayed()
+    }
 
     @Test
     fun swipe_row_reveals_actions() {
